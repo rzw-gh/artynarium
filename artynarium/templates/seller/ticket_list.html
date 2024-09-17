@@ -1,0 +1,187 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}تيكت ها{% endblock title %}
+{% block content %}
+
+
+
+<main class="main">
+
+    <!-- Background Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">تيكت ها</h1>
+        </div>
+    </div>
+    <!-- Background Image -->
+
+    <!-- breadcrump -->
+    <nav aria-label="breadcrumb"
+         class="breadcrumb-nav mb-3">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب کاربری من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">تيكت ها</li>
+            </ol>
+            {% if request.user.seller %}
+            <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a
+                    href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrump -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <!-- Side_Panel -->
+                    <div class="col-md-4 col-lg-2">
+                        {% include 'shop/account_side_panel.html' %}
+                    </div>
+                    <!-- Side_Panel -->
+                    <div class="col-md-8 col-lg-10">
+                        {% if request.user.seller %}
+                        <!-- Message -->
+                        <div class="row justify-content-center">
+                            <div>
+                                {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                    <div
+                                            class="alert alert-{{message.tags}} mb-2"
+                                            role="alert">
+                                        {{ message }}
+                                    </div>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Message -->
+                        <div class="row justify-content-center">
+                            <!-- New Ticket -->
+                            <div class="col-8">
+                                <form class="form1" action="." method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+
+                                    <!-- category -->
+                                    <div>
+                                        <label for="category_ticket" class="form-label"><i
+                                                class="las la-inbox ml-3 v-align1" style="font-size: 1.5em;"></i>دسته *</label>
+                                        <select id="category_ticket" name="category" required>
+                                            <option name="category" value="FINANCE" selected>امور مالي</option>
+                                            <option name="category" value="PRODUCTS">محصولات</option>
+                                            <option name="category" value="ACCOUNT">حساب كاربري</option>
+                                            <option name="category" value="OTHERS">ساير موارد</option>
+                                        </select>
+                                    </div>
+                                    <!-- category -->
+
+                                    <!-- subject -->
+                                    <div class="mt-2">
+                                        <label for="subject_ticket" class="form-label"><i
+                                                class="las la-inbox ml-3 v-align1" style="font-size: 1.5em;"></i>موضوع
+                                            تيكت *</label>
+                                        <input type="text" class="form-control" id="subject_ticket" name="subject"
+                                               placeholder='موضوع تيكت' required>
+                                    </div>
+                                    <!-- subject -->
+
+                                    <!-- text -->
+                                    <div>
+                                        <label for="text_ticket"><i class="las la-comment-dots ml-3 v-align1"
+                                                                    style="font-size: 1.5em;"></i>متن پيام *</label>
+                                        <textarea type="text" class="form-control" id="text_ticket" name="text"
+                                                  placeholder='متن پيام' required></textarea>
+                                    </div>
+                                    <!-- text -->
+                                    <!-- File -->
+                                    <div>
+                                        <label for="file_ticket"><i class="las la-file ml-3 v-align1" style="font-size: 1.5em;"></i>فايل *</label>
+                                        <input type="file" class="dropify" id="file_ticket" name="document">
+                                    </div>
+                                    <!-- File -->
+
+                                    <!-- Send -->
+                                    <div class="container-login100-form-btn mt-3">
+                                        <button type="submit" va class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                            <i class="icon-long-arrow-right ml-2"></i>
+                                            <span>ارسال</span>
+                                        </button>
+                                    </div>
+                                    <!-- Send -->
+
+                                </form>
+                            </div>
+                            <!-- New Ticket -->
+
+                            <!-- Tickets -->
+                            {% if ticket %}
+                            <div class="col-7 mt-7" style="    margin-right: -86px;">
+                                <h6 style="border-bottom: solid 1px #dedede;padding: 6px;"> سوابق تیکت ها</h6>
+                                {% for ticket in ticket %}
+                                <div style="font-size: 16px">
+                                    <a href="{% url 'seller:ticket_detail' ticket.id %}">
+                                        {{ ticket.subject }}
+                                        {% if user_unread_count != 0 %}
+                                        | {{ user_unread_count }}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                {% endfor %}
+                                <!-- Pagination -->
+                                <nav class="mt-5" aria-label="Page navigation">
+                                    {% if ticket.has_other_pages %}
+                                    <ul class="pagination">
+                                        {% if ticket.has_previous %}
+                                        <li class="page-item"><a class="page-link page-link-prev"
+                                                                 href="{% url 'seller:ticket_list' %}?page={{ ticket.previous_page_number }}"
+                                                                 aria-label="Previous" tabindex="-1"
+                                                                 aria-disabled="true"><i
+                                                class="las la-arrow-right ml-2"></i>قبلي<span aria-hidden="true"></span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in ticket.paginator.page_range %}
+                                        {% if ticket.number == i %}
+                                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                        {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if ticket.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link page-link-next"
+                                                 href="{% url 'seller:ticket_list' %}?page={{ ticket.next_page_number }}"
+                                                 aria-label="Next">بعدي <span aria-hidden="true">
+                                                 <i class="las la-arrow-left mr-2"></i></span></a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </nav>
+                                <!-- Pagination -->
+                            </div>
+                            {% endif %}
+                            <!-- Tickets -->
+                            {% else %}
+                            <div class="container text-center">
+                                <p style=color:red;>{{ not_allowed }}</p>
+                                <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i
+                                        class="las la-shopping-bag mr-2"></i></a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

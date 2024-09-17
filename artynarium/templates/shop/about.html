@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}درباره ما{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">درباره ما</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- IMG -->
+    <div class="container"><div class="page-header page-header-big text-center" style="background-image: url({% static 'assets/images/about-header-bg.jpg' %})"></div></div>
+    <!-- IMG -->
+
+    <!-- Content -->
+    <div class="page-content pb-0">
+
+        <div class="bg-light-2 pt-6 pb-5 mb-6 mb-lg-8">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-lg-5 mb-3 mb-lg-0">
+                        <p class="mt-5 mb-2">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</p>
+                        {%comment%}<a href="{% url 'blog:home' %}" class="btn btn-sm btn-minwidth btn-outline-primary-2">
+                            <i class="icon-long-arrow-right ml-2"></i>
+                            <span>بیشتر</span>
+                        </a>{%endcomment%}
+                    </div>
+
+                    <div class="col-lg-6 offset-lg-1">
+                        <div class="about-images">
+                            <img src="{% static 'assets/images/popup/newsletter/img-1.jpg' %}" alt="" class="about-img-front">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Content -->
+
+</main>
+
+{% endblock content %}

@@ -1,0 +1,1230 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+{% block title %}{{ product.name }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- breadcrumb & pagination -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex align-items-center">
+
+            <!-- breadcrumb -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}">فروشگاه</a></li>
+                {% for p in precat %}
+                <li class="breadcrumb-item"><a href="{% url 'shop:category' p.id p.slug %}">{{ p.title }}</a></li>
+                {% endfor %}
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+            <!-- breadcrumb -->
+
+            <!-- pagination -->
+            <nav class="product-pager mr-auto" aria-label="Product">
+
+                <!-- Next Product -->
+                <a class="product-pager-link product-pager-next"
+                   {% if not next_product %} onclick="return false;" style="cursor: not-allowed;" {% endif %}
+                   {% if next_product %}href="{% url 'shop:product' next_product.id next_product.slug %}"{% endif %} aria-label="Next" tabindex="-1">
+                    <i class="icon-angle-right"></i>
+                    <span>بعدی</span>
+                </a>
+                <!-- Next Product -->
+
+                <!-- Prev Product -->
+                <a class="product-pager-link product-pager-prev mr-5"
+                   {% if not prev_product %} onclick="return false;" style="cursor: not-allowed;" {% endif %}
+                   {% if prev_product %} href="{% url 'shop:product' prev_product.id prev_product.slug %}"{% endif %} aria-label="Previous" tabindex="-1">
+                    <span>قبلی</span>
+                    <i class="icon-angle-left"></i>
+                </a>
+                <!-- Prev Product -->
+
+
+
+            </nav>
+            <!-- pagination -->
+
+        </div>
+    </nav>
+    <!-- breadcrumb & pagination -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+
+            <div class="product-details-top mb-2">
+                <div class="row">
+
+                    <!-- Image -->
+                    <div class="col-md-6">
+                        <div class="product-gallery product-gallery-vertical">
+                            <div class="row">
+
+                                <!-- Main Image -->
+                                <figure class="product-main-image">
+
+                                    <img id="product-zoom" src="{{ product.image.url }}" data-zoom-image="{{ product.image.url }}" alt="{{ product.name }}">
+
+                                    <!-- Magnify -->
+                                    <a href="{{ product.image.url }}" id="btn-product-gallery" class="btn-product-gallery">
+                                        <i class="icon-arrows"></i>
+                                    </a>
+                                    <!-- Magnify -->
+
+                                </figure>
+                                <!-- Main Image -->
+
+                                <!-- Image Gallery -->
+                                <div id="product-zoom-gallery" class="product-image-gallery">
+                                    {% for i in images %}
+                                    <a class="product-gallery-item" href="#" data-image="{{ i.image.url }}" data-zoom-image="{{ i.image.url }}">
+                                        <img src="{{ i.image.url }}" alt="{{ i.title }}">
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                                <!-- Image Gallery -->
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Image -->
+
+                    <!-- Details -->
+                    <div class="col-md-6">
+
+                        <!-- Alert Message -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+
+                        <!-- Main -->
+                        <div class="product-details">
+
+                            <!-- Name -->
+                            <h1 class="product-title pr-0 d-inline-block cs-pro-title">
+                                {% if product.product_type == 'Art' %}<i style="vertical-align: -2px;" class="las la-brush ml-1" title="هنر"></i>{% endif %}
+                                {% if product.product_type == 'Material' %}<i style="vertical-align: -2px;" class="las la-puzzle-piece ml-1" title="مواد اولیه"></i>{% endif %}
+                                {% if product.product_type == 'Tool' %}<i style="vertical-align: -2px;" class="las la-tools ml-1" title="ابزار"></i>{% endif %}
+
+                                {{ product.name }}
+                                <!-- Comments -->
+                                <div class="ratings-container ">
+                                    <!-- Wishlist -->
+                                    <div class="">
+                                        <div class="myrate deactive">
+                                            <a  class="ratings-text didghah" href="#product-review-link" id="review-link">( {{ product.comments_count }} دیدگاه )</a>
+                                            <label {% if product.averagereview >= 1 %} class="rangi" {% endif %} ></label>
+                                            <label {% if product.averagereview >= 2 %} class="rangi" {% endif %} ></label>
+                                            <label {% if product.averagereview >= 3 %} class="rangi" {% endif %} ></label>
+                                            <label {% if product.averagereview >= 4 %} class="rangi" {% endif %} ></label>
+                                            <label {% if product.averagereview >= 5 %} class="rangi" {% endif %} ></label>
+                                        </div>
+                                    </div>
+                                    <!-- Wishlist -->
+
+                                </div>
+
+                                <div>
+                                    {% if product.variant == 'None' %}
+                                    <h3 class="product-price">{{ product.price|intcomma:False }} تومان</h3>
+                                    {% else %}
+                                    <h3 class="product-price">{{ variant.price|intcomma:False }} تومان</h3>
+                                    {% endif %}
+                                </div>
+
+                            </h1>
+
+                            <script>
+                                $(document).on('change', '#post-form',function(e){
+                                    e.preventDefault();
+                                    $.ajax({
+                                        type:'POST',
+                                        url:'{% url "shop:ajaxcolor" %}',
+                                        data:{
+                                            productid:$('#productid').val(),
+                                            size:$('#size').val(),
+                                            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                                            action: 'post'
+                                        },
+                                        data_type : 'html',
+                                        success: function (data) {
+                                            $('#appendHere').html(data.rendered_table);
+                                        },
+                                        error: function (data) {
+                                            alert("Got an error: " + data);
+                                        }
+                                    });
+                                });
+                            </script>
+
+                            <!-- Description -->
+                            <div class="product-content ">
+                                <!-- Availability -->
+                                <div class="mb-1">
+                                <span class="cs-in-stock">
+                                    {% if product.user.ghost %}
+                                    <strong style="color: orange;">فروشنده این محصول بنابر بر دلایلی در حال حاضر قادر به ارائه خدمت نمیباشد</strong><br>
+                                    {% endif %}
+                                    {% if product.total_amount > 0  %}
+                                        {% if product.store_amount >= 10 %}
+                                            <i class="las la-store-alt cs-in-stock"></i>
+                                            <strong>موجود در انبار</strong>
+                                        {% elif product.store_amount <= 10 and product.store_amount > 0 %}
+                                            <i class="las la-exclamation-circle cs-in-stock" style="color:red;">
+                                            </i><strong style="color:red;">کمتر از 10 عدد در انبار باقی مانده</strong>
+                                        {% elif product.amount >= 10 %}
+                                            <i class="las la-store-alt cs-in-stock"></i>
+                                            <strong>موجود در نزد فروشنده </strong>
+                                            <button type="button" class="poposer_cs" data-container="body" data-toggle="popover" data-placement="left" data-content="كالاهایی كه موجودی آنها در نزد فروشنده میباشد با تاخیر ارسال خواهند شد!">
+                                              <i class="las la-question-circle"></i>
+                                            </button>
+
+                                        {% elif product.amount <= 10 and product.amount > 0 %}
+                                            <i class="las la-store-alt cs-in-stock"></i>
+                                             <strong>کمتر از 10 عدد در نزد فروشنده </strong>
+                                            <button type="button" class="poposer_cs" data-container="body" data-toggle="popover" data-placement="left" data-content="كالاهایی كه موجودی آنها در نزد فروشنده میباشد با تاخیر ارسال خواهند شد!">
+                                              <i class="las la-question-circle" ></i>
+                                            </button>
+                                        {% endif %}
+                                    {% else %}
+                                        <i class="las la-exclamation mr-2 ml-3" style="color:red;"></i style="color:red;"><strong>ناموجود</strong>
+                                    {% endif %}
+                                </span>
+                                </div>
+                                <!-- Availability -->
+                            </div>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="popover"]').popover()
+                                })
+                            </script>
+                            <!-- Description -->
+
+                            <!-- Add to Cart -->
+                            {% if request.user.is_authenticated %}
+
+                                {% if product.variant == 'Size-Color' %}
+
+                                    <!-- Portion 1 -->
+                                    <div class="product-options">
+
+                                        <!-- Size -->
+                                        <div class="details-filter-row details-row-size m-0">
+
+                                            <form method="POST" id="post-form">
+                                                {% csrf_token %}
+                                                <div class="details-filter-row details-row-size">
+                                                    <label>کد:</label>
+                                                    <div class="">
+                                                        <input type="hidden" name="productid" id="productid" value="{{ product.id }}">
+                                                        <select name="size" id="size" class="form-control">
+                                                            {% for rs in sizes %}
+                                                            <option {% if variant.size_id == rs.size_id %} selected {% endif %} value="{{ rs.size_id }}">{{ rs.size.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- Size -->
+
+                                        <!-- Color -->
+                                        <form method="post" action="?q=selectvariant" id="post-color">
+                                            {% csrf_token %}
+                                            <div id="appendHere" class="details-filter-row details-row-size">
+                                                <label>رنگ:</label>
+                                                <ul class="product-nav product-nav-dots">
+                                                    {% for rs in colors %}
+                                                    <span style="margin-left: 10px;">
+                                                        <input title="{{ rs.color.name }}" type="radio" {% if variant.id == rs.id %} checked {% endif %}
+                                                               name="variantid" id="variantid" value="{{ rs.id }}"
+                                                               onchange="this.form.submit();">
+                                                        <a style="background-color:#{{ rs.color.code }};" {% if variant.id == rs.id %}
+                                                           class="active" {% endif %}></a>
+                                                    </span>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </form>
+                                        <!-- Color -->
+
+                                    </div>
+                                    <!-- Portion 1 -->
+
+                                {% elif product.variant == 'Size' %}
+
+                                    <!-- Portion 2 -->
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <!-- Size -->
+                                            <div id="appendHere" class="details-filter-row details-row-size">
+                                                <form method="post" action="?q=selectvariant" id="post-color">
+                                                    {% csrf_token %}
+                                                    <div class="details-filter-row details-row-size">
+                                                        <label>کد:</label>
+                                                        <div class="">
+                                                            <input type="hidden" name="size" id="size" value="{{ size_id }}">
+                                                            <select class="form-control" name="variantid" id="variantid" onchange="this.form.submit();">
+                                                                {% for rs in sizes %}
+                                                                <option {% if variant.id == rs.id %} selected {% endif %}  value="{{ rs.id }}" >{{ rs.size }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <!-- Size -->
+                                        </div>
+                                        <div class="col-6">
+
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Portion 2 -->
+                                    <br><br>
+
+                                {% elif product.variant == 'Color' %}
+
+                                    <!-- Portion 3 -->
+
+                                    <!-- Color -->
+                                    <form method="post" action="?q=selectvariant" id="post-color">
+                                        {% csrf_token %}
+                                        <div id="appendHere" class="details-filter-row details-row-size">
+                                            <label>رنگ:</label>
+                                            <input type="hidden" name="size" id="size" value="{{ size_id }}">
+                                            <ul class="product-nav product-nav-dots">
+                                                {% for rs in colors %}
+                                                <span style="margin-left: 10px;">
+                                                            <input title="{{ rs.color.name }}" type="radio" {% if variant.id == rs.id %} checked {% endif %} name="variantid" id="variantid" value="{{ rs.id }}" onchange="this.form.submit();">
+                                                            <a style="background-color:#{{ rs.color.code }};"></a>
+                                                        </span>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </form>
+                                    <!-- Color -->
+
+                                    <!-- Portion 3 -->
+
+                                {% endif %}
+
+
+                                {% if  product.variant != 'None'   %}
+
+                                    <!-- Main -->
+                                    <form action="{% url 'shop:addtocart' product.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="details-filter-row details-row-size">
+                                            <label for="quantity">تعداد:</label>
+                                            <input type="hidden" name="variantid" id="variantid" value="{{ variant.id }}">
+
+                                            <div class="product-details-quantity">
+                                                <input class="input"
+                                                       name="quantity"
+                                                       type="number"
+                                                       value="1"
+                                                       min="1"
+                                                       max="
+                                                        {% if in_cart %}
+                                                            {% if variant_store_amount_is_empty %}
+                                                                {% if variant.seller_quantity|minus:cart_limit.total_variant_seller_quantity >= cart_limit_purchase_amount_limit %}
+                                                                    {{ cart_limit_purchase_amount_limit }}
+                                                                {% else %}
+                                                                    {{ variant.seller_quantity|minus:cart_limit.total_variant_seller_quantity }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if variant.quantity|minus:cart_limit.total_variant_quantity >= cart_limit_purchase_store_amount_limit %}
+                                                                    {{ cart_limit_purchase_store_amount_limit }}
+                                                                {% else %}
+                                                                    {{ variant.quantity|minus:cart_limit.total_variant_quantity }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if variant_store_amount_is_empty %}
+                                                                {% if variant.seller_quantity >= product.purchase_amount_limit %}
+                                                                    {{ product.purchase_amount_limit }}
+                                                                {% else %}
+                                                                    {{ variant.seller_quantity }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if variant.quantity >= product.purchase_store_amount_limit %}
+                                                                    {{ product.purchase_store_amount_limit }}
+                                                                {% else %}
+                                                                    {{ variant.quantity }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-6">
+                                                <div class="product-details-action">
+                                                    <button class="btn-product bttn-pproduct btn-cart cs_btn" type="submit"
+                                                            {% if product.user.ghost %}
+                                                            disabled
+                                                            {% elif product.user == request.user  %}
+                                                            disabled
+                                                            {% elif product.total_amount == 0  %}
+                                                            disabled
+                                                            {% elif variant.quantity == 0  %}
+                                                            disabled
+                                                            {% endif %}
+                                                    ><p class="mr-2 cs-span" style="vertical-align: 1px;">افزودن به سبد خرید</p></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <a style="vertical-align: -6px;" href="{% url 'shop:add_remove' product.id product.slug %}" class="btn-product btn-wishlist" title="Wishlist"><span class="mr-2"> افزودن به علاقه مندی ها</span></a>
+
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                    <!-- Main -->
+
+                                {% else %}
+
+                                    <!-- Main -->
+                                    <form action="{% url 'shop:addtocart' product.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="details-filter-row details-row-size m-0">
+                                            <label for="quantity">تعداد:</label>
+                                            <div class="product-details-quantity">
+                                                <input class="input form-control"
+                                                       name="quantity"
+                                                       type="number"
+                                                       value="1"
+                                                       min="1"
+                                                       max="
+                                                        {% if in_cart %}
+                                                            {% if store_amount_is_empty %}
+                                                                {% if product.amount|minus:cart_limit.total_product_amount >= cart_limit_purchase_amount_limit %}
+                                                                    {{ cart_limit_purchase_amount_limit }}
+                                                                {% else %}
+                                                                    {{ product.amount|minus:cart_limit.total_product_amount }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if product.store_amount|minus:cart_limit.total_product_store_amount >= cart_limit_purchase_store_amount_limit %}
+                                                                    {{ cart_limit_purchase_store_amount_limit }}
+                                                                {% else %}
+                                                                    {{ product.store_amount }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if store_amount_is_empty %}
+                                                                {% if product.amount >= product.purchase_amount_limit %}
+                                                                    {{ product.purchase_amount_limit }}
+                                                                {% else %}
+                                                                    {{ product.amount }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if product.store_amount >= product.purchase_store_amount_limit %}
+                                                                    {{ product.purchase_store_amount_limit }}
+                                                                {% else %}
+                                                                    {{ product.store_amount }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="product-details-action">
+                                            <button  class="btn-product bttn-pproduct btn-cart cs_btn mt-1" type="submit"
+                                                    {% if product.user.ghost %}
+                                                    disabled
+                                                    {% elif product.user == request.user  %}
+                                                    disabled
+                                                    {% elif product.total_amount == 0  %}
+                                                    disabled
+                                                    {% endif %}
+                                            ><span class="mr-2" style="vertical-align: 1px;">افزودن به سبد خرید</span></button>
+                                        </div>
+                                    </form>
+                                    <!-- Main -->
+
+                                {% endif %}
+
+                                <!-- Add to Cart -->
+
+                                <!-- chosen -->
+                                {% if  product.variant != 'None'   %}
+                                <p>
+                                    {% if variant.size %}
+                                    کد انتخاب شده: {{ variant.size }}
+                                    {% endif %}
+                                    <br>
+                                    {% if variant.color %}
+                                    رنگ انتخاب شده: {{ variant.color }}
+                                    {% endif %}
+                                </p>
+                                {% endif %}
+                                <!-- chosen -->
+
+                            {% else %}
+                                <div class="product-details-action d-block mt-4 text-center">
+                                <p>برای خرید ابتدا باید وارد حساب خود شوید</p>
+                                <a class="btn-product btn-cart cs_btn mt-1 d-block login_btn1" href="{% url 'account_login' %}?next={{request.path}}"><span class="mr-2"><i class="las la-sign-in-alt"></i>ورود</span></a>
+                            </div>
+                            {% endif %}
+
+                            <!-- Category -->
+                            {% if product.category %}
+                            <div class="product-details-footer {% if  product.variant == 'None'   %} product-details-footer-single {% endif %}">
+                                <div class="product-cat float-right">
+                                    <span>دسته بندی:</span>
+                                    {% for c in product.category.all %}
+                                    <a href="{% url 'shop:category' c.id c.slug %}">{% if forloop.first %}{% else %}, {% endif %}{{ c.title }} </a>
+                                    {% endfor %}
+                                </div>
+                                <div class="social-icons social-icons-sm float-left">
+                                    <span class="social-label ml-1">اشتراك گذاری :</span>
+                                    <a href="https://www.facebook.com/sharer/sharer.php?m2w&s=100&p[url]={{ full_path }}" class="social-icon" title="Facebook" target="_blank"><i class="lab la-facebook-f"></i></a>
+                                    <a href="https://twitter.com/intent/tweet?url={{ full_path }}" class="social-icon" title="Twitter" target="_blank"><i class="lab la-twitter"></i></a>
+                                    <a href="https://wa.me/?text={{ full_path }}" class="social-icon"  title="Whatsapp" target="_blank"><i class="lab la-whatsapp" ></i></a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Category -->
+
+                        </div>
+                        <!-- Main -->
+                    </div>
+                    <!-- Details -->
+
+                </div>
+            </div>
+
+            {% if other_sellers.count > 0 %}
+            <!-- accordion -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="accordion accordion-icon" id="accordion-3">
+                        <div class="card">
+                            <div class="card-header" id="heading3-1">
+                                <h2 class="card-title">
+                                    <a role="button" data-toggle="collapse" href="#collapse_accordion" aria-expanded="false" aria-controls="collapse_accordion">
+                                        <i class="las la-store-alt"></i><span class="mr-3">فروشندگان دیگر این كالا</span>
+                                    </a>
+                                </h2>
+                            </div>
+                            <div id="collapse_accordion" class="collapse" aria-labelledby="heading3-1" data-parent="#accordion-3">
+                                <div class="card-body">
+                                    {% for product in other_sellers %}
+                                    <div class="row mb-1">
+                                        <div class="col-4" style="font-size: 18px;">{{ product.user.seller_title }}</div>
+                                        <div class="col-4" style="font-size: 18px;">{{ product.price|intcomma:False }} تومان</div>
+                                        <div class="col-4"><button onclick="{% url 'shop:product' product.id product.slug %}" class="btn btn-outline-success">مشاهده</button></div>
+                                    </div>
+                                    {% endfor %}
+                                </div><!-- End .card-body -->
+                            </div><!-- End .collapse -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- accordion -->
+            {% endif %}
+
+            <!-- Related Products -->
+            {% if related_products %}
+            <h2 class="title text-center mb-4">محصولات مرتبط</h2>
+            <div class="owl-carousel owl-6 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                {% for p in related_products %}
+                <div class="product product-7 text-center">
+                    <figure class="product-media" style="position: relative">
+
+                        <!-- label -->
+                        <span class="product-label
+                        {% if p.total_amount <= 10 %}
+                            label-sale
+                        {% else %}
+                            label-new
+                        {% endif %}">
+                        {% if p.store_amount >= 10 %}
+                        موجود در انبار
+                        {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                        کمتر 10 ایتم موجود در
+                        انبار
+                        {% elif p.amount >= 10 %}
+                        موجود در نزد فروشنده
+                        {% elif p.amount <= 10 and p.amount > 0 %}
+                        کمتر از 10 ایتم در نزد
+                        فروشنده
+                        {% elif p.total_amount == 0 %}
+                        ناموجود
+                        {% endif %}
+                        </span>
+                        <!-- label -->
+
+                        <a href="{% url 'shop:product' p.id p.slug %}">
+                            <img src="{{ p.image.url }}" alt="Product image" class="product-image">
+                        </a>
+
+                        <div class="product-action action-icon-top" style="bottom: -8px !important;">
+                            <a href="{% url 'shop:product' p.id p.slug %}" class="btn-product btn-cart"><span>خرید کنید</span></a>
+                        </div><!-- End .product-action -->
+
+                    </figure>
+
+                    <div class="product-body">
+
+                        <h3 class="product-title mb-1 mt-1"><a href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a></h3>
+
+                        <div class="product-price">{{ p.price|intcomma:False }} تومان</div>
+
+                        <!-- Comments -->
+
+                        <div class="ratings-container">
+                            <div class="myrate deactive">
+                                <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size" ></label>
+                                <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size" ></label>
+                                <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size" ></label>
+                                <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size" ></label>
+                                <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size" ></label>
+                            </div>
+                            {% if p.comments_count >= 1 %}
+                            <span class="ratings-text">( {{ p.comments_count }} دیدگاه )</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Comments -->
+
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!-- Related Products -->
+
+            <!-- Button detail -->
+            <div class="product-details-tab">
+
+                <!-- Tabs -->
+                <ul class="nav nav-pills justify-content-center" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true"><i class="las la-info ml-2"></i>مشخصات</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false"><i class="las la-comments ml-2"></i>نظرات ({{ product.comments_count }})</a>
+                    </li>
+                </ul>
+                <!-- Tabs -->
+
+                <div class="tab-content">
+
+                    <!-- Description -->
+                    <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
+                        <div class="product-desc-content">
+                            {{ product.description|safe }}
+                        </div>
+                    </div>
+                    <!-- Description -->
+
+                    <!-- Comment -->
+                    <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
+                        <div class="reviews">
+
+                            <!-- Add Comment -->
+                            {% if user.is_authenticated %}
+                            <div class="col-md-6">
+                                <h4 class="text-uppercase">{% if product.comments_count == 0 %}اولین نفری باشید که نظر میدهد{%else%}افزودن دیدگاه{%endif%}</h4>
+                                <form action="{% url 'shop:addcomment' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input name="subject" class="input form-control" type="text" placeholder="عنوان" />
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="comment" class="input form-control" placeholder="دیدگاه..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-rating">
+                                            <strong
+                                                    class="text-uppercase"
+                                                    style="">امتیاز:</strong>
+                                            <div class="rate stars d-inline-block" style="vertical-align: -15px">
+                                                <input type="radio" id="star5" name="rate" value="5" />
+                                                <label for="star5" >5 stars</label>
+                                                <input type="radio" id="star4" name="rate" value="4" />
+                                                <label for="star4" >4 stars</label>
+                                                <input type="radio" id="star3" name="rate" value="3" />
+                                                <label for="star3" >3 stars</label>
+                                                <input type="radio" id="star2" name="rate" value="2" />
+                                                <label for="star2" >2 stars</label>
+                                                <input type="radio" id="star1" name="rate" value="1" />
+                                                <label for="star1" >1 star</label>
+                                            </div>
+                                            <button
+                                                    class="btn btn-outline-primary-2 btn-order d-inline-block float-left">ارسال</button>
+
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            {% else %}
+                            <div class="col-md-6"> برای ارسال دیدگاه باید <a href="{% url 'account_login' %}?next={{request.path}}"></a>وارد</a> شوید</div><hr>
+                            {% endif %}
+                            <!-- Add Comment -->
+
+
+                            <!-- Comments -->
+                            <div class="comments-container">
+
+                                <ul id="comments-list" class="comments-list">
+                                    {% for c in comments %}
+                                    <li>
+                                        <div class="comment-main-level">
+                                            <div class="comment-box">
+                                                <div class="comment-head">
+                                                    <h6 class="comment-name">{{ c.user.first_name }} {{ c.user.last_name }} | {{ c.subject }}{% if child_comment.buyer %}<span class="seller-or-buyer" style="background: #dedede;border-radius: 12px">خریدار</span>{% endif %}</h6>
+                                                    <div>
+                                                        <span>{{ c.create_at|naturaltime }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="comment-content text-justify">
+                                                    {{ c.comment }}
+                                                    <!-- New Reply -->
+                                                    <div class="text-left">
+
+                                                        <div class="btn-reply">
+                                                            <!-- Votes -->
+                                                            <div class="review-action d-inline-block">
+                                                                <a style="vertical-align: -2px;" class="a-vorte" id="like_{{ forloop.counter }}" href="javascript:{}" data-target-url="{% url 'shop:comment_upvote' c.id %}">
+                                                                    <i style="vertical-align: -1px; font-size: 18px;" class="las la-thumbs-up i-vote"></i>
+                                                                <span class="likecount" style="vertical-align: 3px; margin-right: 4px;">{{ c.helpful }}</span>
+                                                                </a>
+                                                            </div>
+                                                            <!-- Votes -->
+                                                            <button class="reply_btn"><i class="las la-reply" style="vertical-align: -3px;margin-left: 4px;"></i>پاسخ دادن</button>
+                                                        </div>
+                                                        <div class="reply-review mt-1">
+                                                            <form action="{% url 'shop:addcomment' product.id %}" method="post">
+                                                                {% csrf_token %}
+                                                                <div class="form-group">
+                                                                    <input type="hidden" value="{{c.id}}" name="parent_id">
+                                                                    <textarea name="comment" class="input form-control" placeholder="دیدگاه..."></textarea>
+                                                                    <button type="submit" class="btn btn-outline-primary-2 btn-order float-right mt-2 mb-1">ارسال</button>
+                                                                </div>
+                                                                <!-- New Reply -->
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% for child_comment in c.children %}
+                                        <div class="comment-main-level cs-drop">
+                                            <div class="comment-box position-relative">
+                                                <div class="comment-head comments-listx">
+                                                    <h6 class="comment-name">{{ child_comment.user.first_name }}  {{ child_comment.user.last_name }}{% if child_comment.buyer %}<span class="seller-or-buyer" style="background: #dedede;border-radius: 12px">خریدار</span>{% endif %}</h6>
+                                                    <span>{{ child_comment.create_at|naturaltime }}</span>
+                                                </div>
+                                                <div class="comment-content text-justify">
+                                                    {{ child_comment.comment }}
+                                                    <!-- Votes -->
+                                                    <div class="review-action text-left d-block">
+                                                        <a class="a-vorte" id="like_{{ forloop.counter }}" href="javascript:{}" data-target-url="{% url 'shop:comment_upvote' child_comment.id %}">
+                                                            <i class="las la-thumbs-up i-vote" style="font-size: 18px; vertical-align: -4px;"></i>
+                                                        <span class="likecount" style="margin-right: 4px;">{{ child_comment.helpful }}</span>
+                                                        </a>
+                                                    </div>
+                                                    <!-- Votes -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+
+                                    </li>
+
+                                    {% endfor %}
+                                </ul>
+
+                                {% if comments.count > 3 %}
+                                <div class="text-center">
+                                    <div class="load-comment" id="loadMore">نمایش بیشتر</div>
+                                    <div class="load-comment" id="showLess">نمایش كمتر</div>
+                                </div>
+                                {% endif %}
+                                <!-- Comments -->
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <style>
+                        #myList li{ display:none;
+                        }
+                        #loadMore {
+                            color:green;
+                            cursor:pointer;
+                        }
+                        #loadMore:hover {
+                            color:black;
+                        }
+                        #showLess {
+                            color:red;
+                            cursor:pointer;
+                        }
+                        #showLess:hover {
+                            color:black;
+                        }
+                    </style>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            size_li = $("#comments-list li").size();
+                            x=3;
+                            if (x<=3) {
+                                $('#showLess').hide();
+                            }
+                            $('#comments-list li:lt('+x+')').show();
+                            $('#loadMore').click(function () {
+                                x= (x+5 <= size_li) ? x+5 : size_li;
+                                $('#comments-list li:lt('+x+')').show();
+                                if (x >= size_li) {
+                                    $('#loadMore').hide();
+                                };
+                                if (x>3) {
+                                    $('#showLess').show();
+                                }
+                                if (x<size_li) {
+                                    $('#loadMore').show();
+                                }
+                            });
+                            $('#showLess').click(function () {
+                                x=(x-5<0) ? 3 : x-5;
+                                $('#comments-list li').not(':lt('+x+')').hide();
+                                if (size_li <= 3) {
+                                    $('#showLess').hide();
+                                };
+                                if (x < size_li) {
+                                    $('#loadMore').show();
+                                }
+                                if (x>=3) {
+                                    $('#showLess').show();
+                                }
+                                if (x<=3) {
+                                    $('#showLess').hide();
+                                }
+                            });
+
+                        });
+                        $('a[id^="like_"]').on('click', function (){
+                            var span = $(this).children('span');
+                            $.ajax({
+                                url: $(this).data("target-url"),
+                                type: 'GET',
+                                data: $(this).serialize(),
+                                success: function (data){
+                                    console.log(data);
+                                    span.text(data.likecount)
+                                },
+                                error: function (error){
+                                    console.log(error);
+                                }
+                            });
+                        });
+                    </script>
+
+                    <!-- Comment -->
+
+                </div>
+
+            </div>
+            <!-- Button detail -->
+
+            <!-- Related Art -->
+            {% if product.product_type != 'Art' %}
+                {% if product.related_art.all %}
+                <h2 class="title text-center mb-4">هنر های مرتبط</h2>
+                <div class="owl-carousel owl-6 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                    {% for p in product.related_art.all %}
+                    <div class="product product-7 text-center">
+                        <figure class="product-media" style="position: relative">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                            {% if p.store_amount >= 10 %}
+                            موجود در انبار
+                            {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                            کمتر 10 ایتم موجود در
+                            انبار
+                            {% elif p.amount >= 10 %}
+                            موجود در نزد فروشنده
+                            {% elif p.amount <= 10 and p.amount > 0 %}
+                            کمتر از 10 ایتم در نزد
+                            فروشنده
+                            {% elif p.total_amount == 0 %}
+                            ناموجود
+                            {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.image.url }}" alt="Product image" class="product-image">
+                            </a>
+
+                            <div class="product-action action-icon-top" style="bottom: -8px !important;">
+                                <a href="{% url 'shop:product' p.id p.slug %}" class="btn-product btn-cart"><span>خرید کنید</span></a>
+                            </div><!-- End .product-action -->
+
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3 class="product-title mb-1 mt-1"><a href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a></h3>
+
+                            <div class="product-price">{{ p.price|intcomma:False }} تومان</div>
+
+                            <!-- Comments -->
+
+                            <div class="ratings-container">
+                                <div class="myrate deactive">
+                                    <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size" ></label>
+                                </div>
+                                {% if p.comments_count >= 1 %}
+                                <span class="ratings-text">( {{ p.comments_count }} دیدگاه )</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Comments -->
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+            <!-- Related Art -->
+
+            <!-- Related Material -->
+            {% if product.product_type != 'Material' %}
+                {% if product.related_material.all %}
+                <h2 class="title text-center mb-4">مواد اولیه مرتبط</h2>
+                <div class="owl-carousel owl-6 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                    {% for p in product.related_material.all %}
+                    <div class="product product-7 text-center">
+                        <figure class="product-media" style="position: relative">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                            {% if p.store_amount >= 10 %}
+                            موجود در انبار
+                            {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                            کمتر 10 ایتم موجود در
+                            انبار
+                            {% elif p.amount >= 10 %}
+                            موجود در نزد فروشنده
+                            {% elif p.amount <= 10 and p.amount > 0 %}
+                            کمتر از 10 ایتم در نزد
+                            فروشنده
+                            {% elif p.total_amount == 0 %}
+                            ناموجود
+                            {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.image.url }}" alt="Product image" class="product-image">
+                            </a>
+
+                            <div class="product-action action-icon-top" style="bottom: -8px !important;">
+                                <a href="{% url 'shop:product' p.id p.slug %}" class="btn-product btn-cart"><span>خرید کنید</span></a>
+                            </div><!-- End .product-action -->
+
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3 class="product-title mb-1 mt-1"><a href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a></h3>
+
+                            <div class="product-price">{{ p.price|intcomma:False }} تومان</div>
+
+                            <!-- Comments -->
+
+                            <div class="ratings-container">
+                                <div class="myrate deactive">
+                                    <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size" ></label>
+                                </div>
+                                {% if p.comments_count >= 1 %}
+                                <span class="ratings-text">( {{ p.comments_count }} دیدگاه )</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Comments -->
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+            <!-- Related Material -->
+
+            <!-- Related Tool -->
+            {% if product.product_type != 'Tool' %}
+                {% if product.related_tool.all %}
+                <h2 class="title text-center mb-4">ابزار مرتبط</h2>
+                <div class="owl-carousel owl-6 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                    {% for p in product.related_tool.all %}
+                    <div class="product product-7 text-center">
+                        <figure class="product-media" style="position: relative">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                            {% if p.store_amount >= 10 %}
+                            موجود در انبار
+                            {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                            کمتر 10 ایتم موجود در
+                            انبار
+                            {% elif p.amount >= 10 %}
+                            موجود در نزد فروشنده
+                            {% elif p.amount <= 10 and p.amount > 0 %}
+                            کمتر از 10 ایتم در نزد
+                            فروشنده
+                            {% elif p.total_amount == 0 %}
+                            ناموجود
+                            {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.image.url }}" alt="Product image" class="product-image">
+                            </a>
+
+                            <div class="product-action action-icon-top" style="bottom: -8px !important;">
+                                <a href="{% url 'shop:product' p.id p.slug %}" class="btn-product btn-cart"><span>خرید کنید</span></a>
+                            </div><!-- End .product-action -->
+
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3 class="product-title mb-1 mt-1"><a href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a></h3>
+
+                            <div class="product-price">{{ p.price|intcomma:False }} تومان</div>
+
+                            <!-- Comments -->
+
+                            <div class="ratings-container">
+                                <div class="myrate deactive">
+                                    <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size" ></label>
+                                    <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size" ></label>
+                                </div>
+                                {% if p.comments_count >= 1 %}
+                                <span class="ratings-text">( {{ p.comments_count }} دیدگاه )</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Comments -->
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+            <!-- Related Tool -->
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% if request.user.is_authenticated %}
+<div class="sticky-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <figure class="product-media">
+                    <a href="{% url 'shop:product' product.id product.slug%}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </a>
+                </figure>
+                <h4 class="product-title mr-4">
+                    <a href="{% url 'shop:product' product.id product.slug%}">
+                        {% if product.product_type == 'Art' %}<i style="vertical-align: -2px;" class="las la-brush ml-1" title="هنر"></i>{% endif %}
+                        {% if product.product_type == 'Material' %}<i style="vertical-align: -2px;" class="las la-puzzle-piece ml-1" title="مواد اولیه"></i>{% endif %}
+                        {% if product.product_type == 'Tool' %}<i style="vertical-align: -2px;" class="las la-tools ml-1" title="ابزار"></i>{% endif %}
+                        {{ product.name }}
+                    </a>
+                </h4>
+            </div>
+            <div class="col-6 justify-content-end">
+                <div class="product-price">
+                    {% if product.variant == 'None' %}
+                    <h3 class="product-price" style="margin-top: 8px">{{ product.price|intcomma:False }} تومان</h3>
+                    {% else %}
+                    <h3 class="product-price" style="margin-top: 8px">{{ variant.price|intcomma:False }} تومان</h3>
+                    {% endif %}
+                </div>
+
+                <div class="product-details-action">
+                    {% if product.variant != 'None' %}
+                    <form action="{% url 'shop:addtocart' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="product-details-quantity float-right">
+                            <input type="hidden" class="form-inline" name="variantid" id="variantid" value="{{ variant.id }}">
+                            <input class="input"
+                                   name="quantity"
+                                   type="number"
+                                   value="1"
+                                   min="1"
+                                   max="
+                                    {% if in_cart %}
+                                        {% if variant_store_amount_is_empty %}
+                                            {% if variant.seller_quantity|minus:cart_limit.total_variant_seller_quantity >= cart_limit_purchase_amount_limit %}
+                                                {{ cart_limit_purchase_amount_limit }}
+                                            {% else %}
+                                                {{ variant.seller_quantity|minus:cart_limit.total_variant_seller_quantity }}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if variant.quantity|minus:cart_limit.total_variant_quantity >= cart_limit_purchase_store_amount_limit %}
+                                                {{ cart_limit_purchase_store_amount_limit }}
+                                            {% else %}
+                                                {{ variant.quantity|minus:cart_limit.total_variant_quantity }}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if variant_store_amount_is_empty %}
+                                            {% if variant.seller_quantity >= product.purchase_amount_limit %}
+                                                {{ product.purchase_amount_limit }}
+                                            {% else %}
+                                                {{ variant.seller_quantity }}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if variant.quantity >= product.purchase_store_amount_limit %}
+                                                {{ product.purchase_store_amount_limit }}
+                                            {% else %}
+                                                {{ variant.quantity }}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}"
+                                   required>
+                        </div>
+                        <button class="btn-product bttn-pproduct btn-cart cs_btn mt-1" type="submit"
+                                {% if product.user.ghost %}
+                                disabled
+                                {% elif product.user == request.user  %}
+                                disabled
+                                {% elif product.total_amount == 0  %}
+                                disabled
+                                {% endif %}
+                            ><span class="mr-2" >افزودن به سبد خرید</span></button>
+                        </button>
+                    </form>
+                    {% else %}
+
+                    <form action="{% url 'shop:addtocart' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="product-details-quantity float-right">
+                            <input class="input form-control"
+                               name="quantity"
+                               type="number"
+                               value="1"
+                               min="1"
+                               max="
+                                {% if in_cart %}
+                                    {% if store_amount_is_empty %}
+                                        {% if product.amount|minus:cart_limit.total_product_amount >= cart_limit_purchase_amount_limit %}
+                                            {{ cart_limit_purchase_amount_limit }}
+                                        {% else %}
+                                            {{ product.amount|minus:cart_limit.total_product_amount }}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if product.store_amount|minus:cart_limit.total_product_store_amount >= cart_limit_purchase_store_amount_limit %}
+                                            {{ cart_limit_purchase_store_amount_limit }}
+                                        {% else %}
+                                            {{ product.store_amount|minus:cart_limit.total_product_store_amount }}
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if store_amount_is_empty %}
+                                        {% if product.amount >= product.purchase_amount_limit %}
+                                            {{ product.purchase_amount_limit }}
+                                        {% else %}
+                                            {{ product.amount }}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if product.store_amount >= product.purchase_store_amount_limit %}
+                                            {{ product.purchase_store_amount_limit }}
+                                        {% else %}
+                                            {{ product.store_amount }}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}"
+                               required>
+                        </div>
+                        <button class="btn-product bttn-pproduct btn-cart cs_btn mt-1" type="submit"
+                            {% if product.user.ghost %}
+                            disabled
+                            {% elif product.user == request.user  %}
+                            disabled
+                            {% elif product.total_amount == 0  %}
+                            disabled
+                            {% endif %}
+                        ><span class="mr-2">افزودن به سبد خرید</span></button>
+                    </form>
+
+                    {% endif %}
+                    <a href="{% url 'shop:add_remove' product.id product.slug %}" class="btn-product btn-wishlist" style="padding-bottom: 0.9rem !important;" title="افزودن به علاقه مندی ها"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.sticky-bar').fadeOut();
+    $(document).scroll(function() {
+        var y = $(this).scrollTop();
+        if (y > 600) {
+            $('.sticky-bar').fadeIn();
+        } else {
+            $('.sticky-bar').fadeOut();
+        }
+    });
+</script>
+{% endif %}
+
+{% endblock content %}

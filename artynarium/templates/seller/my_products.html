@@ -1,0 +1,322 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}محصولات من{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">محصولات من</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item active" aria-current="page">محصولات من</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+            <div class="col-md-8 col-lg-10 " style="padding: 3rem;las la-truck-moving ml-2 cs-font-size3">
+            <!-- Alert Message -->
+              {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                  {{ message }}
+              </div>
+              {% endfor %}
+              {% endif %}
+            <!-- Alert Message -->
+            <!-- Main -->
+            {% if request.user.seller %}
+                {% if products %}
+                <div class="row align-items-center">
+                    <div class="col-12 col-xl-4">
+                        <form id="myForm" method="GET" action=".">
+                            <div class="toolbox-right">
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#reset_filters').click(function(e){
+                                                e.preventDefault();
+                                                var uri = window.location.toString();
+                                                if (uri.indexOf("?") > 0) {
+                                                    var clean_uri = uri.substring(0, uri.indexOf("?"));
+                                                    window.history.replaceState({}, document.title, clean_uri);
+                                                    location.reload();
+                                                }
+                                            });
+
+                                            $('form').submit(function(e){
+                                                var search_val = $('#search-filtering').val();
+                                                if (search_val == '') {
+                                                    $('#search-filtering').attr('disabled', 'disabled');
+                                                }
+                                            });
+
+                                            $('#clear_search_term').click(function(e){
+                                                e.preventDefault();
+                                                let url = new URL(location.href);
+                                                url.searchParams.delete('search');
+                                                history.pushState({}, null, url);
+                                                location.reload();
+                                            });
+                                        });
+                                    </script>
+                                    <div>
+                                        {% if request.GET %}
+                                        <div style="margin-left:auto">
+                                            {% if search %}
+                                            <div class="mt-1 d-inline-block">
+                                                <a id="clear_search_term" href="#"><i class="las la-times" style="font-size: 20px;vertical-align: -2px;"></i></a>
+                                                {{ search }}
+                                            </div>
+                                            {% endif %}
+                                            <div class="d-inline-block">
+                                                <a id="reset_filters" href="{{ full_path }}" class="sidebar-filter-clear-256 mr-5" style='font-size: 1em;'>پاک کردن همه فیلتر ها</a>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            <div class="widget widget-collapsible mt-1">
+                            <div class="input-group mb-2 w-100 cs-flex">
+                            <span class="input-group-append">
+                                <button class="searchButton" type="submit"><i class="las la-search" style="vertical-align: -2px;"></i></button>
+                            </span>
+                                <input class="py-2 searchTerm" placeholder="جستجو در بین نتايج ..." id="search-filtering" type="search" name="search"/>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-xl-8 d-flex flex-wrap">
+                        <div class="mx-2 my-product-search">
+                            <label style="margin-top: 5px;" class="float-right" for="product_status">وضعيت محصول :</label>
+                            <div class="select-custom float-left">
+                            <select name="status" id="product_status" class="form-control dd" onchange="$('#myForm').submit();">
+                                <option hidden disabled selected value>----</option>
+                                <option value="Active" {% if request.GET.status == 'Active' %} selected="selected" {% endif %}>تاييد شده</option>
+                                <option value="Draft" {% if request.GET.status == 'Draft' %} selected="selected" {% endif %}>پيش نويس</option>
+                                <option value="On-Review" {% if request.GET.status == 'On-Review' %} selected="selected" {% endif %}>در حال بررسي</option>
+                                <option value="Disabled" {% if request.GET.status == 'Disabled' %} selected="selected" {% endif %}>غيرفعال</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="mx-2 my-product-search">
+                            <label style="margin-top: 5px;" class="float-right" for="time">تاريخ :</label>
+                            <div class="select-custom float-left">
+                                <select name="time" id="time" class="form-control dd" onchange="$('#myForm').submit();">
+                                    <option hidden disabled selected value>----</option>
+                                    <option value="1"{% if request.GET.time == '1' %} selected="selected" {% endif %}>ساخت ↓</option>
+                                    <option value="2"{% if request.GET.time == '2' %} selected="selected" {% endif %}>ساخت ↑</option>
+                                    <option value="3"{% if request.GET.time == '3' %} selected="selected" {% endif %}>ويرايش ↓</option>
+                                    <option value="4"{% if request.GET.time == '4' %} selected="selected" {% endif %}>ويرايش ↑</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mx-2 my-product-search">
+                            <div class="toolbox-sort "></div>
+                            <label style="margin-top: 5px;" class="float-right" for="amount">مقدار :</label>
+                            <div class="select-custom float-left">
+                                <select name="amount" id="amount" class="form-control dd" onchange="$('#myForm').submit();">
+                                    <option hidden disabled selected value>----</option>
+                                    <option value="1" {% if request.GET.amount == '1' %} selected="selected" {% endif %}>فروش ↓</option>
+                                    <option value="2" {% if request.GET.amount == '2' %} selected="selected" {% endif %}>فروش ↑</option>
+                                    <option value="3" {% if request.GET.amount == '3' %} selected="selected" {% endif %}>بازديد ↓</option>
+                                    <option value="4" {% if request.GET.amount == '4' %} selected="selected" {% endif %}>بازديد ↑</option>
+                                    <option value="5" {% if request.GET.amount == '5' %} selected="selected" {% endif %}>موجودي انبار ↓</option>
+                                    <option value="6" {% if request.GET.amount == '6' %} selected="selected" {% endif %}>موجودي انبار ↑</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <table class="table table-wishlist table-mobile">
+
+                        <!-- Heading -->
+                        <thead>
+                            <tr>
+                                <th>محصول</th>
+                                <th>وضعيت</th>
+                                <th>قيمت</th>
+                                <th>نزد شما</th>
+                                <th>در انبار</th>
+                                <th>فروش</th>
+                                <th>سود خالص</th>
+                                <th>كارمزد</th>
+                                <th>شارژ</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <!-- Heading -->
+
+                        <!-- Body -->
+                        <tbody>
+
+                            {% for p in products %}
+                            <tr>
+
+                                <!-- Product -->
+                                <td data-label="" class="product-col">
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            <a title="{{ p.name }}" href="{% url 'shop:product' p.id p.slug %}">
+                                                <img src="{% if p.image %}{{ p.image.url }}{% endif %}" alt="{{ p.name }}">
+                                            </a>
+                                        </figure>
+
+                                    </div>
+                                </td>
+                                <!-- Product -->
+
+                                <!-- Status -->
+                                <td data-label="وضعیت" class="stock-col">
+                                    <span
+                                        {% if p.status == 'Draft' %}
+                                            title="در اين حالت فقط شما قادر به ديدن و ويرايش كالا هستيد. براي ثبت نهايي بر روي ثبت كليك كنيد"
+                                        {% endif %}
+                                        style="color: {% if p.status == 'Draft' %} orange {% elif p.status == 'Disabled' %} red {% else %} green {% endif %};">
+                                        {% if p.img_gal.all and p.gallery_count >= 4 %}
+                                            {% if p.wrong_variant_seller_quantity == False %}
+                                                {% if p.status == 'Draft' %}
+                                                    پيش نويس
+                                                {% elif p.status == 'Active' %}
+                                                    تاييد شده
+                                                {% elif p.status == 'Disabled' %}
+                                                    غيرفعال
+                                                {% elif p.status == 'Edit-On-Review' or 'Create-On-Review' %}
+                                                    در حال بررسي
+                                                {% endif %}
+                                            {% else %}
+                                                <a href="{% url 'seller:product_variant_create_update' p.id 1 %}" style="color: red">عدم تطابق موجودي</a>
+                                            {% endif %}
+                                        {% else %}
+                                        <a href="{% url 'seller:product_gallery_create_update' p.id 1 %}" style="color: red">افزودن گالري</a>
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <!-- Status -->
+
+                                <!-- Price -->
+                                <td data-label="قیمت" class="price-col"><span>{{ p.price|intcomma:False }} تومان</span></td>
+                                <!-- Price -->
+
+                                <!-- Seller Amount -->
+                                <td data-label="نزد شما" class="stock-col"><span class="{% if p.amount == 0 %} out-of-stock {% elif p.amount <= 10 %} lack-in-stock {% else %} in-stock {% endif %}">{{ p.amount }}</span></td>
+                                <!-- Seller Amount -->
+
+                                <!-- Store Amount -->
+                                <td data-label="در انبار" class="stock-col"><span class="{% if p.store_amount == 0 %} {% elif p.store_amount <= 10 %} lack-in-stock {% else %} in-stock {% endif %}">{{ p.store_amount }}</span></td>
+                                <!-- Store Amount -->
+
+                                <!-- Sold -->
+                                <td data-label="فروش" class="stock-col"><span>{{ p.sold }}</span></td>
+                                <!-- Sold -->
+
+                                <!-- Profit -->
+                                <td data-label="سود خالص" class="stock-col" title="به تومان"><span>{{ p.profit }}</span></td>
+                                <!-- Profit -->
+
+                                <!-- pursuant -->
+                                <td data-label="کارمزد" class="stock-col"><span>{{ p.pursuant }}%</span></td>
+                                <!-- pursuant -->
+
+                                <!-- Charge -->
+                                <td data-label="شارژ" class="stock-col" style="font-size: 13px"><a {% if p.status != 'Active' %} href="/" onclick="return false;" style="pointer-events: none; color: #ccc;"{% else %} href="{% url 'seller:send_product_to_store' p.id %}" {% endif %}><i class="las la-truck-moving ml-2 cs-font-size3 d-block"></i><span>ارسال به انبار</span></a></td>
+                                <!-- Charge -->
+
+                                <!-- Submit -->
+                                {% if p.status == 'Draft' and p.img_gal.all and p.gallery_count >= 4 and p.lack_in_gallery == False %}
+                                <td class="remove-col" style="font-size: 13px"><a href="{% url 'seller:product_final_submit' p.id %}"><i class="las la-check-circle ml-2 cs-font-size3 d-block"></i></a></td>
+                                {% endif %}
+                                <!-- Submit -->
+
+                                <!-- Edit -->
+                                {% if p.img_gal.all %}
+                                <td class="remove-col"><a title="ويرايش" href="{% url 'seller:product_update' p.id %}"><i class="las la-pen cs-font-size3"></i></a></td>
+                                {% endif %}
+                                <!-- Edit -->
+
+                                <!-- Disable -->
+                                {% if p.status == 'Active' %}
+                                <td class="remove-col"><a title="غير فعال سازي" href="{% url 'seller:redirect_to_ticket_disable_product' %}"><i class="las la-times-circle cs-font-size3"></i></a></td>
+                                {% endif %}
+                                <!-- Disable -->
+
+                                <!-- Delete -->
+                                {% if p.status == 'Draft' %}
+                                <td class="remove-col"><a {% if p.sold >= 1 %} href="/" onclick="return false;" title="از انجايي كه تعدادي از اين محصول به فروش رفته شما قادر به حذف اين محصول نيستيد"{% else %}href="{% url 'seller:delete_product' p.id %}"{% endif %}><i class="las la-trash-alt cs-font-size3"></i></a></td>
+                                {% endif %}
+                                <!-- Delete -->
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                        <!-- Body -->
+
+                    </table>
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation">
+                            {% if products.has_other_pages %}
+                            <ul class="pagination">
+                                {% if products.has_previous %}
+                                <li class="page-item"><a class="page-link page-link-prev" href="{% url 'seller:my_products' %}?page={{ products.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true"><span aria-hidden="true"><i class="las la-arrow-right ml-2"></i></span>قبلي</a></li>
+                                {% endif %}
+                                {% for i in products.paginator.page_range %}
+                                    {% if products.number == i %}
+                                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if products.has_next %}
+                                <li class="page-item"><a class="page-link page-link-next" href="{% url 'seller:my_products' %}?page={{ products.next_page_number }}" aria-label="Next">بعدي <span aria-hidden="true">
+                                                 <i class="las la-arrow-left mr-2"></i></span></a></li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </nav>
+                        <!-- Pagination -->
+                {% else %}
+                    <div class="container text-center">
+                        <h2>محصولي براي نمايش وجود ندارد</h2>
+                        <a href="{% url 'seller:product_create' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>اضافه كردن محصول</span><i class="las la-plus-circle mr-2"></i></a>
+                    </div>
+                {% endif %}
+            {% else %}
+            <div class="container text-center">
+                <p style=color:red;>{{ not_allowed }}</p>
+                <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+            </div>
+            {% endif %}
+            <!-- Main -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

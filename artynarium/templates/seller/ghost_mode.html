@@ -1,0 +1,96 @@
+{% extends "base/base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %}حالت روح{% endblock title %}
+{% block content %}
+
+<main class="main">
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">حالت روح</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item active" aria-current="page">حالت روح</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+                <div class="col-md-8 col-lg-10">
+            <div
+                class="row justify-content-center">
+                {% if request.user.seller %}
+                <!-- Alert Message -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- Alert Message -->
+            </div>
+            <div class="row justify-content-center">
+                <p class="alert">اگر بنابر هر دليلي قادر به فروش محصول نيستيد ميتوانيد از حالت روح استفاده كنيد. در اين حالت محصولات شما همچنان در سايت نمايش داده ميشود ولي قابليت خريد ندارد.</p>
+            </div>
+            <div class="row justify-content-center">
+                <form class="form1" method="POST">
+                    {% csrf_token %}
+                    {% if request.user.ghost %}
+                    <!-- Deactivate -->
+                    <div class="container-login100-form-btn mt-3">
+                        <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                            <i class="icon-long-arrow-right ml-2"></i>
+                            <span>غيرفعال سازي<span/>
+                        </button>
+                    </div>
+                    <!-- Deactivate -->
+                    {% endif %}
+                    {% if not request.user.ghost %}
+                    <!-- Activate -->
+                    <div class="container-login100-form-btn mt-3">
+                        <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                            <i class="icon-long-arrow-right ml-2"></i>
+                            <span>ارسال تيكت</span>
+                        </button>
+                    </div>
+                    <!-- Activate -->
+                    {% endif %}
+
+                </form>
+
+                {% else %}
+                <div class="container text-center">
+                    <p style=color:green;>
+                        {{ not_allowed }}</p>
+                    <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                </div>
+                {% endif %}
+            </div>
+                </div>
+            </div>
+        <!-- Viewed Recently -->
+        {% include 'shop/viewed_recently.html' %}
+        <!-- Viewed Recently -->
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

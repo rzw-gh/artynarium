@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}امنيت حساب من{% endblock title %}
+{% block content %}
+  <main class="main">
+
+    <!-- Background Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">امنيت حساب من</h1>
+        </div>
+    </div>
+    <!-- Background Image -->
+
+    <!-- breadcrump -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب کاربری من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">امنيت حساب من</li>
+            </ol>
+                {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+                {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrump -->
+
+    <!-- Main -->
+    <div class="page-content">
+      <div class="dashboard">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 col-lg-2">
+              {% include 'shop/account_side_panel.html' %}
+            </div>
+            <div class="col-md-8 col-lg-9">
+              <div class="mt-2 text-center"><a class="btn btn-primary" href="{% url 'account_reset_password' %}">بازیابی رمز  عبور</a></div>
+              <div class="mt-2 text-center"><a class="btn btn-primary" href="{% url 'account_change_password' %}">تغییر رمز عبور</a></div>
+              <div class="mt-2 text-center"><a class="btn btn-primary" href="{% url 'account_email' %}">مدیریت ایمیل ها</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock content %}

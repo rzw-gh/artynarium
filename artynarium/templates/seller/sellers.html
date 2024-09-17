@@ -1,0 +1,484 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+{% block title %}فروشندگان{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+  <!-- top image -->
+  <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+    <div class="container">
+      <h1 class="page-title">فروشندگان</h1>
+    </div>
+  </div>
+  <!-- top image -->
+
+  <!-- breadcrumb -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+        <li class="breadcrumb-item active" aria-current="page">فروشندگان</li>
+      </ol>
+    </div>
+  </nav>
+  <!-- breadcrumb -->
+
+  <!-- Main -->
+  <div class="page-content">
+      <div class="container" data-layout="fitRows">
+        <div class="row">
+            <div class="col-lg-9">
+                    <!-- toolbox -->
+                    <div class="toolbox">
+                        <div class="toolbox-right">
+                            <div class="toolbox-info">
+                                <span>{% if products_count >= 2 %}{{ products_count }} فروشنده{% elif products_count == 1 %}{{ products_count }} کالا{% elif products_count == 0 %}{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- toolbox -->
+
+                    <!-- Product -->
+                    {% if default %}
+
+                    {% if month_top_sold %}
+                    <div class="row justify-content-center mb-3">
+                        <h6>فروشندگان برتر ماه</h6>
+                        <div class="owl-carousel owl-35 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                            {% for seller in month_top_sold %}
+                            <div class="product product-11 text-center">
+                                <figure class="product-media">
+                                    <a href="{% url 'seller:seller_page' seller.slug %}"><img src="{% if seller.profile_image %}{{ seller.profile_image.url }}{% endif %}" alt="{{ seller.seller_title }}" class="product-image"></a>
+                                </figure>
+                                <div class="product-body" style="padding-bottom: 10px !important;">
+                                    <h3 class="product-title"><a href="{% url 'seller:seller_page' seller.slug %}">{{ seller.seller_title }}</a></h3>
+                                    <div class="ratings-container">
+                                        <div class="myrate deactive">
+                                            <label class="{% if seller.users_rate >= 1 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 2 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 3 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 4 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 5 %}rangi {% endif %}star-size" ></label>
+                                        </div>
+                                        <div>
+                                            <span style="vertical-align: -12px;" class="ratings-text">( {{ seller.user_products_comments_buyer_count }} خريدار )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if month_popular_sellers %}
+                    <div class="row justify-content-center">
+                        <h6>فروشندگان محبوب ماه</h6>
+                        <div class="owl-carousel owl-35 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                            {% for seller in month_popular_sellers %}
+                            <div class="product product-11 text-center">
+                                <figure class="product-media">
+                                    <a href="{% url 'seller:seller_page' seller.slug %}"><img src="{% if seller.profile_image %}{{ seller.profile_image.url }}{% endif %}" alt="{{ seller.seller_title }}" class="product-image"></a>
+                                </figure>
+                                <div class="product-body" style="padding-bottom: 10px !important;">
+                                    <h3 class="product-title"><a href="{% url 'seller:seller_page' seller.slug %}">{{ seller.seller_title }}</a></h3>
+                                    <div class="ratings-container">
+                                        <div class="myrate deactive">
+                                            <label class="{% if seller.users_rate >= 1 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 2 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 3 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 4 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 5 %}rangi {% endif %}star-size" ></label>
+                                        </div>
+                                        <div>
+                                            <span style="vertical-align: -12px;" class="ratings-text">( {{ seller.user_products_comments_buyer_count }} خريدار )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if month_top_viewed %}
+                    <div class="row justify-content-center">
+                        <h6> فروشندگان پر بازديد ماه</h6>
+                        <div class="owl-carousel owl-35 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                            {% for seller in month_top_viewed %}
+                            <div class="product product-11 text-center">
+                                <figure class="product-media">
+                                    <a href="{% url 'seller:seller_page' seller.slug %}"><img src="{% if seller.profile_image %}{{ seller.profile_image.url }}{% endif %}" alt="{{ seller.seller_title }}" class="product-image"></a>
+                                </figure>
+                                <div class="product-body" style="padding-bottom: 10px !important;">
+                                    <h3 class="product-title"><a href="{% url 'seller:seller_page' seller.slug %}">{{ seller.seller_title }}</a></h3>
+                                    <div class="ratings-container">
+                                        <div class="myrate deactive">
+                                            <label class="{% if seller.users_rate >= 1 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 2 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 3 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 4 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 5 %}rangi {% endif %}star-size" ></label>
+                                        </div>
+                                        <div>
+                                            <span style="vertical-align: -12px;" class="ratings-text">( {{ seller.user_products_comments_buyer_count }} خريدار )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if new_sellers %}
+                    <div class="row justify-content-center">
+                        <h6>فروشندگان جديد</h6>
+                        <div class="owl-carousel owl-35 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                            {% for seller in new_sellers %}
+                            <div class="product product-11 text-center">
+                                <figure class="product-media">
+                                    <a href="{% url 'seller:seller_page' seller.slug %}"><img src="{% if seller.profile_image %}{{ seller.profile_image.url }}{% endif %}" alt="{{ seller.seller_title }}" class="product-image"></a>
+                                </figure>
+                                <div class="product-body" style="padding-bottom: 10px !important;">
+                                    <h3 class="product-title"><a href="{% url 'seller:seller_page' seller.slug %}">{{ seller.seller_title }}</a></h3>
+                                    <div class="ratings-container">
+                                        <div class="myrate deactive">
+                                            <label class="{% if seller.users_rate >= 1 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 2 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 3 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 4 %}rangi {% endif %}star-size" ></label>
+                                            <label class="{% if seller.users_rate >= 5 %}rangi {% endif %}star-size" ></label>
+                                        </div>
+                                        <div>
+                                            <span style="vertical-align: -12px;" class="ratings-text">( {{ seller.user_products_comments_buyer_count }} خريدار )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+
+                    {% if sellers_count != 0 %}
+                    <div class="products mb-3">
+                        <div class="row justify-content-center">
+
+                            {% for seller in sellers_qs %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="product product-7 text-center">
+
+                                    <figure class="product-media" style="position:relative;">
+                                        <span class="product-label label-sale">برتر ماه</span>
+                                        <a href="{% url 'seller:seller_page' seller.slug %}" target="_blank">
+                                            <img src="{% if seller.profile_image %}{{ seller.profile_image.url }}{% endif %}" alt="{{ seller.seller_title }}" class="product-image">
+                                        </a>
+                                    </figure>
+
+                                    <!-- Card Description -->
+                                    <div class="product-body">
+                                        <!-- title -->
+                                        <h3 class="product-title"><a href="{% url 'seller:seller_page' seller.slug %}" target="_blank">{{ seller.seller_title }}</a></h3>
+                                        <!-- title -->
+
+                                        <!-- ratings -->
+                                        <div class="ratings-container">
+                                            <div class="myrate deactive">
+                                                <label class="{% if seller.users_rate >= 1 %} rangi {% endif %} star-size" ></label>
+                                                <label class="{% if seller.users_rate >= 2 %} rangi {% endif %} star-size" ></label>
+                                                <label class="{% if seller.users_rate >= 3 %} rangi {% endif %} star-size" ></label>
+                                                <label class="{% if seller.users_rate >= 4 %} rangi {% endif %} star-size" ></label>
+                                                <label class="{% if seller.users_rate >= 5 %} rangi {% endif %} star-size" ></label>
+                                            </div>
+                                            {% if seller.user_products_comments_buyer_count >= 1 %}
+                                            <div>
+                                                <span style="vertical-align: -10px;" class="ratings-text">( {{ seller.user_products_comments_buyer_count }} خريدار)</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <!-- ratings -->
+                                    </div>
+                                    <!-- Card Description -->
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    {% else %}
+                    <h3 class='text-center'>نتیجه ای پیدا نشد</h3>
+                    {% endif %}
+
+                    {% endif %}
+                    <!-- Product -->
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        {% if sellers.has_other_pages %}
+                        <ul class="pagination justify-content-center">
+
+                            {% if sellers.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link page-link-prev" href="{% url 'seller:sellers' %}?{% param_replace page=sellers.previous_page_number  %}" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                                    <span aria-hidden="true"><i class="las la-arrow-right ml-2"></i></span>قبلی
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for i in sellers.paginator.page_range %}
+                                {% if sellers.number == i %}
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?{% param_replace page=i  %}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if sellers.has_next %}
+                            <li class="page-item">
+                                <a class="page-link page-link-next" href="{% url 'seller:sellers' %}?{% param_replace page=sellers.next_page_number  %}" aria-label="Next">
+                                    بعدی <span aria-hidden="true"><i class="las la-arrow-left mr-2"></i></span>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                        {% endif %}
+                    </nav>
+                    <!-- Pagination -->
+
+                </div>
+
+            <!-- Filter -->
+            <script>
+                $(document).ready(function() {
+                    $('#reset_filters').click(function(e){
+                        e.preventDefault();
+                        var uri = window.location.toString();
+                        if (uri.indexOf("?") > 0) {
+                            var clean_uri = uri.substring(0, uri.indexOf("?"));
+                            window.history.replaceState({}, document.title, clean_uri);
+                            location.reload();
+                        }
+                    });
+
+                    $('form').submit(function(e){
+                        var search_val = $('#search-filtering').val();
+                        if (search_val == '') {
+                            $('#search-filtering').attr('disabled', 'disabled');
+                        }
+                    });
+
+                    $('#clear_search_term').click(function(e){
+                        e.preventDefault();
+                        let url = new URL(location.href);
+                        url.searchParams.delete('search');
+                        history.pushState({}, null, url);
+                        location.reload();
+                    });
+                });
+            </script>
+            <aside class="col-lg-3 order-lg-first">
+                <div class="sidebar sidebar-shop">
+
+                    <form id="myForm" method="GET" action=".">
+
+                        <!-- Clean All -->
+                        <div class="widget widget-clean">
+                            <a id="reset_filters" href="{{ full_path }}" class="sidebar-filter-clear-256 mr-5" style='font-size: 1em;'>پاک کردن همه فیلتر ها</a>
+                            {% if search %}
+                            <div class="mt-1">
+                                <a id="clear_search_term" href="#"><i class="las la-times" style="font-size: 20px;vertical-align: -2px;"></i></a>
+                                {{ search }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- Clean All -->
+
+                        <!-- Search -->
+                        <div class="widget widget-collapsible">
+                            <div class="input-group mb-2 w-100 cs-flex">
+                                <span class="input-group-append">
+                                    <button class="searchButton" type="submit"><i class="las la-search" style="vertical-align: -2px;"></i></button>
+                                </span>
+                                <input class="py-2 searchTerm"
+                                       placeholder="جستجو در بین فروشندگان ..."
+                                       id="search-filtering" type="search" {% if search %}value="{{ search }}"{% endif %} name="search">
+                            </div>
+                        </div>
+                        <!-- Search -->
+
+                        <!-- Seller -->
+                        <div class="widget widget-collapsible">
+                            <h3 class="widget-title">
+                                <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1" class="">فروشندگان</a>
+                            </h3>
+
+                            <div class="collapse show" id="widget-1" style="">
+                                <div class="widget-body">
+                                    <div class="filter-items filter-items-count">
+
+                                        <!-- Artists -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="Art" class="custom-control-input" id="cat-6" onchange="$('#myForm').submit();" {% if request.GET.Art == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-6">هنر</label>
+                                            </div>
+                                        </div>
+                                        <!-- Artists -->
+
+                                        <!-- Tool -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="Tool" class="custom-control-input" id="cat-8" onchange="$('#myForm').submit();" {% if request.GET.Tool == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-8">ابزار</label>
+                                            </div>
+                                        </div>
+                                        <!-- Tool -->
+
+                                        <!-- Material -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="Material" class="custom-control-input" id="cat-7" onchange="$('#myForm').submit();" {% if request.GET.Material == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-7">مواد اوليه</label>
+                                            </div>
+                                        </div>
+                                        <!-- Material -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Seller -->
+
+                        <!-- Sort -->
+                        <div class="widget widget-collapsible">
+
+                            <!-- Title -->
+                            <h3 class="widget-title">
+                                <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2" class="">مرتب سازی</a>
+                            </h3>
+                            <!-- Title -->
+
+                            <div class="collapse show" id="widget-2" style="">
+                                <div class="widget-body">
+                                    <div class="filter-items filter-items-count">
+                                        <div class="filter-items">
+
+                                        <!-- Most Sold -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="Sold" id="cat-20" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Sold == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-20">پر فروش ترين</label>
+                                            </div>
+                                        </div>
+                                        <!-- Most Sold -->
+
+                                        <!-- Most Viewed -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="View" class="custom-control-input" id="cat-21" onchange="$('#myForm').submit();" {% if request.GET.View == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-21">پر بازديد ترين</label>
+                                            </div>
+                                        </div>
+                                        <!-- Most Viewed -->
+
+                                        <!-- User Satisfaction -->
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" id="cat-22" name="Satisfaction" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Satisfaction == 'on' %} checked {% endif %}>
+                                                <label class="custom-control-label" for="cat-22">رضايت كاربران</label>
+                                            </div>
+                                        </div>
+                                        <!-- User Satisfaction -->
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- Sort -->
+
+                        <!-- Category -->
+                        {% if maincat.count > 1 %}
+                        <div class="widget widget-collapsible">
+                            <h3 class="widget-title">
+                                <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true" aria-controls="widget-3">
+                                    دسته بندی ها
+                                </a>
+                            </h3>
+
+                            <div class="collapse show" id="widget-3">
+                                <div class="widget-body">
+                                    <div class="filter-items filter-items-count">
+                                        {% for p in maincat %}
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input {% if current_cat.id == p.id %} checked {% endif %}
+                                                       type="radio" name="Cat"
+                                                       value="{{ p.id }}" class="custom-control-input"
+                                                       id="cat-{{ forloop.counter }}" onchange="$('#myForm').submit();">
+                                                <label class="custom-control-label" for="cat-{{ forloop.counter }}">{{ p.title }}</label>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!-- Category -->
+
+                        <!-- Brand -->
+                        {% if brand.count > 1 %}
+                        <div class="widget widget-collapsible">
+                            <h3 class="widget-title">
+                                <a data-toggle="collapse" href="#widget-4" role="button" aria-expanded="true" aria-controls="widget-4">
+                                    برند
+                                </a>
+                            </h3>
+
+                            <div class="collapse show" id="widget-4">
+                                <div class="widget-body">
+                                    <div class="filter-items filter-items-count">
+                                        <div class="filter-items">
+
+                                            {% for p in brand %}
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="radio" name="Brand" value="{{ p.id }}"
+                                                           {% if current_brand.id == p.id %} checked {% endif %}
+                                                           class="custom-control-input"
+                                                           id="brand-{{ forloop.counter }}" onchange="$('#myForm').submit();">
+                                                    <label class="custom-control-label" for="brand-{{ forloop.counter }}">{{ p.title }}</label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!-- Brand -->
+
+                    </form>
+
+
+
+                </div>
+
+            </aside>
+            <!-- Filter -->
+        </div>
+      </div>
+  </div>
+  <!-- Main -->
+
+</main>
+
+{% endblock content %}

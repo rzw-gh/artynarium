@@ -1,0 +1,246 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}مدیریت مالی{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center"
+         style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">مدیریت مالی</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb"
+         class="breadcrumb-nav">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:home' %}">خانه</a>
+                </li>
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:my_orders' %}">حساب
+                    كاربری</a></li>
+                <li class="breadcrumb-item active"
+                    aria-current="page">مدیریت مالی
+                </li>
+            </ol>
+            {% if request.user.seller %}
+
+            <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a
+                    href="{% url 'seller:financial' %}"> موجودی : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+                <div class="col-md-8 col-lg-10">
+                    {% if request.user.seller %}
+                    <div class="row justify-content-end">
+                        <div class="d-inline-block">
+                            <a href="{% url 'seller:transactions' %}">سوابق تراکنش ها</a>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <!-- Alert Message -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div
+                                class="alert alert-{{message.tags}} mb-2"
+                                role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+                    </div>
+
+                    <div class="row justify-content-center  text-center">
+                        {% if request.user.seller %}
+
+                        <form class="form1" method="POST">
+                            {% csrf_token %}
+                            <p>موجودی شما:
+                                {{ request.user.balance|intcomma:False }}
+                                تومان</p>
+                            <p>قابل برداشت:
+                                {{ request.user.withdrawable_balance|intcomma:False }}
+                                تومان</p>
+                            <button type="button" class="poposer_cs" data-container="body" data-toggle="popover" data-placement="left" data-content="سود محصولاتی که حداقل یک هفته از زمان خرید آنها گذشته باشد به مقدار قابل برداشت اضافه خواهد شد">
+                              <i class="las la-question-circle"></i>
+                            </button>
+                            <script>
+                                $(function () {
+                                    $('[data-toggle="popover"]').popover()
+                                })
+                            </script>
+                            <p>شماره شبا حساب شما:
+                                {{ request.user.shaba_number }}</p>
+                            <!-- Amount -->
+                            <div>
+                                <label><i
+                                        class="las la-coins ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>مقدار
+                                    درخواستی به تومان</label>
+                                <input type="number" name="amount"
+                                       class="form-control" maxlength="10" max="{{ request.user.withdrawable_balance }}"
+                                       required>
+                            </div>
+                            <!-- Amount -->
+
+                            <!-- Save -->
+                            <div
+                                    class="container-login100-form-btn mt-3">
+                                <button type="submit"
+                                        class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                    <i
+                                            class="icon-long-arrow-right ml-2"></i>
+                                    <span>درخواست</span>
+                                </button>
+                            </div>
+                            <!-- Save -->
+                        </form>
+
+                        <div>
+                            {% if order %}
+                            <div class="row justify-content-center">
+                                <div class="cs-warn-send mt-5 text-center">
+                                    <p style="color:orange">لیست سفارش مشتری های شما</p>
+                                </div>
+                            </div>
+
+
+                            <table class="table table-wishlist table-mobile mt-2">
+
+                                <!-- Heading -->
+                                <thead>
+                                <tr>
+                                    <th class="text-center">سفارش</th>
+                                    <th class="text-center">كل</th>
+                                    <th class="text-center">كارمزد</th>
+                                    <th class="text-center">سود خالص</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <!-- Heading -->
+
+                                <!-- Body -->
+                                <tbody>
+
+                                {% for o in order %}
+                                <tr>
+
+                                    <!-- Order ID -->
+                                    <td class="price-col">{{ o.order.orderid }}</td>
+                                    <!-- Order ID -->
+
+                                    <!-- Order_Total -->
+                                    <td class="price-col">{{ o.order_total|intcomma:False }}</td>
+                                    <!-- Order_Total -->
+
+                                    <!-- Pursuant -->
+                                    <td class="price-col">{{ o.order_pursuant|intcomma:False }}</td>
+                                    <!-- Pursuant -->
+
+                                    <!-- Profit -->
+                                    <td class="price-col">{{ o.order_profit|intcomma:False }}</td>
+                                    <!-- Profit -->
+
+                                    <!-- Detail -->
+                                    <td class="price-col text-center" title="Detail"><a href="{% url 'seller:order_detail' o.id %}"><i class="las la-eye cs-font-size1 ml-3"></i>مشاهده جزئیات</a></td>
+                                    <!-- Detail -->
+
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+                                <!-- Body -->
+
+                                <!-- Pagination -->
+                                <nav aria-label="Page navigation">
+                                    {% if order.has_other_pages %}
+                                    <ul class="pagination">
+                                        {% if order.has_previous %}
+                                        <li class="page-item"><a
+                                                class="page-link page-link-prev"
+                                                href="{% url 'seller:order' %}?page={{ order.previous_page_number }}"
+                                                aria-label="Previous"
+                                                tabindex="-1"
+                                                aria-disabled="true">قبلی<span
+                                                aria-hidden="true"><i
+                                                class="icon-long-arrow-left"></i></span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in order.paginator.page_range %}
+                                        {% if order.number == i %}
+                                        <li class="page-item active"
+                                            aria-current="page"><a
+                                                class="page-link"
+                                                href="#">{{ i }}</a></li>
+                                        {% else %}
+                                        <li class="page-item"><a
+                                                class="page-link"
+                                                href="?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if order.has_next %}
+                                        <li class="page-item"><a
+                                                class="page-link page-link-next"
+                                                href="{% url 'seller:order' %}?page={{ order.next_page_number }}"
+                                                aria-label="Next">بعدی <span
+                                                aria-hidden="true"><i
+                                                class="icon-long-arrow-right"></i></span></a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </nav>
+                                <!-- Pagination -->
+
+                            </table>
+                            {% endif %}
+
+                            {% else %}
+                            <div class="container text-center">
+                                <p style=color:green;>
+                                    {{ not_allowed }}
+                                </p>
+                                <a href="{% url 'shop:my_orders' %}"
+                                   class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت
+                به حساب كابری</span><i
+                                        class="las la-shopping-bag mr-2"></i></a>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% else %}
+                        <div class="container text-center">
+                            <p style=color:red;>{{ not_allowed }}
+                            </p>
+                            <a href="{% url 'shop:shop' %}"
+                               class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت
+              به فروشگاه</span><i
+                                    class="las la-shopping-bag mr-2"></i></a>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

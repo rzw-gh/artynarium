@@ -1,0 +1,200 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}درخواست فروشندگي{% endblock title %}
+{% block content %}
+
+<main class="main">
+    <!-- top image -->
+    <div class="page-header text-center"
+        style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+
+        <div class="container">
+            <h1 class="page-title">درخواست فروشندگي</h1>
+        </div>
+
+    </div>
+    <!-- top image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb"
+        class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a>
+                </li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}">فروشگاه</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">درخواست فروشندگي</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div
+                class="row justify-content-center">
+                {% if not request.user.seller %}
+                <!-- Alert Message -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} mb-2"
+                    role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- Alert Message -->
+            </div>
+            <div class="row justify-content-center">
+                <form class="form1" method="POST"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div>
+                        <p class='mb-3'>تمامي
+                            اطلاعات زير بعدا از
+                            حساب كاربري فروشنده
+                            قابل تغيير ميباشند</p>
+                    </div>
+                    <!-- Seller title & Shaba number-->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label><i
+                                    class="las la-signature ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>عنوان
+                                فروشنده *</label>
+                            <input type="text"
+                                name="seller_title"
+                                class="form-control"
+                                required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label><i
+                                    class="las la-signature ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>شماره
+                                شبا حساب بانكي
+                                *</label>
+                            <input type="text"
+                                name="shaba_number"
+                                maxlength="24"
+                                placeholder="به همراه ir"
+                                class="form-control"
+                                required>
+                        </div>
+                    </div>
+                    <!-- Seller title & Shaba number-->
+
+                    <!-- National card image & Phone Number-->
+                    <div class="row">
+
+                        <!-- Phone Number -->
+                        <div class="col-sm-6">
+                            <label><i
+                                    class="las la-mobile-alt ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>شماره
+                                همراه *</label>
+                            <input type="text"
+                                name="phone_number"
+                                value="{% if request.user.phone_number is not None %}{{ request.user.phone_number }}{% endif %}"
+                                placeholder="شماره همراه يازده رقمي"
+                                class="form-control"
+                                maxlength="11"
+                                required>
+                        </div>
+                        <!-- Phone Number -->
+
+
+                        <!-- Slug -->
+                        <div class="col-sm-4">
+                            <label><i
+                                    class="las la-id-badge ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>ايدي
+                                فروشنده *</label>
+                            <input type="text"
+                                   name="slug"
+                                   placeholder="ايدي اختصاصي"
+                                   class="form-control"
+                                   maxlength="15"
+                                   required>
+                        </div>
+                        <!-- Slug -->
+
+
+
+                    </div>
+                    <!-- National card image & Phone Number-->
+
+                    <!-- Slug & Profile image-->
+                    <div class="row">
+                        <!-- National card image  -->
+                        <div class="col-sm-6">
+                            <label><i
+                                    class="las la-address-card ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>تصوير
+                                كارت ملي به همراه
+                                خود شخص *</label>
+                            <input type="file"
+                                   name="national_card_image"
+                                   required>
+                        </div>
+                        <!-- National card image  -->
+
+                        <!-- Profile image  -->
+                        <div class="col-sm-4">
+                            <label><i
+                                    class="las la-address-card ml-3 v-align1"
+                                    style="font-size: 1.5em;"></i>عكس
+                                پروفايل فروشنده
+                                *</label>
+                            <input type="file"
+                                name="profile_image"
+                                required>
+                        </div>
+                        <!-- Profile image  -->
+
+
+                    </div>
+                    <!-- Slug & Profile image-->
+
+                    <!-- Save -->
+                    <!-- commitment_to_send  -->
+                    <div class="row mt-5">
+                        <label><i class="las la-address-card ml-3 v-align1" style="font-size: 1.5em;vertical-align: -8px;">تعهد ارسال</i></label>
+                        <select name="commitment_to_send" required>
+                            <option value="1 روز">يك روز كاري</option>
+                            <option value="2 روز">دو روز كاري</option>
+                            <option value="3 روز">سه روز كاري</option>
+                        </select>
+                    </div>
+                    <!-- commitment_to_send  -->
+                    <div
+                        class="container-login100-form-btn mt-3">
+                        <button type="submit"
+                            class="btn btn-outline-primary-2 btn-minwidth-sm">
+                            <i
+                                class="icon-long-arrow-right ml-2"></i>
+                            <span>ارسال</span>
+                        </button>
+                    </div>
+                    <!-- Save -->
+
+                </form>
+
+                {% else %}
+                <div
+                    class="container text-center">
+                    <p style=color:green;>
+                        {{ not_allowed }}</p>
+                    <a href="{% url 'shop:shop' %}"
+                        class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت
+                            به فروشگاه</span><i
+                            class="las la-shopping-bag mr-2"></i></a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

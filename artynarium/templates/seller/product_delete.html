@@ -1,0 +1,61 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}حذف {{ product }}{% endblock %}
+{% block content %}
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">حذف {{ product }}</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:my_products' %}">محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">حذف {{ product }}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+  <div class="page-content">
+    <div class="container">
+
+    {% if request.user.seller %}
+
+        {% if product.sold == 0 %}
+
+          <div class="container text-center">
+            <form action="" method="post">{% csrf_token %}
+              <h4 class="mt-5 mb-5">آيا از حذف {{ product }} مطمئن هستيد؟</h4>
+              <input type="submit" class="btn btn-primary" value="تاييد"/>
+            </form>
+          </div>
+        {% else %}
+          <div class="container text-center">
+            <p style=color:red;>{{ not_allowed_to_delete }}</p>
+            <a href="{% url 'seller:my_products' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به محصولات من</span><i class="las la-shopping-bag mr-2"></i></a>
+          </div>
+        {% endif %}
+
+    {% else %}
+
+      <div class="container text-center">
+        <p style=color:red;>{{ not_allowed }}</p>
+        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+      </div>
+
+    {% endif %}
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}

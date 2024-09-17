@@ -1,0 +1,161 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">ليست علاقه مندي ها</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ليست علاقه مندي ها</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row ">
+                <div class="col-md-4 col-lg-3">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+            <!-- Main -->
+            <div class="wishlist-content col-md-8 col-lg-9">
+            {% if wishlist %}
+            <table class="table table-wishlist table-mobile">
+
+                <!-- Heading -->
+                <thead>
+                    <tr>
+                        <th>محصول</th>
+                        <th>قيمت</th>
+                        <th>موجودي</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <!-- Heading -->
+
+                <!-- Body -->
+                <tbody>
+
+                    {% for p in wishlist %}
+                    <tr>
+
+                        <!-- Product -->
+                        <td class="product-col">
+                            <div class="product">
+                                <figure class="product-media">
+                                    <a href="{% url 'shop:product' p.wished_item.id p.wished_item.slug %}">
+                                        <img src="{{ p.wished_item.image.url }}" alt="{{ p.wished_item.name }}">
+                                    </a>
+                                </figure>
+
+                                <h3 class="product-title mr-5">
+                                    <a href="{% url 'shop:product' p.wished_item.id p.wished_item.slug %}">{{ p.wished_item.name }}</a>
+                                </h3>
+                            </div>
+                        </td>
+                        <!-- Product -->
+
+                        <!-- Price -->
+                        <td data-label="قیمت" class="price-col">{{ p.wished_item.price|intcomma:False }} تومان</td>
+                        <!-- Price -->
+
+                        <!-- Status -->
+                        <td data-label="موجودی" class="stock-col">
+                            <span class="
+                            {% if p.wished_item.total_amount == 0 %}
+                                out-of-stock
+                            {% elif p.wished_item.total_amount <= 10 %}
+                                lack-in-stock
+                            {% else %}
+                                in-stock
+                            {% endif %}">
+                            {% if p.wished_item.store_amount >= 10 %}
+                                موجود در انبار
+                            {% elif p.wished_item.store_amount <= 10 %}
+                                کمتر از 10 عدد
+                            {% elif p.wished_item.total_amount == 0 %}
+                                {% if p.wished_item.amount >= 10 %}
+                                    موجود در نزد فروشنده
+                                {% elif p.wished_item.amount <= 10 %}
+                                    کمتر از 10 عدد در نزد فروشنده
+                                {% elif p.wished_item.amount == 0 %}
+                                    ناموجود
+                                {% endif %}
+                            {% endif %}
+                            </span>
+                        </td>
+                        <!-- Status -->
+
+
+                        <!-- Delete -->
+                        <td class="remove-col"><a href="{% url 'shop:add_remove' p.wished_item.id p.wished_item.slug %}"><i class="las la-trash-alt cs-font-size3"></i></a></td>
+                        <!-- Delete -->
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <!-- Body -->
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    {% if wishlist.has_other_pages %}
+                    <ul class="pagination">
+                        {% if wishlist.has_previous %}
+                        <li class="page-item"><a class="page-link page-link-prev" href="{% url 'shop:wishlist' %}?page={{ wishlist.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true">قبلي<span aria-hidden="true"><i class="icon-long-arrow-left"></i></span></a></li>
+                        {% endif %}
+                        {% for i in wishlist.paginator.page_range %}
+                            {% if wishlist.number == i %}
+                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if wishlist.has_next %}
+                        <li class="page-item"><a class="page-link page-link-next" href="{% url 'shop:wishlist' %}?page={{ wishlist.next_page_number }}" aria-label="Next">بعدي <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span></a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <!-- Pagination -->
+
+
+            </table>
+            {% else %}
+            <div class=" text-center">
+                <h2>ليست علاقه مندي شما خالي است!</h2>
+                <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+            </div>
+            {% endif %}
+            <!-- Main -->
+                </div>
+
+        </div>
+        <!-- Viewed Recently -->
+        {% include 'shop/viewed_recently.html' %}
+        <!-- Viewed Recently -->
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

@@ -1,0 +1,195 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}جزييات سفارش{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">جزييات سفارش</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:order' %}">سفارشات محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">جزييات سفارش</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+            <!--Side Panel-->
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+            <!--Side Panel-->
+            <!--Main-->
+            <div class="col-md-12 col-lg-10">
+                <div class="row">
+                    {% if request.user.seller %}
+
+                    <!--Order-->
+                    <div class="cs-row x-wrapper">
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>شماره سفارش : {{ order.order.orderid }}</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>وضعيت سفارش : {{ order.order.get_status_display }}</p>
+                        <p><i {% if order.order.admin_order_deliverment_confirmation %}style="color: #1e7e34;margin: 9px;" class="fas fa-check"{% else %}style="color: #ff242e;margin: 9px;" class="las la-times"{% endif %}></i>تاييديه تحويل سفارش توسط ادمين : {% if order.order.admin_order_deliverment_confirmation %}تاييد شده{% else %}تاييد نشده{% endif %}</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>جمع هزینه محصولات : {{ order.order_total|intcomma:False }} تومان</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>كارمزد سفارش : {{ order.order_pursuant|intcomma:False }} تومان</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>سود خالص سفارش : {{ order.order_profit|intcomma:False }} تومان</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>تاريخ ثبت سفارش : {{ order.create_at }}</p>
+                    </div>
+                    <!--Order-->
+
+                    <!--Warn-->
+                    {% if not order_charge %}
+                        {% if order.send %}
+                    <div class="row justify-content-center">
+                        <div class="cs-warn-send mb-5 text-center">
+                            <p style="color:orange">لطفا محصولاتي كه سفارش آنها از نزد فروشنده ميباشد را در بازه زماني تعهد ارسال خود به انبار فروشگاه ارسال كنيد</p>
+                            <button class="btn text-white"><a href="{% url 'seller:order_charge_list' order.id %}">ارسال به انبار</a></button>
+                        </div>
+                    </div>
+                        {% endif %}
+                    {% else %}
+                        {% if order.send %}
+                        <div class="cs-row2 justify-content-center">
+                            <div class="cs-warn-send mb-5 text-center">
+                                <p style="color:green">محصولات مورد نياز ارسال شده</p>
+                                <button class="btn text-white"><a href="{% url 'seller:order_charge_list' order.id %}">مشاهده</a></button>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                    <!--Warn-->
+
+                    <!--Order Items-->
+                    <div class="row justify-content-center">
+                        {% for p in order_item %}
+                        <div class="col-12">
+                        <table class="table table-wishlist table-mobile mr-5">
+
+                        <!-- Heading -->
+                        <thead>
+                            <tr>
+                                <th class="text-center">محصول</th>
+                                <th class="text-center">ایدی</th>
+                                <th class="text-center">قيمت</th>
+                                <th class="text-center">تعداد</th>
+                                <th class="text-center">كل</th>
+                                <th class="text-center">كارمزد</th>
+                                <th class="text-center">سود خالص</th>
+                                <th class="text-center">سفارش از</th>
+                            </tr>
+                        </thead>
+                        <!-- Heading -->
+
+                        <!-- Body -->
+                        <tbody>
+
+                            {% for p in order_item %}
+                            <tr>
+                                <!-- Product -->
+                                <td class="product-c text-centerol" >
+                                    <div class="">
+                                        <!-- Image -->
+                                        <div class="">
+                                            {% if p.variant.image_id > 0 %}
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                <img src="{{ p.variant.image }}" alt="{{ p.product.name }}">
+                                            </a>
+                                            {% else %}
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        <!-- Image -->
+
+                                        <!-- Name -->
+                                        <h3 class="product-title mr-5">
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }} {% if p.variant.size %} - {{ p.variant.size }} {% endif %} {% if p.variant.color %} - {{ p.variant.color }} {% endif %}</a>
+                                        </h3>
+                                        <!-- Name -->
+                                    </div>
+                                </td>
+                                <!-- Product -->
+
+                                <!-- ID -->
+                                <td class="price-col text-center">{{ p.product.productid }}</td>
+                                <!-- ID -->
+
+                                <!-- Price -->
+                                <td class="price-col text-center">{{ p.product.price|intcomma:False }} تومان</td>
+                                <!-- Price -->
+
+                                <!-- Quantity -->
+                                <td class="price-col text-center">{{ p.quantity|intcomma:False }}</td>
+                                <!-- Quantity -->
+
+                                <!-- Item Total -->
+                                <td class="price-col text-center">{{ p.item_total|intcomma:False }}</td>
+                                <!-- Item Total -->
+
+                                <!-- Item Pursuant -->
+                                <td class="price-col text-center">{{ p.item_pursuant|intcomma:False }}</td>
+                                <!-- Item Pursuant -->
+
+                                <!-- Item Profit -->
+                                <td class="price-col text-center">{{ p.item_profit|intcomma:False }}</td>
+                                <!-- Item Profit -->
+
+                                <!-- Order From -->
+                                <td class="product-c text-centerol">
+                                    <div class="product">
+                                        <h3 class="product-title">
+                                            <p {% if p.from_amount %} style="color:orange" title="در مدت زمان تعيين شده محصول را به انبار ارسال كنيد"{% else %}style="color:green"{% endif %}>{% if p.from_amount %}نزد فروشنده {% else %}موجودي انبار{% endif %}</p>
+                                        </h3>
+                                    </div>
+                                </td>
+                                <!-- Order From -->
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                        <!-- Body -->
+
+                        </table>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!--Order Items-->
+
+                    {% else %}
+                    <div class="container text-center">
+                        <p style=color:red;>{{ not_allowed }}</p>
+                        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+            </div>
+            <!--Main-->
+        </div>
+    </div>
+
+</main>
+
+{% endblock content %}

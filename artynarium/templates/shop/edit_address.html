@@ -1,0 +1,548 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}ويرايش آدرس{% endblock title %}
+{% block content %}
+
+<!-- State & City  Script-->
+<script type="text/javascript">
+    var citiesByState = {
+        آذربایجان‌شرقی: ["آذرشهر", 'اسکو',
+            "اهر", 'بستان‌آباد', 'بناب',
+            'تبریز', 'چاراویماق', 'سراب',
+            'شبستر', 'عجب‌شیر', 'کلیبر',
+            'مراغه', 'مرند', 'ملکان',
+            'میانه', 'هریس', 'هشترود'
+        ],
+        آذربایجان‌غربی: ["ارومیه", 'اشنویه',
+            "بوکان", 'پیرانشهر', 'تکاب',
+            'چالدران', 'خوی', 'سردشت',
+            'سلماس', 'شاهین‌دژ', 'ماکو',
+            'مهاباد', 'میاندوآب', 'نقده'
+        ],
+        اردبیل: ["اردبیل", 'بیله‌سوار',
+            "پارس‌آباد", 'خلخال', 'کوثر',
+            'گرمی', 'مشگین شهر', 'نمین',
+            'نیر'
+        ],
+        اصفهان: ["آران و بیدگل", 'اردستان',
+            "اصفهان", 'برخوردار و میمه',
+            'تیران و کرون', 'چادگان',
+            'خمینی‌شهر', 'خوانسار',
+            'سمیرم', 'شهرضا',
+            'سمیرم سفلی', 'فریدن',
+            'فریدون‌شهر', 'فلاورجان',
+            'کاشان', 'گلپایگان', 'لنجان',
+            'مبارکه', 'نائین', 'نجف‌آباد',
+            'نطنز'
+        ],
+        البرز: ["ساوجبلاغ", 'طالقان', "کرج",
+            'نظرآباد'
+        ],
+        ایلام: ["آبدانان", 'ایلام', "ایوان",
+            'دره‌شهر', 'دهلران',
+            'شیروان و چرداول', 'مهران'
+        ],
+        بوشهر: ["بوشهر", 'تنگستان', "جم",
+            'دشتستان', 'دشتی', 'دیر',
+            'دیلم', 'کنگان', 'گناوه'
+        ],
+        تهران: ["ورامین", 'فیروزکوه',
+            "شهریار", 'شمیرانات', 'ری',
+            'رباط‌کریم', 'دماوند',
+            'تهران', 'پاکدشت', 'اسلام‌شهر'
+        ],
+        چهارمحال‌و‌بختیاری: ["اردل", 'بروجن',
+            "شهرکرد", 'فارسان', 'کوهرنگ',
+            'لردگان'
+        ],
+        خراسان‌جنوبی: ["بیرجند", 'درمیان',
+            "سرایان", 'سربیشه', 'فردوس',
+            'قائنات', 'نهبندان'
+        ],
+        خراسان‌رضوی: ["بردسکن", 'تایباد',
+            "تربت جام", 'تربت حیدریه',
+            'چناران', 'خلیل‌آباد', 'خواف',
+            'درگز', 'رشتخوار', 'سبزوار',
+            'سرخس', 'فریمان', 'قوچان',
+            'کاشمر', 'کلات', 'گناباد',
+            'مشهد', 'مه ولات', 'نیشابور'
+        ],
+        خراسان‌شمالی: ["آذرشهر", 'بجنورد',
+            "جاجرم", 'شیروان', 'فاروج',
+            'مانه و سملقان'
+        ],
+        خوزستان: ["آبادان", 'امیدیه',
+            "اندیمشک", 'اهواز', 'ایذه',
+            'باغ‌ملک', 'بندر ماهشهر',
+            'بهبهان', 'خرمشهر', 'دزفول',
+            'دشت آزادگان', 'رامشیر',
+            'رامهرمز', 'شادگان', 'شوش',
+            'گتوند', 'لالی',
+            'مسجد سلیمان', 'هندیجان'
+        ],
+        زنجان: ["ابهر", 'ایجرود', "خدابنده",
+            'خرمدره', 'زنجان', 'طارم',
+            'ماه‌نشان'
+        ],
+        سمنان: ["دامغان", 'سمنان', "شاهرود",
+            'گرمسار', 'مهدی‌شهر'
+        ],
+        سیستان‌و‌بلوچستان: ["ایرانشهر",
+            'چابهار', "خاش", 'دلگان',
+            'زابل', 'زاهدان', 'زهک',
+            'سراوان', 'سرباز', 'کنارک',
+            'نیک‌شهر'
+        ],
+        فارس: ["آباده", 'ارسنجان', "استهبان",
+            'اقلید', 'بوانات', 'پاسارگاد',
+            'جهرم', 'خرم‌بید', 'خنج',
+            'داراب', 'زرین‌دشت', 'سپیدان',
+            'شیراز', 'فراشبند', 'فسا',
+            'فیروزآباد', 'قیر و کارزین',
+            'کازرون', 'لارستان', 'لامرد',
+            'مرودشت', 'ممسنی', 'مهر',
+            'نی‌ریز'
+        ],
+        قزوین: ["آبیک", 'البرز', "بوئین‌زهرا",
+            'تاکستان', 'قزوین'
+        ],
+        قم: ["قم"],
+        کردستان: ["بانه", 'بیجار', "دیواندره",
+            'سروآباد', 'سقز', 'سنندج',
+            'قروه', 'کامیاران', 'مریوان'
+        ],
+        کرمان: ["بافت", 'بردسیر', "بم",
+            'جیرفت', 'راور', 'رفسنجان',
+            'رودبار جنوب', 'زرند',
+            'سیرجان', 'شهر بابک',
+            'عنبرآباد', 'قلعه گنج',
+            'کرمان', 'کوهبنان', 'کهنوج',
+            'منوجان'
+        ],
+        کرمانشاه: ["اسلام‌آباد غرب", 'پاوه',
+            "ثلاث باباجانی", 'دالاهو',
+            'روانسر', 'سرپل ذهاب', 'سنقر',
+            'صحنه', 'قصر شیرین',
+            'کرمانشاه', 'کنگاور',
+            'گیلان غرب', 'هرسین'
+        ],
+        کهکیلویه‌و‌بویراحمد: ["بویراحمد",
+            'بهمئی', "دنا", 'کهگیلویه',
+            'گچساران'
+        ],
+        گلستان: ["آزادشهر", 'آق‌قلا',
+            "بندر گز", 'ترکمن', 'رامیان',
+            'علی‌آباد', 'کردکوی', 'کلاله',
+            'گرگان', 'گنبد کاووس',
+            'مراوه‌تپه', 'مینودشت'
+        ],
+        گیلان: ["آستارا", 'آستانه', "اشرفیه",
+            'املش', 'بندر انزلی', 'رشت',
+            'رضوانشهر', 'رودبار', 'رودسر',
+            'سیاهکل', 'شفت', 'صومعه‌سرا',
+            'طوالش', 'فومن', 'لاهیجان',
+            'لنگرود', 'ماسال'
+        ],
+        لرستان: ["ازنا", 'الیگودرز', "بروجرد",
+            'پل‌دختر', 'خرم‌آباد',
+            'دورود', 'دلفان', 'سلسله',
+            'کوهدشت'
+        ],
+        مازندران: ["آمل", 'بابل', "بابلسر",
+            'بهشهر', 'تنکابن', 'جویبار',
+            'چالوس', 'رامسر', 'ساری',
+            'سوادکوه', 'قائم‌شهر',
+            'گلوگاه', 'محمودآباد', 'نکا',
+            'نور', 'نوشهر'
+        ],
+        مرکزی: ["آشتیان", 'اراک', "تفرش",
+            'خمین', 'دلیجان', 'زرندیه',
+            'ساوه', 'شازند', 'کمیجان',
+            'محلات'
+        ],
+        هرمزگان: ["ابوموسی", 'بستک',
+            "بندر عباس", 'بندر لنگه',
+            'جاسک', 'حاجی‌آباد', 'خمیر',
+            'رودان', 'قشم', 'گاوبندی',
+            'میناب'
+        ],
+        همدان: ["اسدآباد", 'بهار', "تویسرکان",
+            'رزن', 'کبودرآهنگ', 'ملایر',
+            'نهاوند', 'همدان'
+        ],
+        یزد: ["ابرکوه", 'اردکان', "بافق",
+            'تفت', 'خاتم', 'صدوق', 'طبس',
+            'مهریز', 'میبد', 'یزد'
+        ]
+    }
+
+    function makeSubmenu(value) {
+        if (value.length == 0) document
+            .getElementById("citySelect")
+            .innerHTML = "<option></option>";
+        else {
+            var citiesOptions = "";
+            for (cityId in citiesByState[value]) {
+                citiesOptions += "<option>" +
+                    citiesByState[value][cityId] +
+                    "</option>";
+            }
+            document.getElementById("citySelect")
+                .innerHTML = citiesOptions;
+        }
+    }
+
+    function resetSelection() {
+        document.getElementById("stateSelect")
+            .selectedIndex = 0;
+        document.getElementById("citySelect")
+            .selectedIndex = 0;
+    }
+</script>
+<!-- State & City  Script-->
+
+
+<main class="main">
+
+    <!-- Background Image -->
+    <div class="page-header text-center"
+        style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">آدرس</h1>
+        </div>
+    </div>
+    <!-- Background Image -->
+
+    <!-- breadcrump -->
+    <nav aria-label="breadcrumb"
+        class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:home' %}">خانه</a>
+                </li>
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:my_orders' %}">حساب
+                        کاربری من</a></li>
+                <li class="breadcrumb-item active"
+                    aria-current="page">آدرس</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrump -->
+
+    <!-- Main -->
+    <div class="page-content">
+            <div class="container">
+                <!--Message-->
+                <div class="row justify-content-center">
+                    <div>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{{message.tags}} mb-2"
+                                role="alert">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--Message-->
+                <div class="row justify-content-around">
+                    <div class="col-md-4 col-lg-2">
+                        {% include 'shop/account_side_panel.html' %}
+                    </div>
+                    <div class="col-md-8 col-lg-9">
+
+                    {% if request.user.activate_payback %}
+                    <form class="form1" method="POST">
+                        {% csrf_token %}
+
+                        <!-- Card Number-->
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label><i class="las la-credit-card ml-3 v-align1" style="font-size: 1.5em;"></i>شماره كارت</label>
+                                <input type="text"
+                                    name="card_number"
+                                    value="{% if request.user.card_number is not None %}{{ request.user.card_number }}{% endif %}"
+                                    class="form-control"
+                                    placeholder="شماره كارت"
+                                    maxlength="16">
+                            </div>
+                        </div>
+                        <!-- Card Number-->
+
+                        <!-- Save -->
+                        <div class="container-login100-form-btn mt-3">
+                            <button type="submit" name="payback_submit"
+                                class="btn btn-outline-warning btn-minwidth-sm">
+                                <i class="icon-long-arrow-right ml-2"></i>
+                                <span>ثبت شماره كارت</span>
+                            </button>
+                        </div>
+                        <!-- Save -->
+
+                        <hr>
+                    </form>
+                    {% endif %}
+
+                    <form class="form1"
+                        method="POST">
+                        {% csrf_token %}
+
+                        <!-- First Name & Last Name-->
+                        <div class="row">
+                            <p>مشخصات
+                                زیر
+                                به
+                                عنوان
+                                آدرس
+                                پیش
+                                فرض
+                                در
+                                حین
+                                خرید
+                                استفاده
+                                خواهد
+                                شد
+                            </p>
+                        </div>
+                        <div class="row">
+                            <!-- First Name  -->
+                            <div class="col-sm-6">
+                                <label><i
+                                        class="las la-signature ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>نام
+                                    *</label>
+                                <input type="text"
+                                    name="first_name"
+                                    value="{% if request.user.first_name %}{{ request.user.first_name }}{% else %}نام{% endif %}"
+                                    class="form-control"
+                                    required>
+                            </div>
+                            <!-- First Name  -->
+
+                            <!-- Last Name -->
+                            <div class="col-sm-6">
+                                <label><i
+                                        class="las la-signature ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>نام
+                                    خانوادگی
+                                    *</label>
+                                <input type="text"
+                                    name="last_name"
+                                    value="{% if request.user.last_name %}{{ request.user.last_name }}{% else %}نام خانوادگی{% endif %}"
+                                    class="form-control"
+                                    required>
+                            </div>
+                            <!-- Last Name -->
+                        </div>
+                        <!-- First Name & Last Name-->
+
+                        <!-- State & City -->
+                        <div class="row">
+
+                            <!-- State -->
+                            <div class="col-sm-6">
+
+                                <label
+                                    for="state"><i
+                                        class="las la-city ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>استان
+                                    *</label>
+
+                                <select
+                                    name='state'
+                                    class="form-control"
+                                    id="stateSelect"
+                                    size="1"
+                                    onchange="makeSubmenu(this.value)">
+                                    <option
+                                        value="{% if request.user.state %} {{ request.user.state }} {% endif %}"
+                                        selected>
+                                        {% if request.user.state %}{{ request.user.state }}{% else %}استان
+                                        را انتخاب
+                                        کنید{% endif %}
+                                    </option>
+                                    <option>
+                                        آذربایجان‌شرقی
+                                    </option>
+                                    <option>
+                                        آذربایجان‌غربی
+                                    </option>
+                                    <option>اردبیل
+                                    </option>
+                                    <option>اصفهان
+                                    </option>
+                                    <option>البرز
+                                    </option>
+                                    <option>ایلام
+                                    </option>
+                                    <option>بوشهر
+                                    </option>
+                                    <option>تهران
+                                    </option>
+                                    <option>
+                                        چهارمحال‌و‌بختیاری
+                                    </option>
+                                    <option>
+                                        خراسان‌جنوبی
+                                    </option>
+                                    <option>
+                                        خراسان‌رضوی
+                                    </option>
+                                    <option>
+                                        خراسان‌شمالی
+                                    </option>
+                                    <option>
+                                        خوزستان
+                                    </option>
+                                    <option>زنجان
+                                    </option>
+                                    <option>سمنان
+                                    </option>
+                                    <option>
+                                        سیستان‌و‌بلوچستان
+                                    </option>
+                                    <option>فارس
+                                    </option>
+                                    <option>قزوین
+                                    </option>
+                                    <option>قم
+                                    </option>
+                                    <option>
+                                        کردستان
+                                    </option>
+                                    <option>کرمان
+                                    </option>
+                                    <option>
+                                        کهکیلویه‌و‌بویراحمد
+                                    </option>
+                                    <option>گلستان
+                                    </option>
+                                    <option>گیلان
+                                    </option>
+                                    <option>لرستان
+                                    </option>
+                                    <option>
+                                        مازندران
+                                    </option>
+                                    <option>مرکزی
+                                    </option>
+                                    <option>
+                                        هرمزگان
+                                    </option>
+                                    <option>همدان
+                                    </option>
+                                    <option>یزد
+                                    </option>
+                                </select>
+
+                            </div>
+                            <!-- State -->
+
+                            <!-- City -->
+                            <div class="col-sm-6">
+                                <label
+                                    for="city"><i
+                                        class="las la-city ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>شهر
+                                    *</label>
+                                <select
+                                    name='city'
+                                    class="form-control"
+                                    id="citySelect"
+                                    size="1">
+                                    <option
+                                        value="{{ request.user.city }}"
+                                        selected>
+                                        {% if request.user.city %}{{ request.user.city }}{% else %}ابتدا
+                                        استان را
+                                        انتخاب
+                                        کنید{% endif %}
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- City -->
+
+                        </div>
+                        <!-- State & City -->
+
+                        <!-- Address -->
+                        <label><i
+                                class="las la-map-marker-alt ml-3 v-align1"
+                                style="font-size: 1.5em;"></i>آدرس
+                            محل سکونت *</label>
+                        <input type="text"
+                            name="address"
+                            value="{% if request.user.address is not None %}{{ request.user.address }}{% endif %}"
+                            class="form-control"
+                            placeholder="آدرس محل سکونت"
+                            required>
+                        <!-- Address -->
+
+                        <!-- ZIP & Phone Number-->
+                        <div class="row">
+
+                            <!-- ZIP  -->
+                            <div class="col-sm-6">
+                                <label><i
+                                        class="las la-barcode ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>کد
+                                    پستی *</label>
+                                <input type="text"
+                                    name="zipcode"
+                                    value="{% if request.user.zipcode is not None %}{{ request.user.zipcode }}{% endif %}"
+                                    class="form-control"
+                                    placeholder="کد پستی ده رقمي"
+                                    maxlength="10"
+                                    required>
+                            </div>
+                            <!-- ZIP  -->
+
+                            <!-- Phone Number -->
+                            <div class="col-sm-6">
+                                <label><i
+                                        class="las la-mobile-alt ml-3 v-align1"
+                                        style="font-size: 1.5em;"></i>شماره
+                                    همراه
+                                    *</label>
+                                <input type="text"
+                                    name="phone_number"
+                                    value="{% if request.user.phone_number is not None %}{{ request.user.phone_number }}{% endif %}"
+                                    placeholder="شماره همراه يازده رقمي"
+                                    class="form-control"
+                                    maxlength="11"
+                                    required>
+                            </div>
+                            <!-- Phone Number -->
+                        </div>
+                        <!-- ZIP & Phone Number-->
+
+                        <!-- Save -->
+                        <div class="container-login100-form-btn mt-3">
+                            <button type="submit" name="address_submit"
+                                class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                <i class="icon-long-arrow-right ml-2"></i>
+                                <span>ذخیره</span>
+                            </button>
+                        </div>
+                        <!-- Save -->
+
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

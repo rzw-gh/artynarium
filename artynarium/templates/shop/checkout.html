@@ -1,0 +1,846 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}ادامه فرایند خرید{% endblock title %}
+{% block content %}
+
+<!--<script>-->
+<!--    // Shipping Method Script-->
+<!--    $(document).ready(function () {-->
+<!--        // State-->
+<!--        var value, c, s, t;-->
+<!--        function State() {-->
+<!--            value = $('#stateSelect').find(':selected').attr('data-price');-->
+<!--            $('#price_material').text(value);-->
+<!--            $('#stateSelect').change(function () {-->
+<!--                value = $('#stateSelect')-->
+<!--                    .find(':selected')-->
+<!--                    .attr('data-price');-->
+<!--                if (-->
+<!--                    document.getElementById('shipping_method').value ==-->
+<!--                    'Express'-->
+<!--                ) {-->
+<!--                    s = Shipping();-->
+<!--                    c = State();-->
+<!--                    t = parseInt(s, 10) + parseInt(c, 10);-->
+<!--                    $('#price_material').text(t);-->
+<!--                } else {-->
+<!--                    $('#price_material').text(value);-->
+<!--                }-->
+<!--            });-->
+<!--            return value;-->
+<!--        }-->
+<!--        // Implement-->
+<!--        $('#stateSelect').change(function () {-->
+<!--            if (-->
+<!--                document.getElementById('shipping_method').value == 'Express'-->
+<!--            ) {-->
+<!--                s = Shipping();-->
+<!--                c = State();-->
+<!--                t = parseInt(s, 10) + parseInt(c, 10);-->
+<!--                $('#price_material').text(t);-->
+<!--            } else {-->
+<!--                c = State();-->
+<!--                $('#price_material').text(c);-->
+<!--            }-->
+<!--        });-->
+
+
+<!--        if (-->
+<!--            document.getElementById('shipping_method').value == 'Express'-->
+<!--        ) {-->
+<!--            s = Shipping();-->
+<!--            c = State();-->
+<!--            t = parseInt(s, 10) + parseInt(c, 10);-->
+<!--            $('#price_material').text(t);-->
+<!--        } else {-->
+<!--            c = State();-->
+<!--            $('#price_material').text(c);-->
+<!--        }-->
+
+<!--        // Shipping-->
+<!--        function Shipping() {-->
+<!--            value = $('#shipping_method')-->
+<!--                .find(':selected')-->
+<!--                .attr('data-price');-->
+<!--            $('#shipping_method').change(function () {-->
+<!--                value = $('#shipping_method')-->
+<!--                    .find(':selected')-->
+<!--                    .attr('data-price');-->
+<!--            });-->
+<!--            return value;-->
+<!--        }-->
+
+<!--        // Plus-->
+<!--        $('#shipping_method').change(function () {-->
+<!--            s = Shipping();-->
+<!--            t = parseInt(s, 10) + parseInt(c, 10);-->
+<!--            $('#price_material').text(t);-->
+<!--        });-->
+<!--        s = Shipping();-->
+<!--        t = parseInt(s, 10) + parseInt(c, 10);-->
+<!--        $('#price_material').text(t);-->
+
+<!--        function ShippingName() {-->
+<!--            valuename = $('#shipping_method')-->
+<!--                .find(':selected')-->
+<!--                .attr('methodname');-->
+<!--            $('#shippingname').text(valuename);-->
+<!--            $('#shipping_method').change(function () {-->
+<!--                valuename = $('#shipping_method')-->
+<!--                    .find(':selected')-->
+<!--                    .attr('methodname');-->
+<!--                $('#shippingname').text(valuename);-->
+<!--            });-->
+<!--            return valuename;-->
+<!--        }-->
+
+<!--        $('#shipping_method').change(function () {-->
+<!--            var d = ShippingName();-->
+<!--            $('#shippingname').text(d);-->
+<!--        });-->
+<!--        var d = ShippingName();-->
+<!--        $('#shippingname').text(d);-->
+<!--    });-->
+<!--</script>-->
+
+<script type="text/javascript">
+    var citiesByState = {
+        آذربایجان‌شرقی: ["آذرشهر", 'اسکو',
+            "اهر", 'بستان‌آباد', 'بناب',
+            'تبریز', 'چاراویماق', 'سراب',
+            'شبستر', 'عجب‌شیر', 'کلیبر',
+            'مراغه', 'مرند', 'ملکان',
+            'میانه', 'هریس', 'هشترود'
+        ],
+        آذربایجان‌غربی: ["ارومیه", 'اشنویه',
+            "بوکان", 'پیرانشهر', 'تکاب',
+            'چالدران', 'خوی', 'سردشت',
+            'سلماس', 'شاهین‌دژ', 'ماکو',
+            'مهاباد', 'میاندوآب', 'نقده'
+        ],
+        اردبیل: ["اردبیل", 'بیله‌سوار',
+            "پارس‌آباد", 'خلخال', 'کوثر',
+            'گرمی', 'مشگین شهر', 'نمین',
+            'نیر'
+        ],
+        اصفهان: ["آران و بیدگل", 'اردستان',
+            "اصفهان", 'برخوردار و میمه',
+            'تیران و کرون', 'چادگان',
+            'خمینی‌شهر', 'خوانسار',
+            'سمیرم', 'شهرضا',
+            'سمیرم سفلی', 'فریدن',
+            'فریدون‌شهر', 'فلاورجان',
+            'کاشان', 'گلپایگان', 'لنجان',
+            'مبارکه', 'نائین', 'نجف‌آباد',
+            'نطنز'
+        ],
+        البرز: ["ساوجبلاغ", 'طالقان', "کرج",
+            'نظرآباد'
+        ],
+        ایلام: ["آبدانان", 'ایلام', "ایوان",
+            'دره‌شهر', 'دهلران',
+            'شیروان و چرداول', 'مهران'
+        ],
+        بوشهر: ["بوشهر", 'تنگستان', "جم",
+            'دشتستان', 'دشتی', 'دیر',
+            'دیلم', 'کنگان', 'گناوه'
+        ],
+        تهران: ["ورامین", 'فیروزکوه',
+            "شهریار", 'شمیرانات', 'ری',
+            'رباط‌کریم', 'دماوند',
+            'تهران', 'پاکدشت', 'اسلام‌شهر'
+        ],
+        چهارمحال‌و‌بختیاری: ["اردل", 'بروجن',
+            "شهرکرد", 'فارسان', 'کوهرنگ',
+            'لردگان'
+        ],
+        خراسان‌جنوبی: ["بیرجند", 'درمیان',
+            "سرایان", 'سربیشه', 'فردوس',
+            'قائنات', 'نهبندان'
+        ],
+        خراسان‌رضوی: ["بردسکن", 'تایباد',
+            "تربت جام", 'تربت حیدریه',
+            'چناران', 'خلیل‌آباد', 'خواف',
+            'درگز', 'رشتخوار', 'سبزوار',
+            'سرخس', 'فریمان', 'قوچان',
+            'کاشمر', 'کلات', 'گناباد',
+            'مشهد', 'مه ولات', 'نیشابور'
+        ],
+        خراسان‌شمالی: ["آذرشهر", 'بجنورد',
+            "جاجرم", 'شیروان', 'فاروج',
+            'مانه و سملقان'
+        ],
+        خوزستان: ["آبادان", 'امیدیه',
+            "اندیمشک", 'اهواز', 'ایذه',
+            'باغ‌ملک', 'بندر ماهشهر',
+            'بهبهان', 'خرمشهر', 'دزفول',
+            'دشت آزادگان', 'رامشیر',
+            'رامهرمز', 'شادگان', 'شوش',
+            'گتوند', 'لالی',
+            'مسجد سلیمان', 'هندیجان'
+        ],
+        زنجان: ["ابهر", 'ایجرود', "خدابنده",
+            'خرمدره', 'زنجان', 'طارم',
+            'ماه‌نشان'
+        ],
+        سمنان: ["دامغان", 'سمنان', "شاهرود",
+            'گرمسار', 'مهدی‌شهر'
+        ],
+        سیستان‌و‌بلوچستان: ["ایرانشهر",
+            'چابهار', "خاش", 'دلگان',
+            'زابل', 'زاهدان', 'زهک',
+            'سراوان', 'سرباز', 'کنارک',
+            'نیک‌شهر'
+        ],
+        فارس: ["آباده", 'ارسنجان', "استهبان",
+            'اقلید', 'بوانات', 'پاسارگاد',
+            'جهرم', 'خرم‌بید', 'خنج',
+            'داراب', 'زرین‌دشت', 'سپیدان',
+            'شیراز', 'فراشبند', 'فسا',
+            'فیروزآباد', 'قیر و کارزین',
+            'کازرون', 'لارستان', 'لامرد',
+            'مرودشت', 'ممسنی', 'مهر',
+            'نی‌ریز'
+        ],
+        قزوین: ["آبیک", 'البرز', "بوئین‌زهرا",
+            'تاکستان', 'قزوین'
+        ],
+        قم: ["قم"],
+        کردستان: ["بانه", 'بیجار', "دیواندره",
+            'سروآباد', 'سقز', 'سنندج',
+            'قروه', 'کامیاران', 'مریوان'
+        ],
+        کرمان: ["بافت", 'بردسیر', "بم",
+            'جیرفت', 'راور', 'رفسنجان',
+            'رودبار جنوب', 'زرند',
+            'سیرجان', 'شهر بابک',
+            'عنبرآباد', 'قلعه گنج',
+            'کرمان', 'کوهبنان', 'کهنوج',
+            'منوجان'
+        ],
+        کرمانشاه: ["اسلام‌آباد غرب", 'پاوه',
+            "ثلاث باباجانی", 'دالاهو',
+            'روانسر', 'سرپل ذهاب', 'سنقر',
+            'صحنه', 'قصر شیرین',
+            'کرمانشاه', 'کنگاور',
+            'گیلان غرب', 'هرسین'
+        ],
+        کهکیلویه‌و‌بویراحمد: ["بویراحمد",
+            'بهمئی', "دنا", 'کهگیلویه',
+            'گچساران'
+        ],
+        گلستان: ["آزادشهر", 'آق‌قلا',
+            "بندر گز", 'ترکمن', 'رامیان',
+            'علی‌آباد', 'کردکوی', 'کلاله',
+            'گرگان', 'گنبد کاووس',
+            'مراوه‌تپه', 'مینودشت'
+        ],
+        گیلان: ["آستارا", 'آستانه', "اشرفیه",
+            'املش', 'بندر انزلی', 'رشت',
+            'رضوانشهر', 'رودبار', 'رودسر',
+            'سیاهکل', 'شفت', 'صومعه‌سرا',
+            'طوالش', 'فومن', 'لاهیجان',
+            'لنگرود', 'ماسال'
+        ],
+        لرستان: ["ازنا", 'الیگودرز', "بروجرد",
+            'پل‌دختر', 'خرم‌آباد',
+            'دورود', 'دلفان', 'سلسله',
+            'کوهدشت'
+        ],
+        مازندران: ["آمل", 'بابل', "بابلسر",
+            'بهشهر', 'تنکابن', 'جویبار',
+            'چالوس', 'رامسر', 'ساری',
+            'سوادکوه', 'قائم‌شهر',
+            'گلوگاه', 'محمودآباد', 'نکا',
+            'نور', 'نوشهر'
+        ],
+        مرکزی: ["آشتیان", 'اراک', "تفرش",
+            'خمین', 'دلیجان', 'زرندیه',
+            'ساوه', 'شازند', 'کمیجان',
+            'محلات'
+        ],
+        هرمزگان: ["ابوموسی", 'بستک',
+            "بندر عباس", 'بندر لنگه',
+            'جاسک', 'حاجی‌آباد', 'خمیر',
+            'رودان', 'قشم', 'گاوبندی',
+            'میناب'
+        ],
+        همدان: ["اسدآباد", 'بهار', "تویسرکان",
+            'رزن', 'کبودرآهنگ', 'ملایر',
+            'نهاوند', 'همدان'
+        ],
+        یزد: ["ابرکوه", 'اردکان', "بافق",
+            'تفت', 'خاتم', 'صدوق', 'طبس',
+            'مهریز', 'میبد', 'یزد'
+        ]
+    }
+
+    function makeSubmenu(value) {
+        if (value.length == 0) document
+            .getElementById("citySelect")
+            .innerHTML = "<option></option>";
+        else {
+            var citiesOptions = "";
+            for (cityId in citiesByState[value]) {
+                citiesOptions += "<option>" +
+                    citiesByState[value][cityId] +
+                    "</option>";
+            }
+            document.getElementById("citySelect")
+                .innerHTML = citiesOptions;
+        }
+    }
+
+    function resetSelection() {
+        document.getElementById("stateSelect")
+            .selectedIndex = 0;
+        document.getElementById("citySelect")
+            .selectedIndex = 0;
+    }
+
+</script>
+
+<script>
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    $(document).ready(function () {
+        $("#checkout-discount-input").change(function () {
+            var coupon = $(this).val();
+            $.ajax({
+                url: '{% url "shop:validate_coupon" %}',
+                data: {
+                    'coupon': coupon,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.coupon_exists_check) {
+                        if (data.coupon_valid) {
+                            if (data.coupon_used_already) {
+                                swal({
+                                    buttons: false,
+                                    icon : "error",
+                                    text : data.coupon_used_already_msg
+                                });
+                                $('.trash_btn1').empty();
+                                $('.trash_btn1').append('<i class="las la-trash"></i>');
+                            }
+                            else if (data.coupon_used) {
+                                swal({
+                                    buttons: false,
+                                    icon : "success",
+                                    text : data.coupon_used_msg
+                                });
+                                $('#total_td').empty();
+                                $('#coupon_amount').append('<td>مقدار تخفیف</td><td>'+ numberWithCommas(data.coupon_amount) +' تومان </td>')
+                                $('#total_td').append(numberWithCommas(data.total_after_coupon) + ' تومان ');
+                                $('.trash_btn1').empty();
+                                $('.trash_btn1').append('<i class="las la-trash"></i>');
+                            }
+                        }
+                        else if (data.coupon_expired) {
+                            swal({
+                                buttons: false,
+                                icon : "error",
+                                text : data.coupon_expired_msg
+                            });
+                            $('.trash_btn1').empty();
+                            $('.trash_btn1').append('<i class="las la-trash"></i>');
+                        }
+                    }
+                    else {
+                        swal({
+                            buttons: false,
+                            icon : "error",
+                            text : data.coupon_does_not_exists_msg
+                        });
+                        $('.trash_btn1').empty();
+                        $('.trash_btn1').append('<i class="las la-trash"></i>');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Shipping Method Script -->
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center"
+         style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">ادامه فرایند
+                خرید</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb"
+         class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:home' %}">خانه</a>
+                </li>
+                <li class="breadcrumb-item"><a
+                        href="{% url 'shop:cart' %}">سبد
+                    خرید</a></li>
+                <li class="breadcrumb-item active"
+                    aria-current="page">ادامه
+                    فرایند خرید</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- Breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="checkout">
+            <div class="container">
+                <!-- Alert Message -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} mb-2"
+                     role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- Alert Message -->
+
+                {% if cart.count > 0 %}
+
+
+
+                <form action="{% url 'shop:checkout' %}" method="POST" id="myForm"> {% csrf_token %}
+                    <div class="checkout-discount">
+                        <div class="form-inline">
+                            <input type="text" class="form-control" style="    width: 269px;" name="coupon" id="checkout-discount-input">
+                            <button type="reset" class="trash_btn1" onclick="
+                        $(document).ready(function (){
+                            $('#checkout-discount-input').val('');
+                            $('.trash_btn1').empty();
+                            $('.text-truncate').css('opacity', 1);
+                            $('#total_td').empty();
+                            $('#coupon_amount').empty();
+                            $('#total_td').append('{{ total|intcomma:False }} تومان')
+                            return false;
+                        }); "></button>
+                            <label for="checkout-discount-input" class="text-truncate"> کوپن دارید؟ <span style="    margin-right: 5px;"> اینجا کلیک کنید </span></label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <!-- Shipping Information -->
+                        <div class="col-lg-8">
+
+                            <!-- Address -->
+                            <label><i
+                                    class="las la-map-marker-alt ml-3 cs-font-size1"></i>آدرس
+                                محل سکونت
+                                *</label>
+                            <input type="text" name="address" value="{% if request.user.address is not None %}{{ request.user.address }}{% endif %}" class="form-control" placeholder="آدرس محل سکونت ..." required>
+                            <!-- Address -->
+
+                            <!-- State & City -->
+                            <div class="row">
+
+                                <!-- State -->
+                                <div
+                                        class="col-sm-6">
+
+                                    <label
+                                            for="stateSelect"><i
+                                            class="las la-city ml-3"
+                                            style="font-size: 1.5em;"></i>استان
+                                        *</label>
+                                    <select
+                                            name='state'
+                                            class="form-control"
+                                            id="stateSelect"
+                                            size="1"
+                                            onchange="makeSubmenu(this.value)">
+                                        <option
+                                                data-price="{% if profile.state == 'تهران' %}12000{% else %}15000{% endif %}"
+                                                value="{% if profile.state %} {{ profile.state }} {% endif %}"
+                                                placeholder="استان ..."
+                                                {% if profile.state %}
+                                                selected
+                                                {% endif %}>
+                                            {% if profile.state %}
+                                            {{ profile.state }}
+                                            {% else %}
+                                            استان
+                                            را
+                                            انتخاب
+                                            کنید
+                                            {% endif %}
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            آذربایجان‌شرقی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            آذربایجان‌غربی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            اردبیل
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            اصفهان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            البرز
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            ایلام
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            بوشهر
+                                        </option>
+                                        <option
+                                                data-price="12000">
+                                            تهران
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            چهارمحال‌و‌بختیاری
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            خراسان‌جنوبی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            خراسان‌رضوی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            خراسان‌شمالی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            خوزستان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            زنجان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            سمنان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            سیستان‌و‌بلوچستان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            فارس
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            قزوین
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            قم
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            کردستان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            کرمان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            کهکیلویه‌و‌بویراحمد
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            گلستان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            گیلان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            لرستان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            مازندران
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            مرکزی
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            هرمزگان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            همدان
+                                        </option>
+                                        <option
+                                                data-price="15000">
+                                            یزد
+                                        </option>
+                                    </select>
+
+                                </div>
+                                <!-- State -->
+
+                                <!-- City -->
+                                <div
+                                        class="col-sm-6">
+                                    <label
+                                            for="citySelect"><i
+                                            class="las la-city ml-3 cs-font-size1"></i>شهر
+                                        *</label>
+                                    <select
+                                            name='city'
+                                            class="form-control"
+                                            id="citySelect"
+                                            size="1">
+                                        <option
+                                                value="{% if profile.city %} {{ profile.city }} {% endif %}"
+                                                {% if profile.city %}
+                                                selected
+                                                {% else %}
+                                                disabled
+                                                selected
+                                                {% endif %}>
+                                            {% if profile.city %}
+                                            {{ profile.city }}
+                                            {% else %}
+                                            ابتدا
+                                            استان
+                                            را
+                                            انتخاب
+                                            کنید
+                                            {% endif %}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- City -->
+
+                            </div>
+                            <!-- State & City -->
+
+                            <!-- ZIP & Shipping Method-->
+                            <div class="row">
+
+                                <!-- ZIP  -->
+                                <div
+                                        class="col-sm-6">
+                                    <label><i
+                                            class="las la-barcode ml-3 cs-font-size1"></i>کد
+                                        پستی
+                                        *</label>
+                                    <input
+                                            type="text"
+                                            name="zipcode"
+                                            value="{% if profile.zipcode %} {{ profile.zipcode }} {% endif %}"
+                                            class="form-control"
+                                            placeholder='کد پستی'
+                                            maxlength="10"
+                                            required>
+                                </div>
+                                <!-- ZIP  -->
+
+                                <!-- Shipping Method -->
+                                <input type="hidden" name="shipping_method" value="Express">
+<!--                                <div-->
+<!--                                        class="col-sm-6">-->
+<!--                                    <label-->
+<!--                                            for="shipping_method"><i-->
+<!--                                            class="las la-dolly ml-3 cs-font-size1"></i>روش-->
+<!--                                        ارسال-->
+<!--                                        *</label>-->
+<!--                                    <select name='shipping_method' class="form-control" id="shipping_method" size="1">-->
+<!--                                        <option name="shipping_method" value="Normal" methodname="هزینه ارسال عادی" data-price="0" selected> ارسال عادی - در طی 4 الی 7 روز کاری-->
+<!--                                        </option>-->
+<!--                                        <option-->
+<!--                                                name="shipping_method"-->
+<!--                                                value="Express"-->
+<!--                                                methodname="هزینه ارسال پیشتاز"-->
+<!--                                                data-price="10000">-->
+<!--                                            ارسال-->
+<!--                                            پیشتاز-->
+<!--                                            - در-->
+<!--                                            طی 1-->
+<!--                                            الی 3-->
+<!--                                            روز-->
+<!--                                            کاری-->
+<!--                                        </option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+                                <!-- Shipping Method -->
+
+                            </div>
+                            <!-- ZIP & Shipping Method-->
+
+                            <!-- Order notes -->
+                            <label><i
+                                    class="las la-comment-dots ml-3 cs-font-size1"></i>یادداشت
+                                (اختیاری)</label>
+                            <textarea name="note"
+                                      class="form-control"
+                                      cols="30" rows="4"
+                                      placeholder="یادداشت برای ارسال محصول"></textarea>
+                            <!-- Order notes -->
+
+                        </div>
+                        <!-- Shipping Information -->
+
+                        <!-- Aside Order Informations -->
+                        <aside class="col-lg-4">
+                            <div class="summary">
+                                <h3
+                                        class="summary-title">
+                                    <i
+                                            class="las la-dolly ml-3 cs-font-size1"></i>سفارش
+                                    شما</h3>
+                                <!-- End .summary-title -->
+
+                                <!-- Main -->
+                                <table
+                                        class="table table-summary">
+
+                                    <thead>
+                                    <tr>
+                                        <th>{% if cart.count > 1 %}محصولات{% else %}محصول{% endif %}
+                                        </th>
+                                        <th>کل
+                                        </th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    <!-- Items -->
+                                    {% for p in cart %}
+                                    <tr>
+
+                                        <!-- Name -->
+                                        <td><a
+                                                href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.quantity }}<i
+                                                class="las la-times"></i>
+                                            {{ p.product.name }}
+                                            {% if p.variant.size %}
+                                            -
+                                            {{ p.variant.size }}
+                                            {% endif %}
+                                            {% if p.variant.color %}
+                                            -
+                                            {{ p.variant.color }}
+                                            {% endif %}
+                                        </a>
+                                        </td>
+                                        <!-- Name -->
+
+                                        <!-- Single Total -->
+                                        <td>
+                                            {% if p.product.variant == 'None' %}
+                                            {{ p.amount|intcomma:False }}
+                                            تومان
+                                            {% else %}
+                                            {{ p.varamount|intcomma:False }}
+                                            تومان
+                                            {% endif %}
+                                        </td>
+                                        <!-- Single Total -->
+
+                                    </tr>
+                                    {% endfor %}
+                                    <!-- Items -->
+
+                                    <!-- Subtotal -->
+                                    <tr id="coupon_amount">
+
+                                    </tr>
+                                    <tr
+                                            class="summary-subtotal">
+                                        <td>هزینه
+                                            کل
+                                            {% if cart.count > 1 %}محصولات{% else %}محصول{% endif %}:
+                                        </td>
+
+                                        <td id="total_td">{{ total|intcomma:False }} تومان</td>
+                                    </tr>
+
+                                    <!-- Subtotal -->
+
+                                    <!-- Shipping -->
+                                    <tr>
+                                        <td>
+                                            <div id="shippingname">هزینه ارسال</div>
+                                        </td>
+
+                                        <td>
+                                            <div id="price_material">15000</div>
+                                        </td>
+                                    </tr>
+                                    <!-- Shipping -->
+
+                                    </tbody>
+
+                                </table>
+                                <!-- Main -->
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                    <span>نهایی
+                                        سازی
+                                        عملیات</span>
+                                </button>
+                                <!-- Submit Button -->
+
+                            </div>
+                        </aside>
+                        <!-- Aside Order Informations -->
+
+                    </div>
+                </form>
+
+                {% else %}
+
+                <div
+                        class="container text-center">
+                    <h2>سبد خرید شما خالیست. ادامه
+                        فرایند خرید مقدور نیست
+                    </h2>
+                    <a href="{% url 'shop:shop' %}"
+                       class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت
+                            به فروشگاه</span><i
+                            class="las la-shopping-bag ml-2"></i></a>
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

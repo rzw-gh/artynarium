@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}تماس با ما{% endblock title %}
+{% block content %}
+
+<main class="main">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">تماس با ما</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav>
+    <div class="container">
+        <div class="page-header page-header-big text-center" style="background-image: url({% static 'assets/images/contact-header-bg.jpg' %})">
+            <h1 class="page-title text-white">تماس با ما</h1>
+        </div><!-- End .page-header -->
+    </div>
+
+    <div class="page-content pb-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mb-5 message-d">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <h2 class="title mb-1">سوالي داريد؟</h2>
+                    <p class="mb-2">با استفاده از فرم زير با تيم فروش در ارتباط باشيد</p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group">
+                            <div class="form-control-border"></div>
+                            {{ field.label }}
+                            {% render_field field class="form-control" %}
+                        </div>
+                        {% endfor %}
+                        <div class="container-login100-form-btn">
+                            <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                <i class="icon-long-arrow-right ml-2"></i>
+                                <span>ارسال</span>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+    </div>
+</main>
+
+{% endblock content %}

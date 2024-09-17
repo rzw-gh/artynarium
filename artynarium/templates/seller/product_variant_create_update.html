@@ -1,0 +1,369 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{% if edit == 1 %}ويرايش گوناگوني محصول{% else %}گوناگوني محصول{% endif %}{% endblock title %}
+{% block content %}
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">{% if edit == 1 %}ويرايش گوناگوني محصول{% else %}گوناگوني محصول{% endif %}</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:my_products' %}">محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% if edit == 1 %}ويرايش گوناگوني محصول{% else %}گوناگوني محصول{% endif %}</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+                <div class="col-md-8 col-lg-10 " style="padding: 3rem;las la-truck-moving ml-2 cs-font-size3">
+                    {% if request.user.seller %}
+
+                    <div id="smartwizard3">
+                        <ul class="text-right nav nav-tabs step-anchor mb-5" style="background: #f5f5f5;border: 1px solid #ddd;">
+                            <li class="nav-item d-inline-block cs-progress"><a {% if edit == 1 %}href="{% url 'seller:product_update' id %}"{% endif %} class="text-white position-relative nav-link">مرحله اول<br><small>{% if edit == 1 %}ويرايش محصول{% else %}اضافه كردن محصول{% endif %}</small></a></li>
+                            <li class="nav-item d-inline-block cs-progress"><a {% if edit == 1 %}href="{% url 'seller:product_gallery_create_update' id 1 %}"{% endif %} class="text-white position-relative nav-link">مرحله دوم<br><small>{% if edit == 1 %}ويرايش گالري محصول{% else %}گالري محصول{% endif %}</small></a></li>
+                            <li class="nav-item d-inline-block cs-progress active"><a class="text-white position-relative nav-link">مرحله سوم<br>{% if edit == 1 %}ويرايش گوناگوني محصول{% else %}گوناگوني محصول{% endif %}</a></li>
+                            {% if edit == 0 %}<li class="nav-item d-inline-block cs-progress"><a class="text-white position-relative nav-link">مرحله چهارم<br><small>ثبت نهايي</small></a></li>{% endif %}
+                        </ul>
+                        <!-- Alert Message -->
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{message.tags}} mb-2" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+                        {% if wrong_variant_seller_quantity %}<div class="alert alert-warning mb-2" role="alert">{{ wrong_variant_seller_quantity }}</div>{% endif %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row justify-content-center mb-3">
+                                <div class="owl-carousel owl-35 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+                                    {% for image in product.img_gal.all %}
+                                    <div class="product product-11 text-center">
+                                        <figure class="product-media">
+                                            <img src="{% if image.image %}{{ image.image.url }}{% endif %}" alt="{{ image.title }}" class="product-image">
+                                        </figure>
+                                        <div class="product-body" style="padding-bottom: 10px !important;">
+                                            <h3 class="product-title">{{ image.id }}</h3>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row justify-content-center mb-2 mt-2">
+                                <label class="ml-3" for="variant_type">نوع گوناگوني *</label>
+                                <select id="variant_type" name="variant_type" onchange="variant_typeFunction()">
+                                    <option value="Color" {% if product.variant == 'Color' %}selected{% endif %}>رنگ</option>
+                                    <option value="Size" {% if product.variant == 'Size' %}selected{% endif %}>اندازه</option>
+                                    <option value="Size-Color" {% if product.variant == 'Size-Color' %}selected{% endif %}>رنگ-اندازه</option>
+                                    <option value="None" {% if product.variant == 'None' %}selected{% endif %}>بدون گوناگوني</option>
+                                </select>
+                            </div>
+                            <script>
+                            function variant_typeFunction() {
+                                $( document ).ready(function() {
+                                      const valueType = document.getElementById("variant_type").value;
+                                      const color_row = $(".color_row");
+                                      const size_row = $(".size_row");
+                                      if(valueType === 'Size'){
+                                        color_row.prop('disabled',true);
+                                        size_row.prop('disabled',false);
+                                      }
+                                      if(valueType === 'Color'){
+                                          color_row.prop('disabled',false);
+                                          size_row.prop('disabled',true);
+                                      }
+                                      if(valueType === 'Size-Color'){
+                                          color_row.prop('disabled',false);
+                                          size_row.prop('disabled',false);
+                                      }
+                                });
+                            }
+                            </script>
+                            <div id="variation_container">
+                                <div class="row">
+                                    {% if edit == 0 %}
+                                    <div class="col-1"><a class=" btn-remove_variation close-btn-create-product" style="color: red;cursor:pointer; margin-top: 105px;" onclick="$(this).parent().parent().empty();"><i class="fas fa-times-circle"></i></a></div>
+                                    <div class="col-11">
+                                        <table class="table table-wishlist table-mobile mt-2">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">عنوان</th>
+                                                    <th class="text-center">رنگ</th>
+                                                    <th class="text-center">اندازه</th>
+                                                    <th class="text-center">ايدي تصوير</th>
+                                                    <th class="text-center">موجودي نزد فروشنده</th>
+                                                    <th class="text-center">قيمت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="price-co text-center"><input class="text_variation ml-3" type="text" name="title" required></td>
+                                                    <td class="price-col mr-3">
+                                                        <select class="select_variation color_row" style="border-color: #ddd;" name="color" required>
+                                                            <option hidden disabled selected value>--</option>
+                                                            {% for color in colors %}
+                                                            <option title="{{ color.name }}" value="{{ color.id }}">{{ color.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td class="price-col ml-3">
+                                                        <select class="select_variation size_row" style="border-color: #ddd;" name="size" required>
+                                                            <option hidden disabled selected value>--</option>
+                                                            {% for size in sizes %}
+                                                            <option value="{{ size.id }}">{{ size.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td class="price-col">
+                                                        <div style="margin: 0px 11px;">
+                                                            <input class="form-control" type="number" name="image_id" required>
+                                                        </div>
+                                                    </td>
+                                                    <td class="price-col">
+                                                        <div style="margin: 0px 11px;"><input class="form-control" maxlength="10" type="number" name="seller_quantity" required></div>
+                                                    </td>
+                                                    <td class="price-col text-center">
+                                                        <div style="margin: 0px 11px;"><input class=" variation_cs" name="price" type="number" style="background: #fafafa !important;" required></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <script>
+                                        $(document).ready(function () {
+                                            $('a[id^="on_click_delete_confirmation_"]').click(function(e){
+                                            var linkURL = $(this).attr("href");
+                                            e.preventDefault();
+                                              swal({
+                                              title: "آيا از حذف اين گوناگوني مطمئن هستيد؟",
+                                              icon: "warning",
+                                              buttons: true,
+                                              dangerMode: true,
+                                              buttons: ["خير", "بله"],
+                                            })
+                                            .then((willDelete) => {
+                                              if (willDelete) {
+                                                  window.location.href = linkURL;
+                                              }
+                                            });
+
+                                            });
+                                        });
+                                    </script>
+                                    {% for variant in product.vars.all %}
+                                    <div class="col-1"><a href="{% url 'seller:del_product_var' variant.id %}" id="on_click_delete_confirmation_{{ forloop.counter }}" class="btn-remove_variation close-btn-create-product" style="background: red;cursor:pointer; margin-top: 105px;">X</a></div>
+                                    <div class="col-11">
+                                        <table class="table table-wishlist table-mobile mt-2">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">عنوان</th>
+                                                    <th class="text-center">رنگ</th>
+                                                    <th class="text-center">اندازه</th>
+                                                    <th class="text-center">ايدي تصوير</th>
+                                                    <th class="text-center">موجودي نزد فروشنده</th>
+                                                    <th class="text-center">قيمت</th>
+                                                    <th class="text-center">موجودي انبار</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <input type="hidden" value="{{ variant.id }}" name="current_id">
+                                                    <td class="price-co text-center">
+                                                        <input class="text_variation ml-3" type="text" value="{{ variant.title }}" name="current_title" required>
+                                                    </td>
+                                                    <td class="price-col mr-3">
+                                                        <select class="select_variation color_row" style="border-color: #ddd;" name="current_color" required>
+                                                            {% for color in colors %}
+                                                            <option hidden value>--</option>
+                                                            <option value="{{ color.id }}" {% if variant.color.id == color.id %}selected{% endif %}>{{ color.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td class="price-col ml-3">
+                                                        <select class="select_variation size_row" style="border-color: #ddd;" name="current_size" required>
+                                                            {% for size in sizes %}
+                                                            <option hidden disabled value>--</option>
+                                                            <option value="{{ size.id }}" {% if variant.size.id == size.id %}selected{% endif %}>{{ size.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td class="price-col">
+                                                        <div style="margin: 0px 11px;">
+                                                            <input class="form-control" type="number" value="{{ variant.image_id }}" name="current_image_id" required>
+                                                        </div>
+                                                    </td>
+                                                    <td class="price-col">
+                                                        <div style="margin: 0px 11px;"><input class="form-control" maxlength="10" type="number" value="{{ variant.seller_quantity }}" name="current_seller_quantity" required></div>
+                                                    </td>
+                                                    <td class="price-col text-center">
+                                                        <div style="margin: 0px 11px;"><input class="variation_cs" value="{{ variant.price }}" name="current_price" type="number" style="background: #fafafa !important;" required></div>
+                                                    </td>
+                                                    <td class="price-col text-center">
+                                                        <div style="margin: 0px 11px;"><p>{% if variant.quantity > 0 %}{{ variant.quantity }}{% else %}0{% endif %}</p></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-center mt-5">
+                                <a id="add-variation" class="btn btn-outline-success" style="display: block;width: 10%;">افزودن گوناگوني</a>
+                                </div>
+                            <div class="text-center mt-5">
+                                <button type="submit" class="btn btn-outline-success">پايان</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        var copy_variation = $('#variation_container').html();
+                        var id = 1;
+                        $('#add-variation').on('click', function(){
+                            $('#variation_container').append(
+                                '<div class="row">\n' +
+                                '                            <div class="col-1">\n' +
+                                '                                <a class="btn-remove_variation close-btn-create-product" style="color: red;cursor:pointer;margin-top: 105px;" onclick="$(this).parent().parent().empty();">\n' +
+                                '                                    <i class="fas fa-times-circle"></i>' +
+                                '                                </a>\n' +
+                                '                            </div>\n' +
+                                '                            <div class="col-11">\n' +
+                                '                            <table class="table table-wishlist table-mobile mt-2">\n' +
+                                '                                <thead>\n' +
+                                '                                <tr>\n' +
+                                '                                    <th class="text-center">عنوان</th>\n' +
+                                '                                    <th class="text-center">رنگ</th>\n' +
+                                '                                    <th class="text-center">اندازه</th>\n' +
+                                '                                    <th class="text-center">ايدي تصوير</th>\n' +
+                                '                                    <th class="text-center">موجودي نزد فروشنده</th>\n' +
+                                '                                    <th class="text-center">قيمت</th>\n' +
+                                '                                    <th class="text-center"موجودي انبار</th>\n' +
+                                '                                </tr>\n' +
+                                '                                </thead>\n' +
+                                '                                <tbody>\n' +
+                                '                                <tr>\n' +
+                                '                                    <td class="price-co text-center">\n' +
+                                '                                        <input name="title" class="text_variation ml-3" type="text">\n' +
+                                '                                    </td>\n' +
+                                '                                    <td class="price-col ml-3">\n' +
+                                '                                        <select name="color" class="select_variation color_row" style="border-color: #ddd;" required>\n' +
+                                '                                           <option hidden disabled selected value>--</option>\n' +
+                                                                            {% for color in colors %}
+                                '                                            <option title="{{ color.name }}" value="{{ color.id }}">{{ color.name }}</option>\n' +
+                                                                            {% endfor %}
+                                '                                        </select>\n' +
+                                '                                    </td>\n' +
+                                '                                    <td class="price-col mr-3">\n' +
+                                '                                        <select name="size" class="select_variation size_row" style="border-color: #ddd;" required>\n' +
+                                '                                           <option hidden disabled selected value>--</option>\n' +
+                                                                            {% for size in sizes %}
+                                '                                           <option value="{{ size.id }}">{{ size.name }}</option>\n' +
+                                                                            {% endfor %}
+                                '                                        </select>\n' +
+                                '                                    </td>\n' +
+                                '                                    <td class="price-col">\n' +
+                                '                                        <div style="margin: 0px 11px;">\n' +
+                                '                                            <input name="image_id" class="form-control '+id+'" type="number">\n' +
+                                '                                        </div>\n' +
+                                '                                    </td>\n' +
+                                '                                    <td class="price-col">\n' +
+                                '                                        <div style="margin: 0px 11px;">\n' +
+                                '                                           <input name="seller_quantity" class="form-control '+id+'" type="number">\n' +
+                                '                                        </div>\n' +
+                                '                                    </td>\n' +
+                                '                                    <td class="price-col text-center">\n' +
+                                '                                        <div style="margin: 0px 11px;">\n' +
+                                '                                        <input name="price" class="variation_cs '+id+'" type="number" style="background: #fafafa !important;">\n' +
+                                '                                        </div>\n' +
+                                '                                    </td>\n' +
+                                '                                </tr>\n' +
+                                '                                </tbody>\n' +
+                                '                            </table>\n' +
+                                '                            </div>\n' +
+                                '                        </div>'
+
+                            );
+                            variant_typeFunction()
+
+                            function quantityInputs() {
+                                if ($.fn.inputSpinner) {
+                                    $("input[type='number']."+id).inputSpinner({
+                                        decrementButton: '<i class="icon-minus"></i>',
+                                        incrementButton: '<i class="icon-plus"></i>',
+                                        groupClass: 'input-spinner',
+                                        buttonsClass: 'btn-spinner',
+                                        buttonsWidth: '26px',
+                                    });
+                                }
+                            }
+
+                            quantityInputs()
+
+                            id = id+1;
+                        });
+                        $('#smartwizard').smartWizard({
+                            selected: 0,
+                            theme: 'arrows',
+                            autoAdjustHeight:true,
+                            transitionEffect:'fade',
+                            showStepURLhash: false,
+                        });
+
+                    </script>
+                    <script>
+                        $( document ).ready(function() {
+                            const valueType = document.getElementById("variant_type").value;
+                            const color_row = $(".color_row");
+                            const size_row = $(".size_row");
+                            if(valueType === 'Size'){
+                            color_row.prop('disabled',true);
+                            size_row.prop('disabled',false);
+                            }
+                            if(valueType === 'Color'){
+                                color_row.prop('disabled',false);
+                                size_row.prop('disabled',true);
+                            }
+                            if(valueType === 'Size-Color'){
+                                color_row.prop('disabled',false);
+                                size_row.prop('disabled',false);
+                            }
+                        });
+                    </script>
+
+                    {% else %}
+                    <div class="container text-center">
+                        <p style=color:red;>{{ not_allowed }}</p>
+                        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+{% endblock content %}

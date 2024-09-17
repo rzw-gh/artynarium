@@ -1,0 +1,297 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}اضافه كردن محصول{% endblock title %}
+{% block content %}
+
+<script>
+    $(document).ready(function () {
+        $("#titleId").change(function () {
+            var title = $(this).val();
+            $.ajax({
+                url: '{% url "seller:validate_product_name" %}',
+                data: {
+                    'title': title,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.product_exists_check) {
+                        if (data.vendor_owns_product){
+                            swal({
+                            buttons: false,
+                            icon : "warning",
+                            text : "شما در حال حاظر محصولي به اين نام داريد. لطفا عنواني كه وارد كرديد را چك كنيد."
+                        });
+                        } else {
+                            swal({
+                                buttons: false,
+                                icon : "warning",
+                                text : "محصولي با اين نام از قبل وجود دارد. شما به عنوان فروشنده ديگر اين محصول ثبت خواهيد شد."
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">اضافه كردن محصول</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:my_products' %}">محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">اضافه كردن محصول</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+                <div class="col-md-8 col-lg-10 " style="padding: 3rem;las la-truck-moving ml-2 cs-font-size3">
+                    <!-- Main -->
+                    {% if request.user.seller %}
+
+                    <div id="smartwizard">
+                        <ul class="text-right nav nav-tabs step-anchor mb-5" style="background: #f5f5f5;border: 1px solid #ddd;">
+                            <li class="nav-item d-inline-block cs-progress active"><a class="text-white position-relative nav-link">مرحله اول<br>اضافه كردن محصول</a></li>
+                            <li class="nav-item d-inline-block cs-progress"><a class="text-white position-relative nav-link">مرحله دوم<br><small>گالري محصول</small></a></li>
+                            <li class="nav-item d-inline-block cs-progress"><a class="text-white position-relative nav-link">مرحله سوم<br><small>گوناگوني محصول</small></a></li>
+                            <li class="nav-item d-inline-block cs-progress"><a class="text-white position-relative nav-link">مرحله چهارم<br><small>ثبت نهايي</small></a></li>
+                        </ul>
+                        <!-- Alert Message -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+
+                            <!-- Product Type -->
+                            <div class="row">
+                                <div class="col-12 col-md-7">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label label-margin-top">نوع *</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" name="product_type" required>
+                                            <option value="Art" selected>هنر</option>
+                                            <option value="Material">مواد اوليه</option>
+                                            <option value="Tool">ابزار</option>
+                                        </select>
+                                    </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Name & Slug -->
+                            <div class="row">
+                                <div class="col-12 col-md-7">
+                                    <div class="form-group row">
+                                        <label for="titleId" class="col-sm-2 col-form-label label-margin-top">عنوان *</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control-plaintext form-control" id="titleId" name="name" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5">
+                                    <div class="form-group row">
+                                        <label for="slugId" class="col-sm-2 col-form-label label-margin-top">اسلاگ *</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control-plaintext form-control" id="slugId" name="slug" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Brand & Category -->
+                            <div class="row">
+                                <div class="col-12 col-md-7">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label ">دسته بندی *</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control multi-select" name="category" multiple required>
+                                                {% for category in categories %}
+                                                <option value="{{ category.id }}" {% if category in product.category.all %}selected {% endif %}>{{ category.title }}</option>
+                                                {% if category.has_child %}
+                                                    {% for child in category.get_children %}
+                                                    <option value="{{ child.id }}" {% if child in product.category.all %}selected {% endif %}>{{ child }}</option>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                $('select[multiple] option').on('mousedown', function(e) {
+                                    var $this = $(this),
+                                        that = this,
+                                        scroll = that.parentElement.scrollTop;
+
+                                    e.preventDefault();
+                                    $this.prop('selected', !$this.prop('selected'));
+
+                                    setTimeout(function() {
+                                        that.parentElement.scrollTop = scroll;
+                                    }, 0);
+
+                                    return false;
+                                });
+                                </script>
+                                <div class="col-12 col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label label-margin-top">برند</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" name="brand">
+                                                <option selected value> -- يك برند انتخاب كنيد -- </option>
+                                                {% for b in brand %}
+                                                <option value="{{ b.id }}">{{ b.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Image & Banner & Hover Image -->
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="d-flex flex-column justify-content-between">
+                                            <label class="form-control-label">تصویر *</label>
+                                            <div class="d-block" style="height: 40px">
+                                                <p style="color: #ff9999; font-size: 12px; margin-bottom: 1px">از تصويري در سايز 1200*1200 تا حداكثر 150 كيلوبايت استفاده كنيد</p>
+                                            </div>
+                                            <input class="form-control dropify"
+                                                   type="file" name="image"
+                                                   data-allowed-file-extensions="png jpg jpeg"
+                                                   data-max-file-size="150K"
+                                                   data-max-height="1250"
+                                                   data-max-width="1250"
+                                                   data-min-width="1150"
+                                                   data-min-height="1150"
+                                                   data-height="200"
+                                                   required>
+                                            </div>
+                                        </div>
+
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                            <label class="form-control-label">تصویر بنر *</label>
+                                            <div class="d-block" style="height: 40px">
+                                                <p style="color: #ff9999; font-size: 12px; margin-bottom: 1px;">از تصويري در سايز 280*280 تا حداكثر 150 كيلوبايت استفاده كنيد</p>
+                                            </div>
+                                            <input class="form-control dropify"
+                                                   type="file" name="banner_image"
+                                                   data-allowed-file-extensions="png jpg jpeg"
+                                                   data-max-file-size="150K"
+                                                   data-max-height="290"
+                                                   data-max-width="290"
+                                                   data-min-width="270"
+                                                   data-min-height="270"
+                                                   data-height="200"
+                                                   required>
+                                    </div>
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                            <label class="form-control-label">تصویر بنر شناور *</label>
+                                            <div class="d-block" style="height: 40px">
+                                            <p style="color: #ff9999; font-size: 12px; margin-bottom: 1px;">از تصويري در سايز 280*280 تا حداكثر 150 كيلوبايت استفاده كنيد</p>
+                                            </div>
+                                            <input class="form-control dropify"
+                                                   type="file" name="hover_image"
+                                                   data-allowed-file-extensions="png jpg jpeg"
+                                                   data-max-file-size="150K"
+                                                   data-max-height="290"
+                                                   data-max-width="290"
+                                                   data-min-width="270"
+                                                   data-min-height="270"
+                                                   data-height="200"
+                                                   required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label class="form-control-label">توضيحات *</label>
+                            <!-- Description -->
+                            <div class="form-group">
+                                {{ form.description|safe }}
+                            </div>
+
+                            <hr>
+
+                            <!-- Price & Amount -->
+                            <div class="row mt-5">
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group row">
+                                        <label for="priceId" class="col-sm-4 col-form-label label-margin-top">قيمت(تومان) *</label>
+                                        <div class="col-sm-5">
+                                            <input type="number" class="form-control-plaintext form-control" maxlength="10" id="priceId" name="price" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group row">
+                                        <label for="amountId" class="col-sm-4 col-form-label label-margin-top">موجودی نزد فروشنده *</label>
+                                        <div class="col-sm-5">
+                                            <input type="number" class="form-control-plaintext form-control" id="amountId" name="amount" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-5">
+                                <button type="submit" class="btn btn-outline-success">مرحله بعد</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {% else %}
+                    <div class="container text-center">
+                        <p style=color:red;>{{ not_allowed }}</p>
+                        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                    </div>
+                    {% endif %}
+                    <!-- Main -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+    <script>
+        $(document).ready(function() {
+        $('.multi-select').select2();
+        });
+    </script>
+
+</main>
+{% endblock content %}

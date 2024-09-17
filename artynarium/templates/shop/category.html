@@ -1,0 +1,468 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load mptt_tags %}
+{% load my_tags %}
+{% block title %}دسته بندي {{ catdata.title }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Category Childrens -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+
+            <h1 class="page-title mb-3">{{ catdata.title }}</h1>
+
+            <div class="owl-carousel owl-7 owl-simple" data-toggle="owl">
+
+                {% recursetree catchild %}
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="banner banner-cat">
+                                <a href="{% url 'shop:category' node.id node.slug %}">
+                                    <img src="{% if node.image %} {{ node.image.url }} {% endif %}" alt="Banner">
+                                </a>
+
+                                <div class="banner-content banner-content-static text-center">
+                                    <h3 class="banner-title">{{ node.title }}</h3>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% if not node.is_leaf_node %}
+                    {{ children }}
+                {% endif %}
+
+                {% endrecursetree %}
+
+            </div>
+        </div>
+    </div>
+    <!-- Category Childrens -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}">فروشگاه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:cat' %}">دسته بندی ها</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ catdata.title }}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+
+                    <!-- toolbox -->
+                    <div class="toolbox">
+                        <div class="toolbox-right">
+                            <div class="toolbox-info">
+                                <span>{% if products_count >= 2 %}{{ products_count }} کالا{% elif products_count == 1 %}{{ products_count }} کالا{% elif products_count == 0 %}{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- toolbox -->
+
+                    <!-- Product -->
+                    {% if products_count != 0 %}
+                    <div class="products mb-3">
+                        <div class="row justify-content-center">
+
+                            {% for p in products %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="product product-7 text-center">
+
+                                    <figure class="product-media" style="position:relative;">
+                                        <span class="product-label
+                                        {% if p.total_amount <= 10 %}
+                                            label-sale
+                                        {% else %}
+                                            label-new
+                                        {% endif %}">
+                                        {% if p.store_amount >= 10 %}
+                                        موجود در انبار
+                                        {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                                        کمتر از 10 عدد موجود در انبار
+                                        {% elif p.amount >= 10 %}
+                                        موجود در نزد فروشنده
+                                        {% elif p.amount <= 10 and p.amount > 0 %}
+                                        کمتر از 10 عدد در نزد فروشنده
+                                        {% elif p.total_amount == 0 %}
+                                        ناموجود
+                                        {% endif %}
+                                        </span>
+                                        <a href="{% url 'shop:product' p.id p.slug %}" target="_blank"><img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-image"></a>
+                                        <div class="product-action-vertical">
+                                            <a href="{% url 'shop:add_remove' p.id p.slug %}" target="_blank" class="btn-product-icon btn-wishlist"></a>
+                                        </div>
+                                        <div class="product-action">
+                                            <a href="{% url 'seller:seller_page' p.user.slug %}" target="_blank" class="btn-product">
+                                                <i class="las la-store-alt"></i>
+                                                <span>فروشنده: <strong>{{ p.user.seller_title }}</strong></span>
+                                            </a>
+                                        </div>
+
+                                    </figure>
+
+                                    <!-- Card Description -->
+                                    <div class="product-body">
+
+                                        <!-- title -->
+                                        <h3 class="product-title"><a href="{% url 'shop:product' p.id p.slug %}" target="_blank">{{ p.name }}</a></h3>
+                                        <!-- title -->
+
+                                        {% if p.status != 'Disabled' %}
+
+                                        <!-- price -->
+                                        <div class="product-price mt-1" {% if p.img_gal.all %} style="bottom: 191px !important;" {% endif%}>{{ p.price|intcomma:False }}  <span class="span_toman">تومان</span></div>
+                                        <!-- price -->
+
+                                        <!-- ratings -->
+                                        <div class="ratings-container">
+                                            <div class="myrate deactive">
+                                                <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size"></label>
+                                            </div>
+                                            {% if comments.count >= 1 %}
+                                            <div>
+                                                <span class="ratings-text">( {{ comments.count }} دیدگاه)</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <!-- ratings -->
+
+                                        <!-- Image Gallery -->
+                                        <div class="product-navd dds product-nav-tshumb mt-2">
+                                            {% for i in p.img_gal.all %}
+                                            <a class="dd" href="javascript:{}" class="active"><img class="rounded" width="40px" src="{{ i.image.url }}" alt="product desc"></a>
+                                            {% endfor %}
+                                        </div>
+                                        <!-- Image Gallery -->
+
+                                        {% else %}
+                                        <div class="unavailable-container mt-4 mb-1">
+                                            <div class="unavailable"><span class="unavailable-text">توقف سفارش گيري</span></div>
+                                        </div>
+                                        {% endif %}
+
+                                    </div>
+                                    <!-- Card Description -->
+
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    {% else %}
+                    <h3 class='text-center'>نتیجه ای پیدا نشد</h3>
+                    {% endif %}
+                    <!-- Product -->
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        {% if products.has_other_pages %}
+                        <ul class="pagination justify-content-center">
+
+                            {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link page-link-prev" href="{% url 'shop:shop' %}?{% param_replace page=products.previous_page_number  %}" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                                    <span aria-hidden="true"><i class="las la-arrow-right ml-2"></i></span>قبلی
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for i in products.paginator.page_range %}
+                                {% if products.number == i %}
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?{% param_replace page=i  %}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link page-link-next" href="{% url 'shop:shop' %}?{% param_replace page=products.next_page_number  %}" aria-label="Next">
+                                    بعدی <span aria-hidden="true"><i class="las la-arrow-left mr-2"></i></span>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                        {% endif %}
+                    </nav>
+                    <!-- Pagination -->
+
+                </div>
+
+                <script>
+                    $(document).ready(function() {
+                        $('#reset_filters').click(function(e){
+                            e.preventDefault();
+
+                            var uri = window.location.toString();
+                            if (uri.indexOf("?") > 0) {
+                                var clean_uri = uri.substring(0, uri.indexOf("?"));
+                                window.history.replaceState({}, document.title, clean_uri);
+                                location.reload();
+                            }
+
+                        });
+                        $('form').submit(function(e){
+                            var search_val = $('#search-filtering').val();
+                            if (search_val == '') {
+                                $('#search-filtering').attr('disabled', 'disabled');
+                            }
+                        });
+                                                        $('#clear_search_term').click(function(e){
+                                    e.preventDefault();
+                                    let url = new URL(location.href);
+                                    url.searchParams.delete('search');
+                                    history.pushState({}, null, url);
+                                    location.reload();
+                                });
+                    });
+                </script>
+                <!-- Filter -->
+                <aside class="col-lg-3 order-lg-first">
+                    <div class="sidebar sidebar-shop">
+
+                        <form id="myForm" method="GET" action=".">
+
+                            <!-- Clean All -->
+                        <div class="widget widget-clean">
+                            <a id="reset_filters" href="{{ full_path }}" class="sidebar-filter-clear-256 mr-5" style='font-size: 1em;'>پاک کردن همه فیلتر ها</a>
+                            {% if search %}
+                                <div class="mt-1">
+                                    <a id="clear_search_term" href="#"><i class="las la-times" style="font-size: 20px;vertical-align: -2px;"></i></a>
+                                    {{ search }}
+                                </div>
+                                {% endif %}
+                        </div>
+                        <!-- Clean All -->
+
+                            <!-- Search -->
+                            <div class="widget widget-collapsible">
+                                <div class="input-group mb-2 w-100 cs-flex">
+                                    <span class="input-group-append">
+                                        <button class="searchButton" type="submit"><i class="las la-search" style="vertical-align: -2px;"></i></button>
+                                    </span>
+                                    <input class="py-2 searchTerm" placeholder="جستجو در بین نتايج ..." id="search-filtering" type="search" name="search"/>
+
+                                </div>
+                            </div>
+                            <!-- Search -->
+
+                            <!-- Product -->
+                            <div class="widget widget-collapsible">
+                                <h3 class="widget-title">
+                                    <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1" class="">محصول</a>
+                                </h3>
+
+                                <div class="collapse show" id="widget-1" style="">
+                                    <div class="widget-body">
+                                        <div class="filter-items filter-items-count">
+
+                                            <!-- Art -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="Art" class="custom-control-input" id="cat-6" onchange="$('#myForm').submit();" {% if request.GET.Art == 'on' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-6">هنر</label>
+                                                </div>
+                                            </div>
+                                            <!-- Art -->
+
+                                            <!-- Material -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="Material" class="custom-control-input" id="cat-7" onchange="$('#myForm').submit();" {% if request.GET.Material == 'on' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-7">مواد اولیه</label>
+                                                </div>
+                                            </div>
+                                            <!-- Material -->
+
+                                            <!-- Tool -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="Tool" class="custom-control-input" id="cat-8" onchange="$('#myForm').submit();" {% if request.GET.Tool == 'on' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-8">ابزار</label>
+                                                </div>
+                                            </div>
+                                            <!-- Tool -->
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Product -->
+
+                            <!-- Sort -->
+                            <div class="widget widget-collapsible">
+
+                                <!-- Title -->
+                                <h3 class="widget-title">
+                                    <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2" class="">مرتب سازی</a>
+                                </h3>
+                                <!-- Title -->
+
+                                <div class="collapse show" id="widget-2" style="">
+                                    <div class="widget-body">
+                                        <div class="filter-items filter-items-count">
+                                            <div class="filter-items">
+
+                                            <!-- Latest -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="radio" name="Date" id="cat-20" value="1" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Date == '1' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-20">جدید ترین</label>
+                                                </div>
+                                            </div>
+                                            <!-- Latest -->
+
+                                            <!-- Most Popular -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="View" class="custom-control-input" id="cat-21" onchange="$('#myForm').submit();" {% if request.GET.View == 'on' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-21">محبوب ترین</label>
+                                                </div>
+                                            </div>
+                                            <!-- Most Popular -->
+
+                                            <!-- Oldest -->
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="radio" id="cat-22" name="Date" value="2" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Date == '2' %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="cat-22">قدیمی ترین</label>
+                                                </div>
+                                            </div>
+                                            <!-- Oldest -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Sort -->
+
+                            <!-- Color -->
+                            {% if color.count > 1 %}
+                            <div class="widget widget-collapsible">
+                                <h3 class="widget-title">
+                                    <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true" aria-controls="widget-3">
+                                        رنگ
+                                    </a>
+                                </h3><!-- End .widget-title -->
+
+                                <div class="collapse show" id="widget-3">
+                                    <div class="widget-body">
+                                            <div class="filter-items filter-items-count">
+                                            <div class="filter-colors">
+                                            {% for c in color %}
+                                            <span class="sss" style="background: #{{ c.color.code }} !important;">
+                                                <input type="radio" value="{{ c.color.id }}" name="selected_color"
+                                                       onchange="$('#myForm').submit();"
+                                                       {% if selected_color.id == c.color.id %}
+                                                       checked {% endif %}>
+                                            </span>
+                                            {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Color -->
+
+                            <!-- Size -->
+                            {% if size.count > 1 %}
+                            <div class="widget widget-collapsible">
+                                <h3 class="widget-title">
+                                    <a data-toggle="collapse" href="#widget-8" role="button" aria-expanded="true" aria-controls="widget-8">
+                                        اندازه
+                                    </a>
+                                </h3>
+
+                                <div class="collapse show" id="widget-8">
+                                    <div class="widget-body">
+                                        <div class="filter-items filter-items-count">
+
+                                            {% for c in size %}
+                                            <div class="filter-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="radio" name="selected_size" value="{{ c.size.id }}" class="custom-control-input" id="size-{{ forloop.counter }}" onchange="$('#myForm').submit();" {% if selected_size.id ==  c.size.id %} checked {% endif %}>
+                                                    <label class="custom-control-label" for="size-{{ forloop.counter }}">{{ c.size.name }}</label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Size -->
+
+                            <!-- Brand -->
+                            {% if brand.count > 1 %}
+                            <div class="widget widget-collapsible">
+                                <h3 class="widget-title">
+                                    <a data-toggle="collapse" href="#widget-4" role="button" aria-expanded="true" aria-controls="widget-4">
+                                        برند
+                                    </a>
+                                </h3>
+
+                                <div class="collapse show" id="widget-4">
+                                    <div class="widget-body">
+                                        <div class="filter-items filter-items-count">
+                                            <div class="filter-items">
+
+                                                {% for p in brand %}
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="radio" name="selected_brand" value="{{ p.id }}" class="custom-control-input" id="brand-{{ forloop.counter }}" onchange="$('#myForm').submit();" {% if selected_brand.id ==  p.id %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="brand-{{ forloop.counter }}">{{ p.title }}</label>
+                                                        <span class="item-count">{{ p.pbrand.count }}</span>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Brand -->
+
+
+                        </form>
+
+                    </div>
+
+                </aside>
+                <!-- Filter -->
+
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

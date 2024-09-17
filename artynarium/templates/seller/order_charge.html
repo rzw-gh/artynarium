@@ -1,0 +1,196 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}ارسال به
+انبار{% endblock title %}
+{% block content %}
+<main class="main">
+    <!-- top image -->
+    <div class="page-header text-center"
+        style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+
+        <div class="container">
+            <h1 class="page-title">ارسال به انبار</h1>
+        </div>
+
+    </div>
+    <!-- top image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb"
+        class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:order_detail' order.id %}">جزییات سفارش</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ارسال به انبار</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+  <div class="page-content pb-0 mt-5 mb-5">
+      <div class="container">
+          <div class="row">
+          {% if request.user.seller %}
+
+            <!-- Side_Panel -->
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+            <!-- Side_Panel -->
+
+              <div class="col-md-8 col-lg-10">
+
+              <!-- Alert Message -->
+              {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                      {{ message }}
+                  </div>
+                  {% endfor %}
+              {% endif %}
+              <!-- Alert Message -->
+
+
+
+              <!--Order Items-->
+                {% for p in order_item %}
+                    {% if p.from_amount %}
+                    <table class="table table-wishlist table-mobile mr-5">
+
+                    <!-- Heading -->
+                    <thead>
+                        <tr>
+                            <th>محصول</th>
+                            <th>ایدی</th>
+                            <th>قيمت</th>
+                            <th>تعداد</th>
+                            <th>كل</th>
+                            <th>كارمزد</th>
+                            <th>سود خالص</th>
+                            <th>سفارش از</th>
+                        </tr>
+                    </thead>
+                    <!-- Heading -->
+
+                    <!-- Body -->
+                    <tbody>
+
+                        {% for p in order_item %}
+                        <tr>
+                            <!-- Product -->
+                            <td class="product-col">
+                                <div class="product">
+                                    <!-- Image -->
+                                    <figure class="product-media">
+                                        {% if p.variant.image_id > 0 %}
+                                        <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                            <img src="{{ p.variant.image }}" alt="{{ p.product.name }}">
+                                        </a>
+                                        {% else %}
+                                        <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                            <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                                        </a>
+                                        {% endif %}
+                                    </figure>
+                                    <!-- Image -->
+
+                                    <!-- Name -->
+                                    <h3 class="product-title mr-5">
+                                        <a href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }} {% if p.variant.size %} - {{ p.variant.size }} {% endif %} {% if p.variant.color %} - {{ p.variant.color }} {% endif %}</a>
+                                    </h3>
+                                    <!-- Name -->
+                                </div>
+                            </td>
+                            <!-- Product -->
+
+                            <!-- ID -->
+                            <td class="price-col">{{ p.productid }}</td>
+                            <!-- ID -->
+
+                            <!-- Price -->
+                            <td class="price-col">{{ p.product.price|intcomma:False }} تومان</td>
+                            <!-- Price -->
+
+                            <!-- Quantity -->
+                            <td class="price-col">{{ p.quantity|intcomma:False }}</td>
+                            <!-- Quantity -->
+
+                            <!-- Item Total -->
+                            <td class="price-col">{{ p.item_total|intcomma:False }}</td>
+                            <!-- Item Total -->
+
+                            <!-- Item Pursuant -->
+                            <td class="price-col">{{ p.item_pursuant|intcomma:False }}</td>
+                            <!-- Item Pursuant -->
+
+                            <!-- Item Profit -->
+                            <td class="price-col">{{ p.item_profit|intcomma:False }}</td>
+                            <!-- Item Profit -->
+
+                            <!-- Order From -->
+                            <td class="product-col">
+                                <div class="product">
+                                    <h3 class="product-title">
+                                        <p {% if p.from_amount %} style="color:orange" title="در مدت زمان تعيين شده محصول را به انبار ارسال كنيد"{% else %}style="color:green"{% endif %}>{% if p.from_amount %}نزد فروشنده {% else %}موجودي انبار{% endif %}</p>
+                                    </h3>
+                                </div>
+                            </td>
+                            <!-- Order From -->
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    <!-- Body -->
+
+                    </table>
+                    {% endif %}
+                {% endfor %}
+              <!--Order Items-->
+                  <div>
+                      <p class="text-center mb-4" style="color:{% if order_charge %}green{% else %}red{% endif %}">{% if order_charge %}فرستاده شده{% else %}فرستاده نشده{% endif %}</p>
+                  </div>
+              {% if order_charge %}
+
+              {% else %}
+                  <div class="text-center">
+                      <a  href="{% url 'seller:order_charge' order.id %}" class="btn btn-outline-primary-2 btn-order  d-inline-block">محصولات را با تعداد ذكر شده ارسال كردم</a>
+                  </div>
+
+              {% endif %}
+
+
+              {% if order_charge %}
+              <div class="row justify-content-center">
+                <p class="mx-4"> تاريخ ثبت: {{ order_charge.create_time }}</p>
+                <p> تاييديه ادمين : {% if order_charge.admin_confirmation %}بله{% else %}خير{% endif %}</p>
+              </div>
+              {% endif %}
+
+              <div class="cs-warn-send mt-5 text-center" style="text-align: center;border-bottom: solid 1px #dedede;">
+                <p>طهران - اتوبان بسیج - قصر فیروزه یک - پست شهرک</p>
+                <p>09911061927</p>
+            </div>
+            <div class="cs-warn-send mt-5 text-center">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6482.345674321192!2d51.4969324789359!3d35.6727460062324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f91fd392b6dc3ed%3A0x2168afc22d0bd7a5!2sQasr-e-Firuzeh-ye-Yek%2C%20District%2014%2C%20Tehran%2C%20Tehran%20Province%2C%20Iran!5e0!3m2!1sen!2s!4v1627475116140!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+              {% else %}
+              <div class="container text-center">
+                  <p style=color:red;>{{ not_allowed }}</p>
+                  <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+              </div>
+              {% endif %}
+              </div>
+          </div>
+      </div>
+  </div>
+</main>
+
+{% endblock content %}

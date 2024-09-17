@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}سوابق تراكنش ها{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">سوابق تراكنش ها</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:financial' %}">مديريت مالي</a></li>
+                <li class="breadcrumb-item active" aria-current="page">سوابق تراكنش ها</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+                <div class="col-md-8 col-lg-10">
+            {% if request.user.seller %}
+
+            <!-- Main -->
+            {% if history %}
+            <table class="table table-wishlist table-mobile">
+
+                <!-- Heading -->
+                <thead>
+                    <tr>
+                        <th>وضعيت پرداخت</th>
+                        <th>مقدار</th>
+                        <th>شماره پيگيري</th>
+                        <th>تاريخ درخواست</th>
+                        <th>تاريخ واريز</th>
+                    </tr>
+                </thead>
+                <!-- Heading -->
+
+                <!-- Body -->
+                <tbody>
+
+                    {% for p in history %}
+                    <tr>
+
+                        <!-- Price -->
+                        <td class="price-col">{% if p.payed %}پرداخت شده{% else %}پرداخت نشده{% endif %}</td>
+                        <!-- Price -->
+                        <!-- Price -->
+                        <td class="price-col">{{ p.amount|intcomma:False }} تومان</td>
+                        <!-- Price -->
+                        <!-- Price -->
+                        <td class="price-col">{{ p.order_tracking_number }}</td>
+                        <!-- Price -->
+                        <!-- Price -->
+                        <td class="price-col">{{ p.create_time }}</td>
+                        <!-- Price -->
+                        <!-- Price -->
+                        <td class="price-col">{{ p.pay_date }}</td>
+                        <!-- Price -->
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <!-- Body -->
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    {% if history.has_other_pages %}
+                    <ul class="pagination">
+                        {% if history.has_previous %}
+                        <li class="page-item"><a class="page-link page-link-prev" href="{% url 'seller:history' %}?page={{ history.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true">قبلي<span aria-hidden="true"><i class="icon-long-arrow-left"></i></span></a></li>
+                        {% endif %}
+                        {% for i in history.paginator.page_range %}
+                            {% if history.number == i %}
+                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if history.has_next %}
+                        <li class="page-item"><a class="page-link page-link-next" href="{% url 'seller:history' %}?page={{ history.next_page_number }}" aria-label="Next">بعدي <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span></a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <!-- Pagination -->
+
+            </table>
+            {% else %}
+            <div class="container text-center">
+                <h2>تا به حال تراكنشي ثبت نشده است.</h2>
+                <a href="{% url 'shop:my_orders' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به حساب كاربري</span><i class="las la-shopping-bag mr-2"></i></a>
+            </div>
+            {% endif %}
+            <!-- Main -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+    {% else %}
+    <div class="container text-center">
+        <p style=color:red;>{{ not_allowed }}</p>
+        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+    </div>
+    {% endif %}
+</main>
+
+{% endblock content %}

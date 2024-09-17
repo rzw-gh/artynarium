@@ -1,0 +1,192 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{% if edit == 1 %}ويرايش گالري محصول{% else %}گالري محصول{% endif %}{% endblock title %}
+{% block content %}
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">{% if edit == 1 %}ويرايش گالري محصول{% else %}گالري محصول{% endif %}</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:my_products' %}">محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% if edit == 1 %}ويرايش گالري محصول{% else %}گالري محصول{% endif %}</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+                <div class="col-md-8 col-lg-10 " style="padding: 3rem;las la-truck-moving ml-2 cs-font-size3">
+                    <!-- Main -->
+                    {% if request.user.seller %}
+
+                    <div id="smartwizard2">
+                        <ul class="text-right nav nav-tabs step-anchor mb-5" style="background: #f5f5f5;border: 1px solid #ddd;">
+                            <li class="nav-item d-inline-block cs-progress"><a {% if edit == 1 %}href="{% url 'seller:product_update' id %}"{% endif %} class="text-white position-relative nav-link">مرحله اول<br><small>{% if edit == 1 %}ويرايش محصول{% else %}اضافه كردن محصول{% endif %}</small></a></li>
+                            <li class="nav-item d-inline-block cs-progress active"><a class="text-white position-relative nav-link">مرحله دوم<br>{% if edit == 1 %}ويرايش گالري محصول{% else %}گالري محصول{% endif %}</a></li>
+                            <li class="nav-item d-inline-block cs-progress"><a {% if edit == 1 %}href="{% url 'seller:product_variant_create_update' id 1 %}"{% endif %} class="text-white position-relative nav-link">مرحله سوم<br><small>{% if edit == 1 %}ويرايش گوناگوني محصول{% else %}گوناگوني محصول{% endif %}</small></a></li>
+                            {% if edit == 0 %}<li class="nav-item d-inline-block cs-progress"><a class="text-white position-relative nav-link">مرحله چهارم<br><small>ثبت نهايي</small></a></li>{% endif %}
+                        </ul>
+                        <!-- Alert Message -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div id="gallery_container">
+                                <div class="row">
+                                    {% if edit == 1 %}
+                                    <script>
+                                        $(document).ready(function () {
+                                            $('a[id^="on_click_delete_confirmation_"]').click(function(e){
+                                            var linkURL = $(this).attr("href");
+                                            e.preventDefault();
+                                              swal({
+                                              title: "آيا از حذف اين گالري مطمئن هستيد؟",
+                                              icon: "warning",
+                                              buttons: true,
+                                              dangerMode: true,
+                                              buttons: ["خير", "بله"],
+                                            })
+                                            .then((willDelete) => {
+                                              if (willDelete) {
+                                                  window.location.href = linkURL;
+                                              }
+                                            });
+
+                                            });
+                                        });
+                                    </script>
+                                    {% for image in product.img_gal.all %}
+                                    <input type="hidden" value="{{ image.id }}" name="current_id">
+                                    <!-- Title -->
+
+                                    <!-- Image -->
+                                    <div class="col-6">
+                                        <div class="form-group m-0 mb-1 row">
+                                            <div class="col-sm-12 m-0 p-0 mb-1">
+                                                <input type="text" placeholder="عنوان" class="form-control-plaintext form-control" name="title" required>
+                                            </div>
+                                            <input class="form-control dropify cssss"
+                                                   type="file" name="current_image_{{ image.id }}"
+                                                   data-allowed-file-extensions="png jpg jpeg"
+                                                   data-max-file-size="150K"
+                                                   data-max-height="1250"
+                                                   data-max-width="1250"
+                                                   data-min-width="1150"
+                                                   data-min-height="1150"
+                                                   data-height="200"
+                                                   data-show-remove="false"
+                                                   data-default-file="{{ image.image.url }}">
+                                        </div>
+                                        <a href="{% url 'seller:del_product_gal' image.id %}" id="on_click_delete_confirmation_{{ forloop.counter }}" class="close-btn-create-product btn btn-danger w-100">حذف عکس<i class="fas fa-times-circle"></i></a>
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <!-- Title -->
+                                    <!-- Image -->
+                                    <div class="col-6">
+                                        <div class="form-group m-0 mb-1 row">
+                                            <div class="col-sm-12 m-0 p-0 mb-1">
+                                                <input type="text" placeholder="عنوان" class="form-control-plaintext form-control" name="title" required>
+                                            </div>
+                                            <input class="form-control dropify cssss m-0 p-0"
+                                                   type="file" name="image"
+                                                   data-allowed-file-extensions="png jpg jpeg"
+                                                   data-max-file-size="150K"
+                                                   data-max-height="1250"
+                                                   data-max-width="1250"
+                                                   data-min-width="1150"
+                                                   data-min-height="1150"
+                                                   data-height="200"
+                                                   required>
+                                        </div>
+                                        <a class="close-btn-create-product btn btn-danger w-100" onclick="$(this).parent().parent().empty();">حذف عکس<i class="fas fa-times-circle"></i></a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-center mt-5">
+                                <a id="add-gallery" class="btn btn-outline-success" style="display: block;width: 10%;">افزودن گالري</a>
+                            </div>
+                            <div class="text-center mt-5">
+                                <button type="submit" name="finish_process" class="btn btn-outline-success">پايان</button>
+                                <button type="submit" name="add_variant" class="btn btn-outline-success">{% if edit == 1 %}ويرايش گوناگونی{% else %}افزودن گوناگونی{% endif %}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        {% if edit == 0 %}
+                        var copy = $('#gallery_container').html();
+                            $('#add-gallery').on('click', function(){
+                                $('#gallery_container').append( copy );
+                                $('.dropify').dropify();
+                        });
+                        {% else %}
+                        $('#add-gallery').on('click', function(){
+                            $('#gallery_container').append(
+                             '<div class="col-6">\n' +
+                                '                                        <div class="form-group m-0 mb-1 row">\n' +
+                                '                                            <div class="col-sm-12 m-0 p-0 mb-1">\n' +
+                                '                                                <input type="text" placeholder="عنوان" class="form-control-plaintext form-control" name="title" required>\n' +
+                                '                                            </div>\n' +
+                                '                                            <input class="form-control dropify cssss m-0 p-0"\n' +
+                                '                                                   type="file" name="image"\n' +
+                                '                                                   data-allowed-file-extensions="png jpg jpeg"\n' +
+                                '                                                   data-max-file-size="150K"\n' +
+                                '                                                   data-max-height="1250"\n' +
+                                '                                                   data-max-width="1250"\n' +
+                                '                                                   data-min-width="1150"\n' +
+                                '                                                   data-min-height="1150"\n' +
+                                '                                                   data-height="200"\n' +
+                                '                                                   required>\n' +
+                                '                                        </div>\n' +
+                                '                                        <a class="close-btn-create-product btn btn-danger w-100" onclick="$(this).parent().parent().empty();">حذف عکس<i class="fas fa-times-circle"></i></a>\n' +
+                                '                                    </div>'
+                             );
+                            $('.dropify').dropify();
+                        });
+                        {% endif %}
+                    </script>
+
+                    {% else %}
+                    <div class="container text-center">
+                        <p style=color:red;>{{ not_allowed }}</p>
+                        <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                    </div>
+                    {% endif %}
+                    <!-- Main -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+{% endblock content %}

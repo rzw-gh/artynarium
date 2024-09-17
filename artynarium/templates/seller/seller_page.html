@@ -1,0 +1,492 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}محصولات {{ seller.seller_title }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+    <!-- top image -->
+    <div class="page-header text-center"
+         style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+
+        <div class="container">
+            <h1 class="page-title">محصولات {{ seller.seller_title }}</h1>
+        </div>
+
+    </div>
+    <!-- top image -->
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb"
+         class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a>
+                </li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}">فروشگاه</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">محصولات {{ seller.seller_title }}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+    <div class="position-relative">
+        {% if seller.ghost %}<div class="cover-bg"><div class="card-cover"><span class="text-white">این کاربر در حال حاضر بنابر دلایلی قادر به ارائه خدمت نمیباشد</span></div></div>{% endif %}
+        <div class="page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-sm-5 col-lg-3">
+                        <div id="side">
+                            <div class="border" id="">
+                                <div class="header_card_cs position-relative">
+                                    <div class="box-radius position-absolute">
+                                        {% if seller.profile_image %}
+                                        <img class="rounded-circle cs-avatar " src="{{ request.user.profile_image.url }}">
+                                        {% else %}
+                                        <img class="rounded-circle cs-avatar" src="{% static 'assets\images\me-home.jpg' %}">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="" style="border-bottom: solid 1px #dedede">
+                                    <!-- Seller title -->
+                                    <div class="text-center mt-4 "> <h4 style="font-size: 20px;">{{ seller.seller_title }}</h4></div>
+                                    <div class="text-center mt-3"> <h4  style="font-size: 14px;">عضویت از {{ seller.date_joined|naturaltime }}</h4></div>
+                                    <!-- Seller title -->
+                                </div>
+                                <div class="footer-card">
+                                    <div class="text-center my-3">
+                                    <span  style="border-bottom: dashed 1px #dedede;color: #00bfd6">
+                                        {{ seller.user_products_satisfaction_percent|floatformat:"0" }} درصد رضایت از کالا
+                                    </span><span >
+                                        | {{ seller.user_products_comments_buyer_count }} رای
+                                    </span>
+                                    </div>
+                                    <div class="main-item-container my-5">
+                                        <div class="parent-item-card">
+                                            <div class="item-card-cs">{{ seller.in_time_supply }} %</div>
+                                            <div class="text-center"><span>تامين به موقع</span></div>
+                                        </div>
+                                        <div class="parent-item-card">
+                                            <div class="item-card-cs">{{ seller.commitment_to_send }}</div>
+                                            <div class="text-center"><span>تعهد ارسال</span></div>
+                                        </div>
+                                        <div class="parent-item-card">
+                                            <div class="item-card-cs">{{ seller.user_products_count }}</div>
+                                            <div class="text-center"><span>تعداد كالا</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="share-footer" style="direction: ltr">
+                                    <button class="position-relative" type="button" style="background: transparent;border: none;" data-toggle="modal" data-target="#exampleModal">
+                                        <span class="c-profile-box-seller__referer-url js-btn-option--social span_share">{{ full_path }}</span>
+                                        <i class="las la-share position-absolute i_share"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">اشتراک گذاری در شبکه های اجتماعی</h5>
+                                                <button type="button" class="close m-0 p-0" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body cs-modal p-5">
+                                                <a href="https://www.facebook.com/sharer/sharer.php?m2w&s=100&p[url]={{ full_path }}" class="social-icon" title="Facebook" target="_blank"><i class="lab la-facebook-f"></i></a>
+                                                <a href="https://twitter.com/intent/tweet?url={{ full_path }}" class="social-icon" title="Twitter" target="_blank"><i class="lab la-twitter"></i></a>
+                                                <a href="https://wa.me/?text={{ full_path }}" class="social-icon"  title="Whatsapp" target="_blank"><i class="lab la-whatsapp" ></i></a>
+                                            </div>
+                                            <div class="modal-footer d-block text-left">
+                                                {{ full_path }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        <script>
+                            $(document).ready(function() {
+                                $('#reset_filters').click(function(e){
+                                    e.preventDefault();
+
+                                    var uri = window.location.toString();
+                                    if (uri.indexOf("?") > 0) {
+                                        var clean_uri = uri.substring(0, uri.indexOf("?"));
+                                        window.history.replaceState({}, document.title, clean_uri);
+                                        location.reload();
+                                    }
+
+                                });
+                                $('form').submit(function(e){
+                                    var search_val = $('#search-filtering').val();
+                                    if (search_val == '') {
+                                        $('#search-filtering').attr('disabled', 'disabled');
+                                    }
+                                });
+
+
+                                $('#clear_search_term').click(function(e){
+                                    e.preventDefault();
+                                    let url = new URL(location.href);
+                                    url.searchParams.delete('search');
+                                    history.pushState({}, null, url);
+                                    location.reload();
+                                });
+                            });
+                        </script>
+                        <div class="sidebar sidebar-shop mt-5">
+                            <form id="myForm" method="GET" action=".">
+
+                                <!-- Clean All -->
+                                <div class="widget widget-clean">
+                                    <a id="reset_filters" href="{{ full_path }}"
+                                       class="sidebar-filter-clear-256 mr-5" style='font-size: 1em;'>پاک کردن همه فیلتر ها</a>
+                                    {% if search %}
+                                    <div>
+                                        {{ search }}
+                                        <a id="clear_search_term" href="#"><i class="las la-times" style="font-size: 20px"></i></a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Clean All -->
+
+                                <!-- Search -->
+                                <div class="widget widget-collapsible">
+                                    <div class="input-group mb-2 w-100 cs-flex">
+                                        <span class="input-group-append">
+                                            <button class="searchButton" type="submit"><i class="las la-search" style="vertical-align: -2px;"></i></button>
+                                        </span>
+                                        <input class="py-2 searchTerm" placeholder="جستجو در بین نتايج ..." id="search-filtering" type="search" name="search"/>
+                                    </div>
+                                </div>
+                                <!-- Search -->
+
+
+                                <!-- Product -->
+                                {% if product_type > 1 %}
+                                <div class="widget widget-collapsible">
+                                    <h3 class="widget-title">
+                                        <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1" class="">محصول</a>
+                                    </h3>
+                                    <div class="collapse show" id="widget-1" style="">
+                                        <div class="widget-body">
+                                            <div class="filter-items filter-items-count">
+
+                                                <!-- Art -->
+                                                {% if art %}
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="Art" class="custom-control-input" id="cat-6" onchange="$('#myForm').submit();" {% if request.GET.Art == 'on' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-6">هنر</label>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                <!-- Art -->
+
+                                                <!-- Material -->
+                                                {% if material %}
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="Material" class="custom-control-input" id="cat-7" onchange="$('#myForm').submit();" {% if request.GET.Material == 'on' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-7">مواد اولیه</label>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                <!-- Material -->
+
+                                                <!-- Tool -->
+                                                {% if tool %}
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="Tool" class="custom-control-input" id="cat-8" onchange="$('#myForm').submit();" {% if request.GET.Tool == 'on' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-8">ابزار</label>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                <!-- Tool -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <!-- Product -->
+
+                                <!-- Sort -->
+                                <div class="widget widget-collapsible">
+
+                                    <!-- Title -->
+                                    <h3 class="widget-title">
+                                        <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2" class="">مرتب سازی</a>
+                                    </h3>
+                                    <!-- Title -->
+
+                                    <div class="collapse show" id="widget-2" style="">
+                                        <div class="widget-body">
+                                            <div class="filter-items filter-items-count">
+                                                <div class="filter-items">
+
+                                                <!-- Latest -->
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="radio" name="Date" id="cat-20" value="1" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Date == '1' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-20">جدید ترین</label>
+                                                    </div>
+                                                </div>
+                                                <!-- Latest -->
+
+                                                <!-- Most Popular -->
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="View" class="custom-control-input" id="cat-21" onchange="$('#myForm').submit();" {% if request.GET.View == 'on' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-21">محبوب ترین</label>
+                                                    </div>
+                                                </div>
+                                                <!-- Most Popular -->
+
+                                                <!-- Oldest -->
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="radio" id="cat-22" name="Date" value="2" class="custom-control-input" onchange="$('#myForm').submit();"  {% if request.GET.Date == '2' %} checked {% endif %}>
+                                                        <label class="custom-control-label" for="cat-22">قدیمی ترین</label>
+                                                    </div>
+                                                </div>
+                                                <!-- Oldest -->
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- Sort -->
+
+                                <!-- Category -->
+                                {% if maincat.count > 1 %}
+                                <div class="widget widget-collapsible">
+                                    <h3 class="widget-title">
+                                        <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true" aria-controls="widget-3">
+                                            دسته بندی ها
+                                        </a>
+                                    </h3>
+
+                                    <div class="collapse show" id="widget-3">
+                                        <div class="widget-body">
+                                            <div class="filter-items filter-items-count">
+                                                {% for p in maincat %}
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input {% if current_cat.id == p.id %} checked {% endif %}
+                                                               type="radio" name="Cat"
+                                                               value="{{ p.id }}" class="custom-control-input"
+                                                               id="cat-{{ forloop.counter }}" onchange="$('#myForm').submit();">
+                                                        <label class="custom-control-label" for="cat-{{ forloop.counter }}">{{ p.title }}</label>
+                                                        <span class="item-count">{{ p.catproduct.count }}</span>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <!-- Category -->
+
+                                <!-- Brand -->
+                                {% if brand.count > 1 %}
+                                <div class="widget widget-collapsible">
+                                    <h3 class="widget-title">
+                                        <a data-toggle="collapse" href="#widget-4" role="button" aria-expanded="true" aria-controls="widget-4">
+                                            برند
+                                        </a>
+                                    </h3>
+
+                                    <div class="collapse show" id="widget-4">
+                                        <div class="widget-body">
+                                            <div class="filter-items filter-items-count">
+                                                <div class="filter-items">
+
+                                                    {% for p in brand %}
+                                                    <div class="filter-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="radio" name="Brand" value="{{ p.id }}"
+                                                                   {% if current_brand.id == p.id %} checked {% endif %}
+                                                                   class="custom-control-input"
+                                                                   id="brand-{{ forloop.counter }}" onchange="$('#myForm').submit();">
+                                                            <label class="custom-control-label" for="brand-{{ forloop.counter }}">{{ p.title }}</label>
+                                                            <span class="item-count">{{ p.pbrand.count }}</span>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <!-- Brand -->
+
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-7 col-lg-9">
+                        <!-- toolbox -->
+                        <div class="toolbox">
+                            <div class="toolbox-right">
+                                <div class="toolbox-info">
+                                    <span>{% if products_count >= 2 %}{{ products_count }} کالا{% elif products_count == 1 %}{{ products_count }} کالا{% elif products_count == 0 %}{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- toolbox -->
+                        {% if products_count != 0 %}
+                        <div class="row">
+                            {% for p in products %}
+                            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                                <div class="product">
+
+                                    <!-- Card Image -->
+                                    <figure
+                                            class="product-media position-relative">
+
+                                        <!-- label -->
+                                        <span class="product-label
+                                    {% if p.total_amount <= 10 %}
+                                        label-sale
+                                    {% else %}
+                                        label-new
+                                    {% endif %}">
+                                            {% if p.store_amount >= 10 %}
+                                            موجود در انبار
+                                            {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                                            کمتر 10 عدد موجود در انبار
+                                            {% elif p.amount >= 10 %}
+                                            موجود در نزد فروشنده
+                                            {% elif p.amount <= 10 and p.amount > 0 %}
+                                            کمتر از 10 عدد در نزد فروشنده
+                                            {% elif p.total_amount == 0 %}
+                                            ناموجود
+                                            {% endif %}
+                                        </span>
+                                        <!-- label -->
+
+                                        <!-- image -->
+                                        <a href="{% url 'shop:product' p.id p.slug %}"><img src="{{ p.image.url }}" alt="{{ p.category.title }}" class="product-image"></a>
+                                        <!-- image -->
+
+                                        <div
+                                                class="product-action2  text-center action-icon-top">
+                                            <a href="{% url 'shop:product' p.id p.slug %}"
+                                               class="btn-product btn-cart"><span style="vertical-align: 2px;margin-right: 5px;">خريد
+                                                    كنيد</span></a>
+                                        </div>
+
+                                    </figure>
+                                    <!-- Card Image -->
+
+                                    <!-- Card Description -->
+                                    <div
+                                            class="product-body">
+
+                                        <!-- Name -->
+                                        <h3
+                                                class="product-title text-center mb-1">
+                                            <a
+                                                    href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a>
+                                        </h3>
+                                        <!-- Name -->
+
+                                        <!-- Price -->
+                                        <div
+                                                class="product-price text-center d-block" style="">
+                                            {{ p.price|intcomma:False }}<span style="vertical-align: 2px;" class="span_toman">تومان</span>
+                                        </div>
+                                        <!-- Price -->
+
+                                        <!-- Comments -->
+                                        {% if p.comment.count >= 1 %}
+
+                                        <!-- ratings -->
+                                        <div class="ratings-container justify-content-center align-items-center">
+                                            <div class="myrate  text-center">
+                                                <label class="{% if p.averagereview >= 1 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 2 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 3 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 4 %} rangi {% endif %} star-size"></label>
+                                                <label class="{% if p.averagereview >= 5 %} rangi {% endif %} star-size"></label>
+                                            </div>
+                                            {% if p.comments_count >= 1 %}
+                                                <span class="ratings-text">( {{ p.comments_count }} دیدگاه)</span>
+                                            {% endif %}
+                                        </div>
+                                        <!-- ratings -->
+
+                                        {% endif %}
+
+                                    </div>
+                                    <!-- Card Description -->
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <h3 class='text-center'>نتیجه ای پیدا نشد</h3>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation">
+                            {% if products.has_other_pages %}
+                            <ul class="pagination">
+                                {% if products.has_previous %}
+                                <li class="page-item"><a
+                                        class="page-link page-link-prev"
+                                        href="{% url 'shop:shop' %}?page={{ products.previous_page_number }}"
+                                        aria-label="Previous"
+                                        tabindex="-1"
+                                        aria-disabled="true">قبلي<span
+                                        aria-hidden="true"><i
+                                        class="icon-long-arrow-left"></i></span></a>
+                                </li>
+                                {% endif %}
+                                {% for i in products.paginator.page_range %}
+                                {% if products.number == i %}
+                                <li class="page-item active"
+                                    aria-current="page"><a
+                                        class="page-link"
+                                        href="#">{{ i }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item"><a
+                                        class="page-link"
+                                        href="?page={{ i }}">{{ i }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                                {% if products.has_next %}
+                                <li class="page-item"><a
+                                        class="page-link page-link-next"
+                                        href="{% url 'shop:shop' %}?page={{ products.next_page_number }}"
+                                        aria-label="Next">بعدي<span
+                                        aria-hidden="true"><i
+                                        class="icon-long-arrow-right"></i></span></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </nav>
+                        <!-- Pagination -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

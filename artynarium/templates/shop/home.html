@@ -1,0 +1,1295 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load instagram_client %}
+{% block title %}فروشگاه اينترنتي
+آرتيناريوم{% endblock title %}
+{% block content %}
+
+<!-- main -->
+<main class="main">
+    <!-- Top Slider (intro-slider) -->
+    {% if topslider %}
+    <div class="intro-slider-container">
+        <!-- Main -->
+        <div id="owl-1"
+            class="owl-carousel owl-simple owl-light owl-nav-inside"
+            data-toggle="owl"
+            data-owl-options='{"nav": false}'>
+            {% for ts in topslider %}
+            <div class="intro-slide"
+                style="background-image: url( {% if ts.slider_image %}{{ ts.slider_image.url }}{% endif %});">
+                <div
+                    class="container intro-content">
+                    <h3 class="intro-subtitle">
+                        {{ ts.slider_title }}</h3>
+                    <h1 class="intro-title">
+                        {{ ts.slider_description }}
+                    </h1>
+                    <a href="{% url 'shop:product' ts.id ts.slug %}"
+                        class="btn btn-primary">
+                        <i
+                            class="icon-long-arrow-left mr-2"></i>
+                        <span>خرید کنید</span>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Main -->
+        <span
+            class="slider-loader text-white"></span>
+    </div>
+    {% endif %}
+    <!-- Top Slider (intro-slider) -->
+
+    <div class="mb-3 mb-lg-5"></div>
+
+    <!-- banner-group -->
+    <div class="banner-group">
+        <div class="container">
+            <div
+                class="row justify-content-center">
+                <!-- Latest banner -->
+                <div class="col-md-12 col-lg-5">
+                    <div
+                        class="banner banner-large banner-overlay banner-overlay-light">
+                        <a
+                            href="{% url 'shop:shop' %}?sort=latest "><img
+                                src="{% static 'assets/images/demos/demo-2/banners/banner-1.jpg' %}"
+                                alt="Banner"></a>
+
+                        <div
+                            class="banner-content banner-content-top">
+                            <h4
+                                class="banner-subtitle">
+                                تازه ها</h4>
+                            <h3
+                                class="banner-title">
+                                جدید ترین محصولات
+                            </h3>
+                            <a href="{% url 'shop:shop' %}?sort=latest "
+                                class="btn btn-outline-gray banner-link"><i
+                                    class="icon-long-arrow-right"></i><span>خرید
+                                    کنید</span></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Latest banner -->
+
+                <!-- Popular banner -->
+                <div class="col-md-6 col-lg-3">
+                    <div
+                        class="banner banner-overlay">
+                        <a
+                            href="{% url 'shop:shop' %}?sort=popular ">
+                            <img src="{% static 'assets/images/demos/demo-2/banners/banner-2.jpg' %}"
+                                alt="Banner">
+                        </a>
+
+                        <div
+                            class="banner-content banner-content-bottom">
+                            <h4
+                                class="banner-subtitle text-grey">
+                                محبوب ها</h4>
+                            <h3
+                                class="banner-title text-white">
+                                محبوب ترین محصولات
+                            </h3>
+                            <a href="{% url 'shop:shop' %}?sort=popular "
+                                class="btn btn-outline-white banner-link"><i
+                                    class="icon-long-arrow-right"></i><span>خرید
+                                    کنید</span></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Popular banner -->
+
+                <div class="col-md-6 col-lg-4">
+
+                    <!-- Shop All banner -->
+                    <div
+                        class="banner banner-overlay">
+                        <a
+                            href="{% url 'shop:shop' %}">
+                            <img src="{% static 'assets/images/demos/demo-2/banners/banner-3.jpg' %}"
+                                alt="Banner">
+                        </a>
+                        <div
+                            class="banner-content banner-content-top">
+                            <h4
+                                class="banner-subtitle text-grey">
+                                همه</h4>
+                            <h3
+                                class="banner-title text-white">
+                                همه محصولات</h3>
+                            <a href="{% url 'shop:shop' %}"
+                                class="btn btn-outline-white banner-link"><i
+                                    class="icon-long-arrow-right"></i><span>خرید
+                                    کنید</span></a>
+                        </div>
+                    </div>
+                    <!-- Shop All banner -->
+
+                    <!-- Categories banner -->
+                    <div
+                        class="banner banner-overlay banner-overlay-light">
+                        <a
+                            href="{% url 'shop:cat' %}">
+                            <img src="{% static 'assets/images/demos/demo-2/banners/banner-4.jpg' %}"
+                                alt="Banner">
+                        </a>
+                        <div
+                            class="banner-content banner-content-top">
+                            <h4
+                                class="banner-subtitle text-grey">
+                                دسته بندی ها</h4>
+                            <h3
+                                class="banner-text">
+                                همه دسته بندی ها
+                            </h3>
+                            <a href="{% url 'shop:cat' %}"
+                                class="btn btn-outline-gray banner-link"><i
+                                    class="icon-long-arrow-right"></i><span>خرید
+                                    کنید</span></a>
+                        </div>
+                    </div>
+                    <!-- Categories banner -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner-group -->
+
+    <div class="mb-3"></div>
+
+    <!-- Featured Special Latest nav-->
+    <div class="container">
+        <ul class="nav nav-pills nav-border-anim nav-big justify-content-center mb-3"
+            role="tablist">
+            {% if latest %}
+            <li class="nav-item">
+                <a class="nav-link active"
+                    id="products-top-link"
+                    data-toggle="tab"
+                    href="#products-top-tab"
+                    role="tab"
+                    aria-controls="products-top-tab"
+                    aria-selected="true">جدیدترین</a>
+            </li>
+            {% endif %}
+            {% if featured %}
+            <li class="nav-item">
+                <a class="nav-link"
+                    id="products-featured-link"
+                    data-toggle="tab"
+                    href="#products-featured-tab"
+                    role="tab"
+                    aria-controls="products-featured-tab"
+                    aria-selected="false">ویژه</a>
+            </li>
+            {% endif %}
+            {% if special %}
+            <li class="nav-item">
+                <a class="nav-link"
+                    id="products-sale-link"
+                    data-toggle="tab"
+                    href="#products-sale-tab"
+                    role="tab"
+                    aria-controls="products-sale-tab"
+                    aria-selected="false">خاص</a>
+            </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            {% if vr.count >= 1 %}
+            <li class="nav-item">
+                <a class="nav-link"
+                    id="products-vr-link"
+                    data-toggle="tab"
+                    href="#products-vr-tab"
+                    role="tab"
+                    aria-controls="products-vr-tab"
+                    aria-selected="false">بازدیدهای
+                    اخیر شما</a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    <!-- Featured Special Latest nav-->
+
+    <!-- Featured Special Latest body-->
+    <div class="container-fluid">
+        <div
+            class="tab-content tab-content-carousel">
+            {% if latest %}
+            <!-- Latest -->
+            <div class="tab-pane p-0 fade show active"
+                id="products-top-tab"
+                role="tabpanel"
+                aria-labelledby="products-top-link">
+
+                <div class="owl-carousel owl-3 owl-simple carousel-equal-height carousel-with-shadow"
+                    data-toggle="owl">
+
+                    {% for p in latest %}
+                    <div
+                        class="product product-11 text-center">
+                        <figure
+                            class="product-media">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                                {% if p.store_amount >= 10 %}
+                                موجود در انبار
+                                {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                                کمتر 10 عدد موجود
+                                در
+                                انبار
+                                {% elif p.amount >= 10 %}
+                                موجود در نزد
+                                فروشنده
+                                {% elif p.amount <= 10 and p.amount > 0 %}
+                                کمتر از 10 عدد در
+                                نزد
+                                فروشنده
+                                {% elif p.total_amount == 0 %}
+                                ناموجود
+                                {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a
+                                href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.banner_image.url }}"
+                                    alt="Product image"
+                                    class="product-image">
+                                <img src="{{ p.hover_image.url }}"
+                                    alt="Product image"
+                                    class="product-image-hover">
+                            </a>
+                            <div
+                                class="product-action-vertical">
+                                <a href="{% url 'shop:add_remove' p.id p.slug %}"
+                                    target="_blank"
+                                    class="btn-product-icon btn-wishlist"><span>add
+                                        to
+                                        wishlist</span></a>
+                            </div>
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3
+                                class="product-title">
+                                <a
+                                    href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a>
+                            </h3>
+                            <!-- End .product-title -->
+                            <div
+                                class="product-price mt-1">
+                                {{ p.price|intcomma:False }}
+                                <span
+                                    class="span_toman">تومان</span>
+                            </div>
+                        </div>
+                        <div
+                            class="product-action">
+                            <a href="{% url 'shop:product' p.id p.slug %}"
+                                class="btn-product btn-cart"><span
+                                    class='mr-2'>خرید</span></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            <!-- Latest -->
+            {% endif %}
+            {% if featured %}
+            <!-- Featured -->
+            <div class="tab-pane p-0 fade"
+                id="products-featured-tab"
+                role="tabpanel"
+                aria-labelledby="products-featured-link">
+                <div id="owl-2"
+                    class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                    data-toggle="owl"
+                    data-owl-options='{
+
+                    }'>
+
+                    {% for p in featured %}
+                    <div
+                        class="product product-11 text-center">
+                        <figure
+                            class="product-media">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                                {% if p.store_amount >= 10 %}
+                                موجود در انبار
+                                {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                                کمتر 10 عدد موجود
+                                در
+                                انبار
+                                {% elif p.amount >= 10 %}
+                                موجود در نزد
+                                فروشنده
+                                {% elif p.amount <= 10 and p.amount > 0 %}
+                                کمتر از 10 عدد در
+                                نزد
+                                فروشنده
+                                {% elif p.total_amount == 0 %}
+                                ناموجود
+                                {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a
+                                href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.banner_image.url }}"
+                                    alt="Product image"
+                                    class="product-image">
+                                <img src="{{ p.hover_image.url }}"
+                                    alt="Product image"
+                                    class="product-image-hover">
+                            </a>
+                            <div
+                                class="product-action-vertical">
+                                <a href="{% url 'shop:add_remove' p.id p.slug %}"
+                                    target="_blank"
+                                    class="btn-product-icon btn-wishlist"><span>add
+                                        to
+                                        wishlist</span></a>
+                            </div>
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3
+                                class="product-title">
+                                <a
+                                    href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a>
+                            </h3>
+                            <!-- End .product-title -->
+                            <div
+                                class="product-price mt-1">
+                                {{ p.price|intcomma:False }}
+                                <span
+                                    class="span_toman">تومان</span>
+                            </div>
+                        </div>
+                        <div
+                            class="product-action">
+                            <a href="{% url 'shop:product' p.id p.slug %}"
+                                class="btn-product btn-cart"><span
+                                    class='mr-2'>خرید</span></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            <!-- Featured -->
+            {% endif %}
+            {% if special %}
+            <!-- Special -->
+            <div class="tab-pane p-0 fade"
+                id="products-sale-tab"
+                role="tabpanel"
+                aria-labelledby="products-sale-link">
+
+                <div class="owl-carousel owl-3 owl-simple carousel-equal-height carousel-with-shadow"
+                    data-toggle="owl">
+
+                    {% for p in special %}
+                    <div
+                        class="product product-11 text-center">
+                        <figure
+                            class="product-media">
+
+                            <!-- label -->
+                            <span class="product-label
+                            {% if p.total_amount <= 10 %}
+                                label-sale
+                            {% else %}
+                                label-new
+                            {% endif %}">
+                                {% if p.store_amount >= 10 %}
+                                موجود در انبار
+                                {% elif p.store_amount <= 10 and p.store_amount > 0 %}
+                                کمتر 10 عدد موجود
+                                در
+                                انبار
+                                {% elif p.amount >= 10 %}
+                                موجود در نزد
+                                فروشنده
+                                {% elif p.amount <= 10 and p.amount > 0 %}
+                                کمتر از 10 عدد در
+                                نزد
+                                فروشنده
+                                {% elif p.total_amount == 0 %}
+                                ناموجود
+                                {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a
+                                href="{% url 'shop:product' p.id p.slug %}">
+                                <img src="{{ p.banner_image.url }}"
+                                    alt="Product image"
+                                    class="product-image">
+                                <img src="{{ p.hover_image.url }}"
+                                    alt="Product image"
+                                    class="product-image-hover">
+                            </a>
+                            <div
+                                class="product-action-vertical">
+                                <a href="{% url 'shop:add_remove' p.id p.slug %}"
+                                    target="_blank"
+                                    class="btn-product-icon btn-wishlist"><span>add
+                                        to
+                                        wishlist</span></a>
+                            </div>
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3
+                                class="product-title">
+                                <a
+                                    href="{% url 'shop:product' p.id p.slug %}">{{ p.name }}</a>
+                            </h3>
+                            <!-- End .product-title -->
+                            <div
+                                class="product-price mt-1">
+                                {{ p.price|intcomma:False }}
+                                <span
+                                    class="span_toman">تومان</span>
+                            </div>
+                        </div>
+                        <div
+                            class="product-action">
+                            <a href="{% url 'shop:product' p.id p.slug %}"
+                                class="btn-product btn-cart"><span
+                                    class='mr-2'>خرید</span></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+
+                </div>
+
+            </div>
+            <!-- Special -->
+            {% endif %}
+            <!-- Viewed Recently -->
+            {% if request.user.is_authenticated %}
+            {% if vr.count >= 1 %}
+            <div class="tab-pane p-0 fade"
+                id="products-vr-tab"
+                role="tabpanel"
+                aria-labelledby="products-vr-link">
+
+                <div class="owl-carousel owl-3 owl-simple carousel-equal-height carousel-with-shadow"
+                    data-toggle="owl">
+
+                    {% for p in vr %}
+                    {% if p.content_object.banner_image %}
+                    <div
+                        class="product product-11 text-center">
+                        <figure
+                            class="product-media">
+
+                            <!-- label -->
+                            <span class="product-label
+                                {% if p.content_object.total_amount <= 10 %}
+                                    label-sale
+                                {% else %}
+                                    label-new
+                                {% endif %}">
+                                {% if p.content_object.store_amount >= 10 %}
+                                موجود در انبار
+                                {% elif p.content_object.store_amount <= 10 and p.content_object.store_amount > 0 %}
+                                کمتر 10 عدد موجود
+                                در
+                                انبار
+                                {% elif p.content_object.amount >= 10 %}
+                                موجود در نزد
+                                فروشنده
+                                {% elif p.content_object.amount <= 10 and p.content_object.amount > 0 %}
+                                کمتر از 10 عدد در
+                                نزد
+                                فروشنده
+                                {% elif p.content_object.total_amount == 0 %}
+                                ناموجود
+                                {% endif %}
+                            </span>
+                            <!-- label -->
+
+                            <a
+                                href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}">
+                                <img src="{{ p.content_object.banner_image.url }}"
+                                    alt="Product image"
+                                    class="product-image">
+                                <img src="{{ p.content_object.hover_image.url }}"
+                                    alt="Product image"
+                                    class="product-image-hover">
+                            </a>
+                            <div
+                                class="product-action-vertical">
+                                <a href="{% url 'shop:add_remove' p.content_object.id p.content_object.slug %}"
+                                    target="_blank"
+                                    class="btn-product-icon btn-wishlist"><span>add
+                                        to
+                                        wishlist</span></a>
+                            </div>
+                        </figure>
+
+                        <div class="product-body">
+
+                            <h3
+                                class="product-title">
+                                <a
+                                    href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}">{{ p.content_object.name }}</a>
+                            </h3>
+                            <div
+                                class="product-price mt-1">
+                                {{ p.content_object.price|intcomma:False }}
+                                <span
+                                    class="span_toman">تومان</span>
+                            </div>
+                        </div>
+                        <div
+                            class="product-action">
+                            <a href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}"
+                                class="btn-product btn-cart"><span
+                                    class='mr-2'>خرید</span></a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            {% endif %}
+            {% endif %}
+            <!-- Viewed Recently -->
+
+        </div>
+    </div>
+    <!-- Featured Special Latest body-->
+
+    <div class="mb-5"></div>
+
+    <!-- Shop by Categories -->
+    <div class="container categories pt-6">
+        <h2 class="title-lg text-center mb-4">دسته
+            بندی</h2>
+        <!-- End .title-lg text-center -->
+
+        <div class="row justify-content-center">
+            {% for p in categ %}
+            {% if forloop.first %}
+            <div class="col-6 col-lg-4">
+                <div
+                    class="banner banner-display banner-link-anim">
+                    <a href="">
+                        <img src="{{ p.image.url }}"
+                            alt="Banner">
+                    </a>
+
+                    <div
+                        class="banner-content banner-content-center">
+                        <h3
+                            class="banner-title text-white">
+                            <a
+                                href="{% url 'shop:category' p.id p.slug %}}">{{ p.title }}</a>
+                        </h3>
+                        <!-- End .banner-title -->
+                        <a href="{% url 'shop:category' p.id p.slug %}"
+                            class="btn btn-outline-white banner-link"><i
+                                class="icon-long-arrow-right"></i>مشاهده</a>
+                    </div>
+                    <!-- End .banner-content -->
+                </div><!-- End .banner -->
+            </div><!-- End .col-sm-6 col-lg-3 -->
+            <div
+                class="col-sm-12 col-lg-4 banners-sm">
+                <div
+                    class="row justify-content-center">
+
+                    {% elif not forloop.last %}
+                    <div
+                        class="banner banner-display banner-link-anim col-lg-12 col-6">
+                        <a href="">
+                            <img src="{{ p.image.url }}"
+                                alt="Banner">
+                        </a>
+
+                        <div
+                            class="banner-content banner-content-center">
+                            <h3
+                                class="banner-title text-white">
+                                <a
+                                    href="#">{{ p.title }}</a>
+                            </h3>
+                            <!-- End .banner-title -->
+                            <a href=""
+                                class="btn btn-outline-white banner-link"><i
+                                    class="icon-long-arrow-right"></i>مشاهده</a>
+                        </div>
+                        <!-- End .banner-content -->
+                    </div><!-- End .banner -->
+                    {% else %}
+
+                </div>
+            </div><!-- End .col-sm-6 col-lg-3 -->
+            <div
+                class="col-6 col-lg-4 order-lg-last">
+                <div
+                    class="banner banner-display banner-link-anim">
+                    <a href="">
+                        <img src="{{ p.image.url }}"
+                            alt="Banner">
+                    </a>
+
+                    <div
+                        class="banner-content banner-content-center">
+                        <h3
+                            class="banner-title text-white">
+                            <a
+                                href="#">{{ p.title }}</a>
+                        </h3>
+                        <!-- End .banner-title -->
+                        <a href=""
+                            class="btn btn-outline-white banner-link"><i
+                                class="icon-long-arrow-right"></i>مشاهده</a>
+                    </div>
+                    <!-- End .banner-content -->
+                </div><!-- End .banner -->
+            </div><!-- End .col-sm-6 col-lg-3 -->
+            {% endif %}
+            {% endfor %}
+        </div><!-- End .row -->
+
+    </div><!-- End .container -->
+    <!-- Shop by Categories -->
+
+    <div class="mb-6"></div>
+
+    <!-- Top Popular Products -->
+    {% if most_viewed.count >= 1 %}
+    <div class="container">
+
+        <!-- Heading -->
+        <div class="heading heading-center mb-3">
+            <h2 class="title">محبوب ترین ها</h2>
+            <ul class="nav nav-pills nav-border-anim justify-content-center"
+                role="tablist">
+                {% if most_viewed_cat_0 or most_viewed_cat_1 or most_viewed_cat_2%}
+                <li class="nav-item">
+                    <a class="nav-link active"
+                        id="all-most-viewed"
+                        data-toggle="tab"
+                        href="#all-most-viewed-tab"
+                        role="tab"
+                        aria-controls="all-most-viewed-tab"
+                        aria-selected="true">همه</a>
+                </li>
+                {% endif %}
+                {% if most_viewed_cat_0 %}
+                <li class="nav-item">
+                    <a class="nav-link" id="cat-0"
+                        data-toggle="tab"
+                        href="#cat-0-tab"
+                        role="tab"
+                        aria-controls="cat-0-tab"
+                        aria-selected="false">{{ categ.0 }}</a>
+                </li>
+                {% endif %}
+                {% if most_viewed_cat_1 %}
+                <li class="nav-item">
+                    <a class="nav-link" id="cat-1"
+                        data-toggle="tab"
+                        href="#cat-1-tab"
+                        role="tab"
+                        aria-controls="cat-1-tab"
+                        aria-selected="false">{{ categ.1 }}</a>
+                </li>
+                {% endif %}
+                {% if most_viewed_cat_2 %}
+                <li class="nav-item">
+                    <a class="nav-link" id="cat-2"
+                        data-toggle="tab"
+                        href="#cat-2-tab"
+                        role="tab"
+                        aria-controls="cat-2-tab"
+                        aria-selected="false">{{ categ.2 }}</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!-- Heading -->
+
+        <!-- Main -->
+        <div class="tab-content">
+            <div class="tab-pane p-0 fade show active"
+                id="all-most-viewed-tab"
+                role="tabpanel"
+                aria-labelledby="all-most-viewed">
+                <div class="products">
+                    <div
+                        class="row justify-content-center">
+
+                        <!-- Main -->
+                        {% for v in most_viewed %}
+                        <div
+                            class="col-6 col-md-4 col-lg-3 col-xl-5col">
+                            <div
+                                class="product product-11 text-center">
+
+                                <!-- label -->
+                                <span class="product-label
+                                {% if v.total_amount <= 10 %}
+                                    label-sale
+                                {% else %}
+                                    label-new
+                                {% endif %}">
+                                    {% if v.store_amount >= 10 %}
+                                    موجود در انبار
+                                    {% elif v.store_amount <= 10 and v.store_amount > 0 %}
+                                    کمتر 10 عدد
+                                    موجود
+                                    در انبار
+                                    {% elif v.amount >= 10 %}
+                                    موجود در نزد
+                                    فروشنده
+                                    {% elif v.amount <= 10 and v.amount > 0 %}
+                                    کمتر از 10 عدد
+                                    در
+                                    نزد فروشنده
+                                    {% elif v.total_amount == 0 %}
+                                    ناموجود
+                                    {% endif %}
+                                </span>
+                                <!-- label -->
+
+                                <!-- Image -->
+                                <figure
+                                    class="product-media">
+
+                                    <a
+                                        href="{% url 'shop:product' v.id v.slug %}">
+                                        <img src="{{ v.banner_image.url }}"
+                                            alt="Product image"
+                                            class="product-image">
+                                        <img src="{{ v.hover_image.url }}"
+                                            alt="Product image"
+                                            class="product-image-hover">
+                                    </a>
+
+                                </figure>
+                                <div
+                                    class="product-action-vertical">
+                                    <a href="{% url 'shop:add_remove' v.id v.slug %}"
+                                        target="_blank"
+                                        class="btn-product-icon btn-wishlist"><span>add
+                                            to
+                                            wishlist</span></a>
+                                </div>
+                                <!-- Image -->
+
+                                <div
+                                    class="product-body">
+                                    <h3
+                                        class="product-title">
+                                        <a
+                                            href="product.html">{{ v.name }}</a>
+                                    </h3>
+                                    <div
+                                        class="product-price mt-1">
+                                        {{ v.price|intcomma:False }}
+                                        <span
+                                            class="span_toman">تومان</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="product-action">
+                                    <a href="{% url 'shop:product' v.id v.slug %}"
+                                        class="btn-product btn-cart"><span
+                                            class='mr-2'>خرید</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Main -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane p-0 fade"
+                id="cat-0-tab" role="tabpanel"
+                aria-labelledby="cat-0">
+                <div class="products">
+                    <div
+                        class="row justify-content-center">
+
+                        <!-- Main -->
+                        {% for v in most_viewed_cat_0 %}
+                        <div
+                            class="col-6 col-md-4 col-lg-3 col-xl-5col">
+                            <div
+                                class="product product-11 text-center">
+
+                                <!-- label -->
+                                <span class="product-label
+                                {% if v.total_amount <= 10 %}
+                                    label-sale
+                                {% else %}
+                                    label-new
+                                {% endif %}">
+                                    {% if v.store_amount >= 10 %}
+                                    موجود در انبار
+                                    {% elif v.store_amount <= 10 and v.store_amount > 0 %}
+                                    کمتر 10 عدد
+                                    موجود
+                                    در انبار
+                                    {% elif v.amount >= 10 %}
+                                    موجود در نزد
+                                    فروشنده
+                                    {% elif v.amount <= 10 and v.amount > 0 %}
+                                    کمتر از 10 عدد
+                                    در
+                                    نزد فروشنده
+                                    {% elif v.total_amount == 0 %}
+                                    ناموجود
+                                    {% endif %}
+                                </span>
+                                <!-- label -->
+
+                                <!-- Image -->
+                                <figure
+                                    class="product-media">
+
+                                    <a
+                                        href="{% url 'shop:product' v.id v.slug %}">
+                                        <img src="{{ v.banner_image.url }}"
+                                            alt="Product image"
+                                            class="product-image">
+                                        <img src="{{ v.hover_image.url }}"
+                                            alt="Product image"
+                                            class="product-image-hover">
+                                    </a>
+
+                                </figure>
+                                <div
+                                    class="product-action-vertical">
+                                    <a href="{% url 'shop:add_remove' v.id v.slug %}"
+                                        target="_blank"
+                                        class="btn-product-icon btn-wishlist"><span>add
+                                            to
+                                            wishlist</span></a>
+                                </div>
+                                <!-- Image -->
+
+                                <div
+                                    class="product-body">
+                                    <h3
+                                        class="product-title">
+                                        <a
+                                            href="product.html">{{ v.name }}</a>
+                                    </h3>
+                                    <div
+                                        class="product-price mt-1">
+                                        {{ v.price|intcomma:False }}
+                                        <span
+                                            class="span_toman">تومان</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="product-action">
+                                    <a href="{% url 'shop:product' v.id v.slug %}"
+                                        class="btn-product btn-cart"><span
+                                            class='mr-2'>خرید</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Main -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane p-0 fade"
+                id="cat-1-tab" role="tabpanel"
+                aria-labelledby="cat-1">
+                <div class="products">
+                    <div
+                        class="row justify-content-center">
+
+                        <!-- Main -->
+                        {% for v in most_viewed_cat_1 %}
+                        <div
+                            class="col-6 col-md-4 col-lg-3 col-xl-5col">
+                            <div
+                                class="product product-11 text-center">
+
+                                <!-- label -->
+                                <span class="product-label
+                                {% if v.total_amount <= 10 %}
+                                    label-sale
+                                {% else %}
+                                    label-new
+                                {% endif %}">
+                                    {% if v.store_amount >= 10 %}
+                                    موجود در انبار
+                                    {% elif v.store_amount <= 10 and v.store_amount > 0 %}
+                                    کمتر 10 عدد
+                                    موجود
+                                    در انبار
+                                    {% elif v.amount >= 10 %}
+                                    موجود در نزد
+                                    فروشنده
+                                    {% elif v.amount <= 10 and v.amount > 0 %}
+                                    کمتر از 10 عدد
+                                    در
+                                    نزد فروشنده
+                                    {% elif v.total_amount == 0 %}
+                                    ناموجود
+                                    {% endif %}
+                                </span>
+                                <!-- label -->
+
+                                <!-- Image -->
+                                <figure
+                                    class="product-media">
+
+                                    <a
+                                        href="{% url 'shop:product' v.id v.slug %}">
+                                        <img src="{{ v.banner_image.url }}"
+                                            alt="Product image"
+                                            class="product-image">
+                                        <img src="{{ v.hover_image.url }}"
+                                            alt="Product image"
+                                            class="product-image-hover">
+                                    </a>
+
+                                </figure>
+                                <div
+                                    class="product-action-vertical">
+                                    <a href="{% url 'shop:add_remove' v.id v.slug %}"
+                                        target="_blank"
+                                        class="btn-product-icon btn-wishlist"><span>add
+                                            to
+                                            wishlist</span></a>
+                                </div>
+                                <!-- Image -->
+
+                                <div
+                                    class="product-body">
+                                    <h3
+                                        class="product-title">
+                                        <a
+                                            href="product.html">{{ v.name }}</a>
+                                    </h3>
+                                    <div
+                                        class="product-price mt-1">
+                                        {{ v.price|intcomma:False }}
+                                        <span
+                                            class="span_toman">تومان</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="product-action">
+                                    <a href="{% url 'shop:product' v.id v.slug %}"
+                                        class="btn-product btn-cart"><span
+                                            class='mr-2'>خرید</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Main -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane p-0 fade"
+                id="cat-2-tab" role="tabpanel"
+                aria-labelledby="cat-2">
+                <div class="products">
+                    <div
+                        class="row justify-content-center">
+
+                        <!-- Main -->
+                        {% for v in most_viewed_cat_2 %}
+                        <div
+                            class="col-6 col-md-4 col-lg-3 col-xl-5col">
+                            <div
+                                class="product product-11 text-center">
+
+                                <!-- label -->
+                                <span class="product-label
+                                {% if v.total_amount <= 10 %}
+                                    label-sale
+                                {% else %}
+                                    label-new
+                                {% endif %}">
+                                    {% if v.store_amount >= 10 %}
+                                    موجود در انبار
+                                    {% elif v.store_amount <= 10 and v.store_amount > 0 %}
+                                    کمتر 10 عدد
+                                    موجود
+                                    در انبار
+                                    {% elif v.amount >= 10 %}
+                                    موجود در نزد
+                                    فروشنده
+                                    {% elif v.amount <= 10 and v.amount > 0 %}
+                                    کمتر از 10 عدد
+                                    در
+                                    نزد فروشنده
+                                    {% elif v.total_amount == 0 %}
+                                    ناموجود
+                                    {% endif %}
+                                </span>
+                                <!-- label -->
+
+                                <!-- Image -->
+                                <figure
+                                    class="product-media">
+
+                                    <a
+                                        href="{% url 'shop:product' v.id v.slug %}">
+                                        <img src="{{ v.banner_image.url }}"
+                                            alt="Product image"
+                                            class="product-image">
+                                        <img src="{{ v.hover_image.url }}"
+                                            alt="Product image"
+                                            class="product-image-hover">
+                                    </a>
+
+                                </figure>
+                                <div
+                                    class="product-action-vertical">
+                                    <a href="{% url 'shop:add_remove' v.id v.slug %}"
+                                        target="_blank"
+                                        class="btn-product-icon btn-wishlist"><span>add
+                                            to
+                                            wishlist</span></a>
+                                </div>
+                                <!-- Image -->
+
+                                <div
+                                    class="product-body">
+                                    <h3
+                                        class="product-title">
+                                        <a
+                                            href="product.html">{{ v.name }}</a>
+                                    </h3>
+                                    <div
+                                        class="product-price mt-1">
+                                        {{ v.price|intcomma:False }}
+                                        <span
+                                            class="span_toman">تومان</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="product-action">
+                                    <a href="{% url 'shop:product' v.id v.slug %}"
+                                        class="btn-product btn-cart"><span
+                                            class='mr-2'>خرید</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Main -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main -->
+
+    </div>
+    {% endif %}
+    <!-- Top Popular Products -->
+
+    <!-- Motto -->
+    <div class="container">
+        <hr>
+        <div class="row justify-content-center">
+
+            <div class="col-lg-4 col-sm-6">
+                <div
+                    class="icon-box icon-box-card text-center">
+                    <span class="icon-box-icon">
+                        <i
+                            class="icon-rocket"></i>
+                    </span>
+                    <div class="icon-box-content">
+                        <h3
+                            class="icon-box-title">
+                            لورم ایپسوم</h3>
+                        <p>لورم ایپسوم لورم ایپسوم
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-6">
+                <div
+                    class="icon-box icon-box-card text-center">
+                    <span class="icon-box-icon">
+                        <i
+                            class="icon-rotate-left"></i>
+                    </span>
+                    <div class="icon-box-content">
+                        <h3
+                            class="icon-box-title">
+                            لورم ایپسوم</h3>
+                        <p>لورم ایپسوم لورم ایپسوم
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-6">
+                <div
+                    class="icon-box icon-box-card text-center">
+                    <span class="icon-box-icon">
+                        <i
+                            class="icon-life-ring"></i>
+                    </span>
+                    <div class="icon-box-content">
+                        <h3
+                            class="icon-box-title">
+                            لورم ایپسوم</h3>
+                        <p>لورم ایپسوم لورم ایپسوم
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-2"></div>
+    </div>
+    <!-- Motto -->
+
+    <!-- From Our Blog -->
+</main>
+
+{% if blog %}
+<div class="blog-posts pt-7 pb-7">
+    <div class="container">
+        <h2
+            class="title-lg text-center mb-3 mb-md-4 mb-2">
+            بلاگ</h2>
+        <!-- End .title-lg text-center -->
+        <div class="owl-carousel owl-4 owl-simple carousel-with-shadow"
+            data-toggle="owl">
+
+            {% for b in blog %}
+            <article
+                class="entry entry-display cs-card">
+                <figure
+                    class="entry-media cs-card-image">
+                    <a
+                        href="{% url 'blog:post' b.id b.slug %}">
+                        <img class="img-blog-post"
+                            src="{{ b.image.url }}"
+                            alt="image desc">
+                    </a>
+                </figure>
+
+                <div
+                    class="entry-body pb-4 text-center">
+                    {% if b.comment.count >= 1 %}
+                    <div class="entry-meta">
+                        {{ b.create_time|naturaltime }}
+                        | {{ b.comment.count }}
+                        دیدگاه
+                    </div>
+                    {% endif %}
+                    <h3 class="entry-title">
+                        <a
+                            href="{% url 'blog:post' b.id b.slug %}">{{ b.title }}</a>
+                    </h3>
+
+                    <div class="entry-content">
+                        <p class="ee-content">
+                            {{ b.short_description }}
+                        </p>
+                    </div>
+                    <div class="pt-2">
+                        <a class="btn btn-primary btn-round"
+                            href="{% url 'blog:post' b.id b.slug %}"
+                            class="read-more">بیشتر
+                            بخوانید</a>
+                    </div>
+
+                </div>
+            </article>
+
+            {% endfor %}
+
+        </div>
+        <!-- End .owl-carousel -->
+        <div
+            class="more-container text-center mb-0 mt-3">
+            <a href="{% url 'blog:home' %}"
+                class="btn btn-outline-darker btn-more"><i
+                    class="icon-long-arrow-right"></i><span>پست
+                    های بیشتر</span></a>
+        </div><!-- End .more-container -->
+
+    </div><!-- container -->
+</div>
+{% endif %}
+<!-- From Our Blog -->
+
+<!-- instagram -->
+{% comment %} <div class="container-fluid mt-5">
+    <div class="heading text-center">
+        <h2 class="title mb-1">ما را در اینستاگرام
+            دنبال کنید</h2>
+        <p class="heading-cat mb-3"><a
+                href="https://instagram.com/{{ instagram_profile_name|capfirst }}"
+                target="_blank">{{ instagram_profile_name|capfirst }}@</a>
+        </p>
+    </div>
+    <div class="owl-carousel owl-5 owl-simple"
+        data-toggle="owl">
+        {% instagram_user_recent_media instagram_profile_name %}
+        {% for media in recent_media %}
+        <a href="https://instagram.com/p/{{ media.shortcode }}"
+            target="_blank"><img
+                src="{{ media.thumbnail_src }}"
+                alt="{{ instagram_profile_name|capfirst }}">
+            <div id="ig-posts"
+                class="instagram-feed"></div>
+        </a>
+        {% endfor %}
+
+    </div>
+
+</div> {% endcomment %}
+<!-- instagram -->
+
+</main>
+<!-- End .main -->
+
+{% endblock content %}

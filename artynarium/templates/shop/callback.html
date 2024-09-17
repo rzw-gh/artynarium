@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}فاكتور خريد{% endblock title %}
+{% block content %}
+
+<h1 class="text-center">فاكتور خريد</h1>
+<div class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 order-detail">
+        <div class="section-title text-center">
+          <h3 class="title">با تشكر از خريد شما</h3>
+        </div>
+        <div class="order-summary">
+          <p>شماره سفارش شما {{ invoice.id }} ميباشد</p>
+          <p>ميتوايند براي پيگيري سفارشتان از اين شماره استفاده كنيد</p>
+        {% for p in order.items.product.all %}
+            {{ p.name }}
+        {% endfor %}
+          <h3>جزئیات بیشتر سفارشتان را میتوانید در <a href="{% url 'shop:my_orders' %}">بخش حساب كاربري</a> مشاهده کنید</h3>
+        </div>
+        <!-- Viewed Recently -->
+        {% include 'shop/viewed_recently.html' %}
+        <!-- Viewed Recently -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

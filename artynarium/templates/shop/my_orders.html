@@ -1,0 +1,198 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}سفارش های من{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">سفارش های من</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربری</a></li>
+                <li class="breadcrumb-item active" aria-current="page">سفارش های من</li>
+            </ol>
+            {% if request.user.seller %}
+                <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودی : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row ">
+              <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+              </div>
+            <!-- Main -->
+            <div class="wishlist-content col-md-8 col-lg-10">
+            {% if order %}
+              <table class="table table-wishlist table-mobile">
+
+                <!-- Heading -->
+                <thead>
+                    <tr>
+                      <th>شماره سفارش</th>
+                      <th>تاریخ</th>
+                      <th>روش ارسال</th>
+                      <th>هزینه کل</th>
+                      <th>وضعیت</th>
+                    </tr>
+                </thead>
+                <!-- Heading -->
+
+                <!-- Body -->
+                <tbody>
+
+                    {% for o in order %}
+                    <tr>
+
+                        <!-- Order ID -->
+                        <td data-label="شماره سفارش" class="product-col">
+                                    <span>{{ o.orderid }}</span>
+                        </td>
+                        <!-- Order ID -->
+
+                        <!-- Date -->
+                        <td data-label="تاریخ" class="price-col" title="{{ o.create_at }}"><span>{{ o.create_at }}</span></td>
+                        <!-- Date -->
+
+                        <!-- Shipping Method -->
+                        <td data-label="روش ارسال" class="price-col" title="{% if o.shipping_method == 'Express' %} 1 الی 3 روز کاری {% else %} 4 الی 7 روز کاری {% endif %}"><span>{% if o.shipping_method == 'Express' %} <i class="las la-shipping-fast ml-2 cs-font-size1"></i> {% else %} <i class="las la-truck ml-2 cs-font-size1"></i>{% endif %} {{ o.get_shipping_method_display }}</span></td>
+                        <!-- Shipping Method -->
+
+                        <!-- Total -->
+                        <td data-label="هزینه کل" class="price-col"><span>{{ o.totalcost|intcomma:False }}</span></td>
+                        <!-- Total -->
+
+                        <!-- Status -->
+                        <td data-label="وضعیت" class="stock-col">
+                            <span class="in-stock" {% if o.admin_order_deliverment_confirmation %} style="color: rgb(3, 180, 3);" {% elif o.status == "Canceled" %} style="color: rgb(175, 2, 2);" {% endif %}>
+                                {% if o.admin_order_deliverment_confirmation %}
+                                    <i class="las la-check-circle cs-font-size1 v-align-icon"></i>
+                                    <span  class="font-status">{{ o.get_status_display }}</span>
+                                {% elif o.status == "Preparing" %}
+                                    <i class="las la-box cs-font-size1 v-align-icon"></i>
+                                    <span class="font-status">{{ o.get_status_display }}</span>
+                                {% elif o.status == "Payment" or order.status == 'LackOfInventory' or o.status == "Bank" %}
+                                    <a href="{% url 'shop:order' o.id %}" style="color: rgb(213, 228, 13);">
+                                        <i class="las la-pause-circle cs-font-size1 v-align-icon"></i>پرداخت نشده</a>
+                                {% elif o.status == "Canceled" %}
+                                    <i class="las la-times-circle cs-font-size1 v-align-icon"></i>
+                                    <span class="font-status">{{ o.get_status_display }}</span>
+                                {% elif o.status == "OnShipping" %}
+                                    <i class="las la-road cs-font-size1 v-align-icon"></i>
+                                    <span class="font-status">{{ o.get_status_display }}</span>
+                                {% endif %}
+                            </span>
+                        </td>
+                        <!-- Status -->
+
+                        <!-- Detail -->
+                        <td class="remove-col"><a href="{% url 'shop:my_order_detail' o.id %}"><i class="las la-eye cs-font-size1 ml-3"></i></a></td>
+                        <!-- Detail -->
+
+                        <!-- Delete -->
+                        <script>
+                        $(document).ready(function () {
+                            $('a[id^="on_click_delete_confirmation_"]').click(function(e){
+                            var linkURL = $(this).attr("href");
+                            e.preventDefault();
+                              swal({
+                              title: "آیا از لغو این سفارش مطمئن هستید؟",
+                              icon: "warning",
+                              buttons: true,
+                              dangerMode: true,
+                              buttons: ["خیر", "بله"],
+                            })
+                            .then((willDelete) => {
+                              if (willDelete) {
+                                  window.location.href = linkURL;
+                              }
+                            });
+
+                            });
+                        });
+                        </script>
+                        {% if o.status == 'Payment' or order.status == 'LackOfInventory' %}
+                        <td class="remove-col">
+                            <a href="{% url 'shop:cancel_order' o.id %}" id="on_click_delete_confirmation_{{ forloop.counter }}">
+                             <i class="las la-trash-alt cs-font-size3" style="vertical-align: -5px;"></i>
+                            </a>
+                        </td>
+                        {% endif %}
+                        <!-- Delete -->
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <!-- Body -->
+
+              </table>
+
+                <!-- Pagination -->
+                <nav class="mt-5" aria-label="Page navigation">
+                    {% if order.has_other_pages %}
+                    <ul class="pagination">
+                        {% if order.has_previous %}
+                        <li class="page-item"><a class="page-link page-link-prev"
+                                                 href="{% url 'shop:my_orders' %}?page={{ order.previous_page_number }}"
+                                                 aria-label="Previous" tabindex="-1"
+                                                 aria-disabled="true"><i
+                                class="las la-arrow-right ml-2"></i>قبلی<span aria-hidden="true"></span></a>
+                        </li>
+                        {% endif %}
+                        {% for i in order.paginator.page_range %}
+                        {% if order.number == i %}
+                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if order.has_next %}
+                        <li class="page-item">
+                            <a class="page-link page-link-next"
+                               href="{% url 'shop:my_orders' %}?page={{ order.next_page_number }}"
+                               aria-label="Next">بعدی <span aria-hidden="true">
+                                             <i class="las la-arrow-left mr-2"></i></span></a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <!-- Pagination -->
+
+            {% else %}
+              <div class="container text-center">
+                <h2>سفارشی تا کنون ثبت نشده</h2>
+                <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+              </div>
+            {% endif %}
+            <!-- Main -->
+            </div>
+
+        </div>
+            <!-- Viewed Recently -->
+            {% include 'shop/viewed_recently.html' %}
+            <!-- Viewed Recently -->
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

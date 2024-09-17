@@ -1,0 +1,12 @@
+<div id="appendHere" class="details-filter-row details-row-size">
+  <label>رنگ:</label>
+  <input type="hidden" name="size" id="size" value="{{ size_id }}">
+  <ul class="product-nav product-nav-dots">
+      {% for rs in colors %}
+          <span class="ml-2" {% if forloop.first %}style="margin-left: -20px;"{% endif %}>
+              <input type="radio" title="{{ rs.color.name }}" {% if variant.id == rs.id %} checked {% endif %} name="variantid" id="variantid" value="{{ rs.id }}" onchange="this.form.submit();">
+              <a style="background-color:#{{ rs.color.code }};"></a>
+          </span>
+      {% endfor %}
+  </ul>
+</div>

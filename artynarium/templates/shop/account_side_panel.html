@@ -1,0 +1,94 @@
+{% url 'shop:my_orders' as my_orders %}
+{% url 'shop:edit_address' as edit_address %}
+{% url 'shop:wishlist' as wishlist %}
+{% url 'shop:account_security' as account_security %}
+{% url 'seller:order' as order %}
+{% url 'seller:financial' as financial %}
+{% url 'seller:my_products' as my_products %}
+{% url 'seller:ticket_list' as ticket_list %}
+{% url 'seller:edit_seller_info' as edit_seller_info %}
+{% url 'seller:ghost_mode' as ghost_mode %}
+{% url 'shop:last_payments' as last_payments %}
+{% url 'seller:product_create' as product_create %}
+{% url 'seller:product_update' as product_update %}
+{% url 'seller:product_gallery_create_update' as product_gallery_create_update %}
+{% url 'seller:product_variant_create_update' as product_variant_create_update %}
+
+<!-- Tabs -->
+<aside>
+    <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+
+        <li class="nav-item my-2">
+          <a class="nav-link nav-link-wish {% if request.path == my_orders %}active{% endif %}"href="{% url 'shop:my_orders' %}"><i class="las la-dolly ml-3 cs-font-size1 "></i>سفارش های من{% if pending_pay != 0 %}<span class="wishlist-count-account badge">{{ pending_pay }}</span>{% endif %}</a>
+        </li>
+
+        <li class="nav-item my-2">
+          <a class="nav-link nav-link-wish {% if request.path == edit_address %}active{% endif %}" href="{% url 'shop:edit_address' %}"><i class="las la-map-marked-alt ml-3 cs-font-size1 "></i><span class="vertical-align-account">مشخصات و آدرس من</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+                <a class="nav-link nav-link-wish {% if request.path == wishlist %}active{% endif %}" href="{% url 'shop:wishlist' %}"><i class="icon-heart-o ml-3 cs-font-size1 "></i><span class="vertical-align-account" style="font-size: 13px">ليست علاقه مندی های من</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == account_security %}active{% endif %}" href="{% url 'shop:account_security' %}"><i class="las la-lock ml-3 cs-font-size1 "></i><span class="vertical-align-account">امنیت حساب من</span></a>
+        </li>
+
+        {% if request.user.seller %}
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish" href="{% url 'seller:seller_page' request.user.slug %}"><i class="las la-pager ml-3 cs-font-size1 "></i><span class="vertical-align-account">صفحه فروش من</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == order %}active{% endif %}" href="{% url 'seller:order' %}"><i class="las la-store-alt ml-3 cs-font-size1 "></i><span class="vertical-align-account">سفارشات محصولات من{% if seller_order_notif != 0 %}</span><span class="wishlist-count-account badge">{{ seller_order_notif }}</span>{% endif %}</a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == my_products %}active{% endif %}" href="{% url 'seller:my_products' %}"><i class="las la-boxes ml-3 cs-font-size1 "></i><span class="vertical-align-account">محصولات من</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == product_create or product_update or product_gallery_create_update or product_variant_create_update %}active{% endif %}" href="{% url 'seller:product_create' %}"><i class="las la-plus-circle ml-3 cs-font-size1 "></i><span class="vertical-align-account">اضافه كردن محصول</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == financial %}active{% endif %}" href="{% url 'seller:financial' %}"><i class="las la-coins ml-3 cs-font-size1 "></i><span class="vertical-align-account">مديريت مالی</span></a>
+        </li>
+
+        {% if history_count > 10 %}
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == last_payments %}active{% endif %}" href="{% url 'shop:last_payments' %}"><i class="las la-file-invoice-dollar ml-3 cs-font-size1 "></i><span class="vertical-align-account">واريزي های اخير</span></a>
+        </li>
+        {% endif %}
+
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == ghost_mode %}active{% endif %}" href="{% url 'seller:ghost_mode' %}"><i class="las la-ghost ml-3 cs-font-size1 "></i><span class="vertical-align-account">حالت روح</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == edit_seller_info %}active{% endif %}" href="{% url 'seller:edit_seller_info' %}"><i class="las la-edit ml-3 cs-font-size1 "></i><span class="vertical-align-account">اطلاعات فروشنده</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish" href="{% url 'seller:faq' %}"><i class="las la-question ml-3 cs-font-size1 "></i><span class="vertical-align-account">سوالات پرتكرار فروشندگان</span></a>
+        </li>
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish {% if request.path == ticket_list %}active{% endif %}" href="{% url 'seller:ticket_list' %}"><i class="las la-comments ml-3 cs-font-size1 "></i><span class="vertical-align-account">تيكت ها{% if user_unread_messages_count != 0 %}</span><span class="wishlist-count-account badge">{{ user_unread_messages_count }}</span>{% endif %}</a>
+        </li>
+
+        {% else %}
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish" href="{% url 'seller:seller_request' %}"><i class="las la-handshake ml-3 cs-font-size1 "></i><span class="vertical-align-account">درخواست فروشندگي</span></a>
+        </li>
+        {% endif %}
+
+        <li class="nav-item my-2">
+            <a class="nav-link nav-link-wish" href="{% url 'account_logout' %}"><i class="las la-sign-out-alt ml-3 cs-font-size1 "></i><span class="vertical-align-account">خروج</span></a>
+        </li>
+
+    </ul>
+</aside>
+<!-- Tabs -->

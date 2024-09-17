@@ -1,0 +1,188 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}ارسال به
+انبار{% endblock title %}
+{% block content %}
+<main class="main">
+    <!-- top image -->
+    <div class="page-header text-center"
+        style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+
+        <div class="container">
+            <h1 class="page-title">ارسال به انبار</h1>
+        </div>
+
+    </div>
+    <!-- top image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb"
+        class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:my_products' %}">محصولات من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ارسال به انبار</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+  <div class="page-content pb-0 mt-5 mb-5">
+      <div class="container">
+          <div class="row justify-content-center">
+                <!-- Side_Panel -->
+              <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+              <div class="col-md-8 col-lg-10">
+                  <!-- Side_Panel -->
+                  {% if request.user.seller %}
+                  {% if not not_allowed_to_charge %}
+
+                  <!-- Alert Message -->
+                  {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                      {{ message }}
+                  </div>
+                  {% endfor %}
+                  {% endif %}
+                  <!-- Alert Message -->
+                  <div class="row justify-content-center">
+                      <form method="POST" enctype="multipart/form-data">
+                          {% csrf_token %}
+                          {% if product.variant != 'None' %}
+                          {% for variant in variants %}
+                          <div class="row mt-1">
+                              <div class="form-inline ml-3">
+                                  <input type="hidden" value="{{variant.id}}" name="var_id">
+                                  <i class="las la-dolly ml-3 cs-font-size1"></i>
+                                  <select name="type">
+                                      <option selected value="From_Seller">از موجودي نزد فروشنده</option>
+                                      <option value="New">تعداد جديد</option>
+                                  </select>
+                              </div>
+                              <div class="form-inline">
+                                  <label class="ml-3">تعداد گوناگوني "{{ variant.title }}"  :</label>
+                                  <input class="input form-control" name="amount" type="number">
+                              </div>
+                          </div>
+                          {% endfor %}
+                          <div class="row justify-content-center">
+                              <div class="form-inline">
+                                  <button style="margin: 20px;" type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm form-control">
+                                      <span>ارسال</span><i class="icon-long-arrow-right mr-2"></i>
+                                  </button>
+                              </div>
+                          </div>
+                          {% else %}
+                          <div class="row">
+                               <div class="form-inline ml-3">
+                                  <i class="las la-dolly ml-3 cs-font-size1"></i>
+                                  <select name="type">
+                                      <option selected value="From_Seller">از موجودي نزد فروشنده</option>
+                                      <option value="New">تعداد جديد</option>
+                                  </select>
+                              </div>
+                              <div class="form-inline">
+                                  <label class="ml-3">تعداد محصول "{{ product.name }}"  :  </label>
+                                  <input class="input form-control" name="amount" type="number" required>
+                              </div>
+                              <div class="form-inline">
+                                  <button style="margin: 20px;" type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm form-control">
+                                      <span>ارسال</span><i class="icon-long-arrow-right mr-2"></i>
+                                  </button>
+                              </div>
+                          </div>
+                          {% endif %}
+
+                      </form>
+                  </div>
+
+                  <table class="table table-wishlist table-mobile">
+
+                    <!-- Heading -->
+                    <thead>
+                        <tr>
+                            <th class="text-center">تعداد</th>
+                            <th class="text-center">تاريخ ثبت</th>
+                            <th class="text-center">تاييديه ادمين</th>
+                        </tr>
+                    </thead>
+                    <!-- Heading -->
+
+                    <!-- Body -->
+                    <tbody>
+
+                        {% for i in history %}
+                        <tr>
+                            <td class="price-col text-center">
+                                {% if i.productchargevariants_set.all %}
+                                <button type="button" class="poposer_cs"
+                                        data-container="body" data-toggle="popover"
+                                        data-placement="bottom" data-content="
+                                        {% for v in i.productchargevariants_set.all %}
+                                            {% if v.amount %}
+                                                {{ v.variant_title }}:{{ v.amount }}
+                                                {% if not forloop.last %} -- {% endif %}
+                                            {% endif %}
+                                        {% endfor %}">
+                                  <i class="las la-question-circle" style="font-size: 18px;"></i>
+                                </button>
+                                {% endif %}
+                                {{ i.amount }}
+                            </td>
+                            <td class="price-col text-center">{{ i.create_time }}</td>
+                            <td class="price-col text-center">{% if i.admin_confirmation %}بله{% else %}خير{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    <!-- Body -->
+                      <script>
+                            $(function () {
+                                $('[data-toggle="popover"]').popover()
+                            })
+                        </script>
+
+                </table>
+
+                  <div class=" justify-content-center mt-5">
+                      <div class="cs-warn-send mt-5 text-center" style="text-align: center;border-bottom: solid 1px #dedede;">
+                          <p>طهران - اتوبان بسیج - قصر فیروزه یک - پست شهرک</p>
+                          <p>09911061927</p>
+                      </div>
+                      <div class="cs-warn-send mt-5 text-center">
+                          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6482.345674321192!2d51.4969324789359!3d35.6727460062324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f91fd392b6dc3ed%3A0x2168afc22d0bd7a5!2sQasr-e-Firuzeh-ye-Yek%2C%20District%2014%2C%20Tehran%2C%20Tehran%20Province%2C%20Iran!5e0!3m2!1sen!2s!4v1627475116140!5m2!1sen!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                      </div>
+                  </div>
+
+
+
+                  {% else %}
+                  <div class="container text-center">
+                      <p style=color:red;>{{ not_allowed_to_charge }}</p>
+                      <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                  </div>
+                  {% endif %}
+
+                  {% else %}
+                  <div class="container text-center">
+                      <p style=color:red;>{{ not_allowed }}</p>
+                      <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                  </div>
+                  {% endif %}
+              </div>
+
+          </div>
+      </div>
+  </div>
+</main>
+
+{% endblock content %}

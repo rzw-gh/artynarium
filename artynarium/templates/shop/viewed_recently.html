@@ -1,0 +1,54 @@
+{% load humanize %}
+
+{% if vr.count >= 1 %}
+<h2 class="title text-center mt-4 mb-4">بازدیدهای اخیر شما</h2>
+<div class="owl-carousel owl-3 owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl">
+
+    {% for p in vr %}
+        {% if p.content_object.banner_image %}
+            <div class="product product-11 text-center">
+                <figure class="product-media">
+
+                    <!-- label -->
+                    <span class="product-label
+                    {% if p.content_object.total_amount <= 10 %}
+                        label-sale
+                    {% else %}
+                        label-new
+                    {% endif %}">
+                    {% if p.content_object.store_amount >= 10 %}
+                    موجود در انبار
+                    {% elif p.content_object.store_amount <= 10 and p.content_object.store_amount > 0 %}
+                    کمتر 10 عدد موجود در انبار
+                    {% elif p.content_object.amount >= 10 %}
+                    موجود در نزد فروشنده
+                    {% elif p.content_object.amount <= 10 and p.content_object.amount > 0 %}
+                    کمتر از 10 عدد در نزد فروشنده
+                    {% elif p.content_object.total_amount == 0 %}
+                    ناموجود
+                    {% endif %}
+                    </span>
+                    <!-- label -->
+
+                    <a href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}">
+                        <img src="{{ p.content_object.banner_image.url }}" alt="Product image" class="product-image">
+                        <img src="{{ p.content_object.hover_image.url }}" alt="Product image" class="product-image-hover">
+                    </a>
+                </figure>
+
+                <div class="product-body">
+
+                    <h3 class="product-title"><a href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}">{{ p.content_object.name }}</a></h3>
+                    <div class="product-price">
+                        {{ p.content_object.price|intcomma:False }} تومان
+                    </div>
+                </div>
+                <div class="product-action">
+                    <a href="{% if p.content_object %}{% url 'shop:product' p.content_object.id p.content_object.slug %}{% endif %}" class="btn-product btn-cart"><span class='mr-2'>خرید</span></a>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+</div>
+{% endif %}

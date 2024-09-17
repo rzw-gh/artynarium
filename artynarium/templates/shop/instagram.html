@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load instagram_client %}
+{% block title %}صفحه اينستاگرام
+{{ instagram_profile_name|capfirst }}{% endblock title %}
+{% block content %}
+
+<main class="main" dir="ltr">
+    <div class="page-content">
+        <div class="container">
+            <h2
+                class="title text-center mb-3 mt-5">
+                جديد ترين پست هاي صفحه اينستاگرام
+                ما</h2>
+
+            <div id="ig-posts"
+                class="portfolio-container"
+                data-layout="fitRows">
+                {% instagram_user_recent_media instagram_profile_name %}
+                {% for media in recent_media %}
+                <div id="ig-posts"
+                    class="portfolio-item accessories women col-sm-6 col-lg-4">
+                    <div id="ig-posts"
+                        class="portfolio portfolio-overlay">
+                        <figure
+                            class="portfolio-media">
+                            <a href="https://instagram.com/p/{{ media.shortcode }}"
+                                target="_blank"><img
+                                    src="{{ media.thumbnail_src }}"
+                                    alt="{{ instagram_profile_name|capfirst }}"></a>
+                        </figure>
+                    </div>
+                    <!-- End .portfolio portfolio-overlay -->
+                </div><!-- End .portfolio-item -->
+                {% endfor %}
+            </div>
+            <!-- End .portfolio-container -->
+
+            <h2
+                class="title text-center mb-3 mt-5">
+                ببينيد <a
+                    href="https://instagram.com/{{ instagram_profile_name|capfirst }}"
+                    target="_blank">{{ instagram_profile_name|capfirst }}@</a>پست
+                هاي بيشتر را در </a></h2>
+            <!-- End .title text-center mb-2 -->
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main>
+
+
+{% endblock content %}

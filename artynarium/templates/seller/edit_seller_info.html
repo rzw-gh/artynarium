@@ -1,0 +1,191 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}ويرايش اطلاعات فروشنده{% endblock title %}
+{% block content %}
+
+<main class="main">
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">ويرايش اطلاعات فروشنده</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ويرايش اطلاعات فروشنده</li>
+            </ol>
+            {% if request.user.seller %}
+            <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a
+                    href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-lg-2">
+                    {% include 'shop/account_side_panel.html' %}
+                </div>
+                <div class="col-md-8 col-lg-10">
+                    <div class="row">
+                        <div class="col-8">
+
+                        {% if request.user.seller %}
+                        <!-- Alert Message -->
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} mb-2"
+                             role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <!-- Alert Message -->
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-5 mb-3">
+                            <div class="profile-img">
+                                {% if request.user.profile_image %}
+                                <img src="{{ request.user.profile_image.url }}">
+                                {% else %}
+                                <img src="{% static 'assets\images\seller\294-2947257_interface-icons-user-avatar-profile-user-avatar-png.png' %}">
+                                {% endif %}
+
+                                <!-- commitment_to_send  -->
+                                <div class="">
+                                    <label><i class="las la-address-card ml-3 v-align1" style=""><span style="vertical-align: 2px;
+margin-right: 5px;">تعهد ارسال</span></i>: {{ request.user.commitment_to_send }}</label>
+                                </div>
+                                <!-- commitment_to_send  -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-3">
+                        <form class="form1" method="POST"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- Seller title & Shaba number-->
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <!-- Seller title -->
+                                    <div class="col-sm-6">
+                                        <label><i
+                                                class="las la-signature ml-3 v-align1"
+                                                style="font-size: 1.5em;"></i>عنوان
+                                            فروشنده
+                                            *</label>
+                                        <input type="text"
+                                               name="seller_title"
+                                               value="{% if request.user.seller_title is not None %}{{ request.user.seller_title }}{% endif %}"
+                                               class="form-control"
+                                               required>
+                                    </div>
+                                    <!-- Seller title -->
+                                    <!-- Phone Number -->
+                                    <div class="col-sm-6">
+                                        <label><i
+                                                class="las la-mobile-alt ml-3 v-align1"
+                                                style="font-size: 1.5em;"></i>شماره
+                                            همراه
+                                            *</label>
+                                        <input type="text"
+                                               name="phone_number"
+                                               value="{% if request.user.phone_number is not None %}{{ request.user.phone_number }}{% endif %}"
+                                               placeholder="شماره همراه يازده رقمي"
+                                               class="form-control"
+                                               maxlength="11"
+                                               required>
+                                    </div>
+                                    <!-- Phone Number -->
+                                </div>
+
+                                <!-- Slug & Profile image-->
+                                <div class="row">
+
+                                    <!-- Slug -->
+                                    <div class="col-sm-6">
+                                        <label><i
+                                                class="las la-id-badge ml-3 v-align1"
+                                                style="font-size: 1.5em;"></i>ايدي
+                                            فروشنده
+                                            *</label>
+                                        <input type="text"
+                                               name="slug"
+                                               placeholder="ايدي اختصاصي"
+                                               value="{% if request.user.slug is not None %}{{ request.user.slug }}{% endif %}"
+                                               class="form-control"
+                                               maxlength="15"
+                                               required>
+                                    </div>
+                                    <!-- Slug -->
+
+                                    <!-- Profile image  -->
+                                    <div class="col-sm-6">
+                                        <label><i
+                                                class="las la-address-card ml-3 v-align1"
+                                                style="font-size: 1.5em;"></i>{% if request.user.profile_image %}تغيير
+                                            عكس پروفايل
+                                            فروشنده*{% else %}عكس
+                                            پروفايل
+                                            فروشنده*{% endif %}</label>
+                                        <input type="file"
+                                               name="profile_image"
+                                               {% if request.user.profile_image %}{% else %}required{% endif %}>
+                                    </div>
+                                    <!-- Profile image  -->
+
+                                </div>
+                                <!-- Slug & Profile image-->
+
+                                <!-- Save -->
+                                <div
+                                        class="container-login100-form-btn mt-3">
+                                    <button type="submit"
+                                            class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                        <i
+                                                class="icon-long-arrow-right ml-2"></i>
+                                        <span>ذخيره</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                        <i class="icon-long-arrow-right ml-2"></i>
+                                        <span><a href="{% url 'seller:redirect_to_ticket_edit_seller_info' %}">ارسال تيكت</a></span>
+                                    </button>
+                                </div>
+                                <!-- Save -->
+
+                            </div>
+
+                        </form>
+
+
+                        {% else %}
+                        <div
+                                class="container text-center">
+                            <p style=color:green;>
+                                {{ not_allowed }}</p>
+                            <a href="{% url 'shop:shop' %}"
+                               class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت
+                            به
+                            فروشگاه</span><i
+                                    class="las la-shopping-bag mr-2"></i></a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</main>
+
+{% endblock content %}

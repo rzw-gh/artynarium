@@ -1,0 +1,134 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}جزییات سفارش{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">جزییات سفارش</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربری</a></li>
+                <li class="breadcrumb-item active" aria-current="page">جزییات سفارش</li>
+            </ol>
+            {% if request.user.seller %}
+                <p style="float: left;margin-top: -26px;"><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a href="{% url 'seller:financial' %}"> موجودی : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content pb-0 mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+            <!--Side Panel-->
+            <div class="col-md-4 col-lg-2">
+                {% include 'shop/account_side_panel.html' %}
+            </div>
+            <!--Side Panel-->
+            <!--Main-->
+            <div class="col-md-12 col-lg-10">
+                <div class="row">
+
+                    <!--Order-->
+                    <div class="cs-row x-wrapper2">
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>شماره سفارش : {{ order.orderid }}</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>وضعیت سفارش : {% if order.status == "Payment" or order.status == 'LackOfInventory' %}<a href="{% url 'shop:order' order.id %}" style="color: rgb(213, 228, 13);">{{ order.get_status_display }}</a>{% else %}{{ order.get_status_display }}{% endif %}</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>جمع هزینه محصولات : {{ order.total|intcomma:False }} تومان</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>هزینه ارسال : {% if o.shipping_method == 'Express' %}25,000{% else %}15,000{% endif %} تومان</p>
+                        {% if order.coupon %}<p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>تخفیف كوپن : {{ order.coupon.amount|intcomma:False }} تومان</p>{% endif %}
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>جمع کل : {{ order.totalcost|intcomma:False }} تومان</p>
+                        <p><i style="color: #1e7e34;margin: 9px;" class="fas fa-check"></i>تاریخ ثبت سفارش : {{ order.create_at }}</p>
+                    </div>
+                    <!--Order-->
+
+                    <!--Order Items-->
+                    <div class="row cs-row2 justify-content-center mt-4">
+                        <table class="table table-wishlist table-mobile mr-5">
+
+                        <!-- Heading -->
+                        <thead>
+                            <tr>
+                                <th>محصول</th>
+                                <th>قیمت</th>
+                                <th>تعداد</th>
+                                <th>كل</th>
+                            </tr>
+                        </thead>
+                        <!-- Heading -->
+
+                        <!-- Body -->
+                        <tbody>
+
+                            {% for p in order_item %}
+                            <tr>
+                                <!-- Product -->
+                                <td style="width: 46rem;" class="product-col">
+                                    <div class="product">
+                                        <!-- Image -->
+                                        <figure class="product-media">
+                                            {% if p.variant.image_id > 0 %}
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                <img src="{{ p.variant.image }}" alt="{{ p.product.name }}">
+                                            </a>
+                                            {% else %}
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                                            </a>
+                                            {% endif %}
+                                        </figure>
+                                        <!-- Image -->
+
+                                        <!-- Name -->
+                                        <h3 class="product-title mr-5">
+                                            <a href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }} {% if p.variant.size %} - {{ p.variant.size }} {% endif %} {% if p.variant.color %} - {{ p.variant.color }} {% endif %}</a>
+                                        </h3>
+                                        <!-- Name -->
+                                    </div>
+                                </td>
+                                <!-- Product -->
+
+                                <!-- Price -->
+                                <td class="price-col">{{ p.product.price|intcomma:False }} تومان</td>
+                                <!-- Price -->
+
+                                <!-- Quantity -->
+                                <td class="price-col">{{ p.quantity|intcomma:False }}</td>
+                                <!-- Quantity -->
+
+                                <!-- Item Total -->
+                                <td class="price-col">{{ p.order.totalcost|intcomma:False }}</td>
+                                <!-- Item Total -->
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                        <!-- Body -->
+
+                        </table>
+                    </div>
+                    <!--Order Items-->
+
+                </div>
+
+            </div>
+            </div>
+            <!--Main-->
+        </div>
+    </div>
+
+</main>
+
+{% endblock content %}

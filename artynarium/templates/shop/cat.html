@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}دسته بندي{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- top image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+
+        <div class="container">
+            <h1 class="page-title">دسته بندي هاي اصلي</h1>
+        </div>
+
+    </div>
+    <!-- top image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">دسته بندي هاي اصلي</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+
+        <div class="container">
+
+            <div class="portfolio-container" data-layout="fitRows">
+
+                {% for c in cate %}
+                <div class="portfolio-item accessories women col-sm-6 col-lg-4">
+                    <div class="portfolio portfolio-overlay">
+                        <figure class="portfolio-media">
+                            <a href="{% url 'shop:category' c.id c.slug %}"><img src="{% if c.image %} {{ c.image.url }} {% endif %}" alt="{{ c.title }}"></a>
+                        </figure>
+                        <div class="portfolio-content">
+                        <h3 class="portfolio-title">
+                            <a href="{% url 'shop:category' c.id c.slug %}">
+                                <i class="las {{ c.icon }} ml-3" style="font-size: 1.5em;"></i>{{ c.title }}
+                            </a>
+                        </h3>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

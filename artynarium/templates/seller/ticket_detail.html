@@ -1,0 +1,190 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}تيكت {{ ticket.subject }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Background Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">{{ ticket.subject }}</h1>
+        </div>
+    </div>
+    <!-- Background Image -->
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb"
+         class="breadcrumb-nav mb-3">
+        <div class="container d-flex justify-content-between  align-items-center overflow-hidden">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب کاربری من</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'seller:ticket_list' %}">تيكت ها</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ ticket.subject }}</li>
+            </ol>
+            {% if request.user.seller %}
+            <p><i class="las la-wallet ml-2 cs-font-size1 v-align2"></i><a
+                    href="{% url 'seller:financial' %}"> موجودي : {{ balance|intcomma:False }} تومان</a></p>
+            {% endif %}
+        </div>
+    </nav>
+    <!-- Breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-lg-2">
+                        {% include 'shop/account_side_panel.html' %}
+                    </div>
+
+                    <div class="col-md-8 col-lg-10">
+                        {% if request.user.seller %}
+                            {% if not not_allowed_to_reply %}
+                            <div class="container">
+                                <!-- Message -->
+                                <div class="row justify-content-center">
+                                    <div>
+                                        {% if messages %}
+                                        <ul class="messages">
+                                            {% for message in messages %}
+                                            <div
+                                                    class="alert alert-{{message.tags}} mb-2"
+                                                    role="alert">
+                                                {{ message }}
+                                            </div>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- Message -->
+                                <!-- New Reply -->
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-md-8">
+                                        {% if ticket.status == 'Closed' %}
+                                        <p>اين تيكت بسته شده است. شما قادر به ارسال پاسخ نيستيد <a href="{% url 'seller:ticket_list' %}">بازگشت</a></p>
+                                        {% else %}
+                                        <form class="form1" action="." method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="parent_id" value="{{ ticket_id }}">
+                                            <!-- Text -->
+                                            <label for="text_for_ticket" class="form-label"><i
+                                                    class="las la-comment-dots ml-3 v-align1" style="font-size: 1.5em;"></i>متن
+                                                پيام *</label>
+                                            <textarea id="text_for_ticket" name="text" class="form-control"
+                                                      placeholder="متن پيام"
+                                                      maxlength="10" required></textarea>
+                                            <!-- Text -->
+                                            <!-- File -->
+                                            <div>
+                                                <label for="file_ticket"><i class="las la-file ml-3 v-align1" style="font-size: 1.5em;"></i>فايل *</label>
+                                                <input type="file" class="dropify" id="file_ticket" name="document">
+                                            </div>
+                                            <!-- File -->
+                                            <!-- Send -->
+                                            <div class="container-login100-form-btn mt-3">
+                                                <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                                                    <i class="icon-long-arrow-right ml-2"></i>
+                                                    <span>ارسال</span>
+                                                </button>
+                                            </div>
+                                            <!-- Send -->
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- New Reply -->
+                            </div>
+                            <div class="row justify-content-center mt-7">
+                                <div class="col-12 col-md-8" >
+                                    <h6 style="border-bottom: solid 1px #dedede; padding: 6px;">تیکت ها</h6>
+                                    <!-- Replies -->
+                                    <div>
+                                        {% for reply in reply %}
+                                        <div class="cs-message">
+                                            <p><span class="ml-2">نویسنده:</span>{{ reply.user }}</p>
+                                            <p><span class="ml-2">متن پیام:</span>{{ reply.text }}</p>
+                                            {% if reply.document %}
+                                            <p>
+                                                <span class="ml-2">:فايل</span>
+                                                <a href="{{ reply.document.url }}">{{ reply.document_name }}</a>
+                                            </p>
+                                            {% endif %}
+                                            <p><span class="ml-2"> زمان ارسال:</span>{{ reply.create_at|naturaltime }}</p>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="cs-message">
+                                            <p><span class="ml-2">نویسنده:</span>{{ ticket.text }}</p>
+                                            <p><span class="ml-2">متن پیام:</span>{{ ticket.user }}</p>
+                                            {% if ticket.document %}
+                                            <p>
+                                                <span class="ml-2">فايل:</span>
+                                                <a href="{{ ticket.document.url }}">{{ ticket.document_name }}</a>
+                                            </p>
+                                            {% endif %}
+                                            <p><span class="ml-2"> زمان ارسال:</span>{{ ticket.create_at|naturaltime }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- Replies -->
+
+                                    <!-- Pagination -->
+                                    <nav class="mt-5" aria-label="Page navigation">
+                                        {% if reply.has_other_pages %}
+                                        <ul class="pagination">
+                                            {% if reply.has_previous %}
+                                            <li class="page-item"><a class="page-link page-link-prev"
+                                                                     href="{% url 'seller:ticket_detail' ticket.id %}?page={{ reply.previous_page_number }}"
+                                                                     aria-label="Previous" tabindex="-1"
+                                                                     aria-disabled="true"><i
+                                                    class="las la-arrow-right ml-2"></i>قبلي<span aria-hidden="true"></span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% for i in reply.paginator.page_range %}
+                                            {% if reply.number == i %}
+                                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                            {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% if reply.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link page-link-next"
+                                                     href="{% url 'seller:ticket_detail' ticket.id %}?page={{ reply.next_page_number }}"
+                                                     aria-label="Next">بعدي <span aria-hidden="true">
+                                                     <i class="las la-arrow-left mr-2"></i></span></a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                        {% endif %}
+                                    </nav>
+                                    <!-- Pagination -->
+                                </div>
+                            </div>
+                            {% else %}
+                                <div class="container text-center">
+                                    <p style=color:red;>{{ not_allowed_to_reply }}</p>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                        <div class="container text-center">
+                            <p style=color:red;>{{ not_allowed }}</p>
+                            <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

@@ -1,0 +1,458 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+{% block title %}سفارش شماره {{order.orderid}}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <style>
+        .bg-unselect:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: 36%;
+            background-color: #0000004a;
+            z-index: 0;
+        }
+        .bg-unselect:before {
+            content: attr(data-bg);
+            color: white;
+            font-size: 30px;
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: 36%;
+            z-index: 1;
+        }
+        .unselect-bg-btn {
+            position: absolute;
+            display: flex;
+            z-index: 999999999999;
+            right: 48%;
+            padding: 8px 15px;
+            margin-top: 18px;
+            border: none;
+            color: white;
+            border-radius: 9px;
+        }
+    </style>
+
+    <!-- Top Image -->
+    <div class="page-header text-center"
+        style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">سفارش شماره {{order.orderid}}</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb"
+        class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">سفارش های من</a></li>
+                <li class="breadcrumb-item active" aria-current="page">سفارش شماره {{order.orderid}}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- Breadcrumb -->
+
+    <!--Main-->
+    <div class="page-content">
+        {% if order_canceled %}
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <h5 class="alert alert-info mb-1" style="font-size: 12px;">با عرض پوزش این سفارش به دلیل اتمام موجودی لغو شد</h5>
+                        <a href="{% url 'shop:my_orders' %}" class="btn btn-outline-primary-2 btn-order btn-block">بازگشت به سفارشات من</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {% if reorder_products_query and order.status == 'LackOfInventory'%}
+            <div class="cart">
+                <div class="container">
+                    <div class="row">
+
+                        <!-- Main -->
+                        <div class="col-lg-9">
+
+                            <h5 class="alert alert-info mb-1" style="font-size: 12px;">با عرض پوزش موجودی {% if order_items_count > 1 %} مجصولات {% elif order_items_count == 1 %} محصول {% endif %} زیر دارای کاستی میباشد</h5>
+
+                            <!-- Main Top -->
+                            <table class="table table-cart table-mobile text-center">
+
+                                <!-- Table Head -->
+                                <thead>
+                                    <tr>
+                                        <th>محصول</th>
+                                        <th>قیمت</th>
+                                        <th>درخواست شما</th>
+                                        <th>کاستی</th>
+                                        <th>موجودی فعلی</th>
+                                        <th>كل</th>
+                                    </tr>
+                                </thead>
+                                <!-- Table Head -->
+
+                                <!-- Table Body -->
+                                <tbody>
+                                    {% for p in reorder_products_query %}
+                                    <!-- Main -->
+                                    <tr {% if p.out_of_stock %} class="bg-unselect" style="position: relative" data-bg="اتمام موجودی" {% endif %}>
+
+                                        {% if p.out_of_stock %}
+                                        <td style="float: right"><a class="unselect-bg-btn" style="background: red;" href="{% url 'shop:del_order_item' p.id %}" id="on_click_delete_confirmation_{{ forloop.counter }}">حذف از سبد خرید</a></td>
+                                        {% endif %}
+
+                                        <!-- Details -->
+                                        <td class="product-col cart-product-col">
+
+                                            <div class="product">
+
+                                                <!-- Image -->
+                                                <figure class="product-media">
+                                                    {% if p.variant.image_id  > 0 %}
+                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                        <img src="{{ p.variant.image }}" alt="{{ p.product.name }}">
+                                                    </a>
+                                                    {% else %}
+                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                        <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                                                    </a>
+                                                    {% endif %}
+                                                </figure>
+                                                <!-- Image -->
+
+                                                <!-- Name -->
+                                                <h3 class="product-title mr-3">
+                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }} {% if p.variant.size %} - {{ p.variant.size }} {% endif %} {% if p.variant.color %} - {{ p.variant.color }} {% endif %}</a>
+                                                </h3>
+                                                <!-- Name -->
+
+                                            </div>
+
+                                        </td>
+                                        <!-- Details -->
+
+                                        <!-- Price -->
+                                        {% if p.product.variant == 'None' %}
+                                        <td class="price-cols">{{ p.product.price|intcomma:False }} تومان</td>
+                                        {% else %}
+                                        <td class="price-cols">{{ p.variant.price|intcomma:False }} تومان</td>
+                                        {% endif %}
+                                        <!-- Price -->
+
+                                        <!-- Requested -->
+                                        <td class="quantity-col"><span>{{ reorder_products_info_list|requested:p.id }}</span></td>
+                                        <!-- Requested -->
+
+                                        <!-- Lack -->
+                                        <td class="quantity-col"><span style="color: red;">{{ reorder_products_info_list|lack:p.id }}</span></td>
+                                        <!-- Lack -->
+
+                                        <!-- Quantity -->
+                                        <td class="quantity-col"><span>{{ p.quantity }}</span></td>
+                                        <!-- Quantity -->
+
+                                        <!-- Total -->
+                                        <td class="total-col" id="product_total_cost_{{ forloop.counter }}">
+                                        {% if p.product.variant == 'None' %}
+                                            {{ p.amount|intcomma:False }} تومان
+                                        {% else %}
+                                            {{ p.varamount|intcomma:False }} تومان
+                                        {% endif %}
+
+                                        {% if p.product.variant == 'None' %}
+                                            {{ p.amount|intcomma:False }} تومان
+                                        {% else %}
+                                            {{ p.varamount|intcomma:False }} تومان
+                                        {% endif %}
+                                        </td>
+                                        <!-- Total -->
+                                    </tr>
+                                    <!-- Main -->
+                                    {% endfor %}
+
+                                    <script type="text/javascript">
+                                        $('a[id^="on_click_delete_confirmation_"]').click(function(e){
+                                            var linkURL = $(this).attr("href");
+                                            e.preventDefault();
+                                            swal({
+                                              title: "آیا از حذف این محصول مطمئن هستید؟",
+                                              icon: "warning",
+                                              buttons: true,
+                                              dangerMode: true,
+                                              buttons: ["خیر", "بله"],
+                                            })
+                                            .then((willDelete) => {
+                                              if (willDelete) {window.location.href = linkURL;}
+                                            });
+                                        });
+                                    </script>
+                                </tbody>
+                                <!-- Table Body -->
+
+                            </table>
+                            <!-- Main Top -->
+
+                        </div>
+                        <!-- Main -->
+
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="container">
+                    <aside class="col-lg-5 message-d">
+                    {% if order.delay %}
+                        <h5 class="alert alert-info mb-1" style="font-size: 12px;">تعدادی از محصولات انتخابی شما موجود در نزد فروشنده میباشد. ارسال این سفارش با تاخیر انجام خواهد شد</h5>
+                    {% endif %}
+                        <div class="summary">
+                            <h3 class="summary-title"><i class="las la-dolly ml-3 cs-font-size1 v-align2"></i>{% if order.status == 'Payment' or order.status == 'LackOfInventory' %}سفارش شما{% elif order.status == 'Canceled' %}سفارش لغو شده{% endif %}</h3>
+
+                            <table class="table table-summary">
+
+                                <tbody>
+                                    <!-- Subtotal -->
+                                    <tr class="summary-subtotal">
+                                        <td>{% if order_items_count > 1 %}هزینه محصولات{% else %}هزینه محصول{% endif %}</td>
+                                        <td>{{ order.total|intcomma:False }} تومان</td>
+                                    </tr>
+                                    <!-- Subtotal -->
+
+                                    <!-- Shipping -->
+                                    <tr>
+                                        <td>{% if order.shipping_method == 'Express' %} <i class="las la-shipping-fast ml-3 cs-font-size1 v-align2"></i> ارسال پیشتاز {% else %} <i class="las la-truck ml-3 cs-font-size1"></i>ارسال عادی {% endif %}</td>
+                                        <td>15,000 تومان
+    <!--                                        {% if order.shipping_method == 'Express' %}-->
+
+    <!--                                            {% if order.state == 'تهران' %}-->
+    <!--                                                22,000 تومان-->
+    <!--                                            {% else %}-->
+    <!--                                                25,000 تومان-->
+    <!--                                            {% endif %}-->
+
+    <!--                                        {% else %}-->
+
+    <!--                                            {% if order.state == 'تهران' %}-->
+    <!--                                                12,000 تومان-->
+    <!--                                            {% else %}-->
+    <!--                                                15,000 تومان-->
+    <!--                                            {% endif %}-->
+
+    <!--                                        {% endif %}-->
+                                        </td>
+                                    </tr>
+                                    <!-- Shipping -->
+
+                                    <!-- Coupon -->
+                                    {% if order.coupon %}
+                                    <tr>
+                                        <td><i class="las la-tag ml-3 cs-font-size1 v-align2"></i>تخفیف كوپن</td>
+                                        <td>
+                                            {% if order.total <= order.coupon.amount %}
+                                                {{ order.total|intcomma:False }} تومان
+                                            {% else %}
+                                                {{ order.coupon.amount|intcomma:False }} تومان
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <!-- Coupon -->
+
+                                    <!-- Total -->
+                                    <tr class="summary-total">
+                                        <td><i class="las la-credit-card ml-3 cs-font-size1 v-align2"></i>قابل پرداخت</td>
+                                        <td>{{ order.totalcost|intcomma:False }} تومان</td>
+                                    </tr>
+                                    <!-- Total -->
+                                </tbody>
+
+                            </table>
+
+                            {% if order.status == 'Payment' or order.status == 'LackOfInventory' %}
+                            <div class="row">
+                                <div class="col-6">
+                                    <!-- To bank -->
+                                    <a href="{% url 'shop:pay' order.id %}" class="btn btn-outline-primary-2 btn-order btn-block">پرداخت</a>
+                                    <!-- To bank -->
+                                </div>
+                                <script>
+                                $(document).ready(function () {
+                                    $('#on_click_delete_confirmation').click(function(e){
+                                    var linkURL = $(this).attr("href");
+                                    e.preventDefault();
+                                      swal({
+                                      title: "آیا از لغو این سفارش مطمئن هستید؟",
+                                      icon: "warning",
+                                      buttons: true,
+                                      dangerMode: true,
+                                      buttons: ["خیر", "بله"],
+                                    })
+                                    .then((willDelete) => {
+                                      if (willDelete) {
+                                          window.location.href = linkURL;
+                                      }
+                                    });
+
+                                    });
+                                });
+                                </script>
+                                <div class="col-6">
+                                    <!-- Cancel -->
+                                    <a href="{% url 'shop:cancel_order' order.id %}" id="on_click_delete_confirmation" class="btn btn-outline-primary-2 btn-order btn-block">لغو سفارش</a>
+                                    <!-- Cancel -->
+                                </div>
+                            </div>
+                            {% else %}
+                                <!-- Back to my orders -->
+                                <a href="{% url 'shop:my_orders' %}" class="btn btn-outline-primary-2 btn-order btn-block">بازگشت به سفارشات من</a>
+                                <!-- Back to my orders -->
+                            {% endif %}
+                        </div>
+                    </aside>
+                    {% if order.status == 'Payment' or order.status == 'LackOfInventory' %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="accordion accordion-icon" id="accordion-3">
+                                <div class="card">
+                                    <div class="card-header" id="heading3-1">
+                                        <h2 class="card-title">
+                                            <a role="button" data-toggle="collapse" href="#collapse_accordion" aria-expanded="false" aria-controls="collapse_accordion">
+                                                <i class="las la-shopping-bag"></i><span class="mr-3">{% if reorder_products_query %}مشاهده سایر محصولات{% else %}مشاهده {% if order_items_count > 1 %}محصولات{% else %}محصول{% endif %} سفارش{% endif %}</span>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    <div id="collapse_accordion" class="collapse" aria-labelledby="heading3-1" data-parent="#accordion-3">
+                                        <div class="card-body">
+                                            <div class="cart">
+                                                <div class="container">
+                                                    <div class="row">
+
+                                                        <!-- Main -->
+                                                        <div class="col-lg-8">
+
+                                                            <!-- Main Top -->
+                                                            <table class="table table-cart table-mobile text-center">
+
+                                                                <!-- Table Head -->
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>محصول</th>
+                                                                        <th>قیمت</th>
+                                                                        <th>تعداد</th>
+                                                                        <th>كل</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <!-- Table Head -->
+
+                                                                <!-- Table Body -->
+                                                                <tbody>
+                                                                    {% for p in order_items %}
+                                                                    <!-- Main -->
+                                                                    <tr>
+                                                                        <!-- Details -->
+                                                                        <td class="product-col cart-product-col">
+
+                                                                            <div class="product">
+
+                                                                                <!-- Image -->
+                                                                                <figure class="product-media">
+                                                                                    {% if p.variant.image_id  > 0 %}
+                                                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                                                        <img src="{{ p.variant.image }}" alt="{{ p.product.name }}">
+                                                                                    </a>
+                                                                                    {% else %}
+                                                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">
+                                                                                        <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+                                                                                    </a>
+                                                                                    {% endif %}
+                                                                                </figure>
+                                                                                <!-- Image -->
+
+                                                                                <!-- Name -->
+                                                                                <h3 class="product-title mr-3">
+                                                                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }} {% if p.variant.size %} - {{ p.variant.size }} {% endif %} {% if p.variant.color %} - {{ p.variant.color }} {% endif %}</a>
+                                                                                </h3>
+                                                                                <!-- Name -->
+
+                                                                            </div>
+
+                                                                        </td>
+                                                                        <!-- Details -->
+
+                                                                        <!-- Price -->
+                                                                        {% if p.product.variant == 'None' %}
+                                                                        <td class="price-cols">{{ p.product.price|intcomma:False }} تومان</td>
+                                                                        {% else %}
+                                                                        <td class="price-cols">{{ p.variant.price|intcomma:False }} تومان</td>
+                                                                        {% endif %}
+                                                                        <!-- Price -->
+
+                                                                        <!-- Quantity -->
+                                                                        <td class="quantity-col"><span>{{ p.quantity }}</span></td>
+                                                                        <!-- Quantity -->
+
+                                                                        <!-- Total -->
+                                                                        <td class="total-col">
+                                                                        {% if p.product.variant == 'None' %}
+                                                                            {{ p.amount|intcomma:False }} تومان
+                                                                        {% else %}
+                                                                            {{ p.varamount|intcomma:False }} تومان
+                                                                        {% endif %}
+                                                                        </td>
+                                                                        <!-- Total -->
+                                                                    </tr>
+                                                                    <!-- Main -->
+                                                                    {% endfor %}
+
+                                                                    <script type="text/javascript">
+                                                                        $('a[id^="on_click_delete_confirmation_"]').click(function(e){
+                                                                            var linkURL = $(this).attr("href");
+                                                                            e.preventDefault();
+                                                                            swal({
+                                                                              title: "آیا از حذف این محصول مطمئن هستید؟",
+                                                                              icon: "warning",
+                                                                              buttons: true,
+                                                                              dangerMode: true,
+                                                                              buttons: ["خیر", "بله"],
+                                                                            })
+                                                                            .then((willDelete) => {
+                                                                              if (willDelete) {window.location.href = linkURL;}
+                                                                            });
+                                                                        });
+                                                                    </script>
+                                                                </tbody>
+                                                                <!-- Table Body -->
+
+                                                            </table>
+                                                            <!-- Main Top -->
+
+                                                        </div>
+                                                        <!-- Main -->
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <!--Main-->
+
+</main>
+
+{% endblock %}

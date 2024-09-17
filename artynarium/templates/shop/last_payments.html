@@ -1,0 +1,106 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}واريزي هاي اخير{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">واريزي هاي اخير</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:my_orders' %}">حساب كاربري</a></li>
+                <li class="breadcrumb-item active" aria-current="page">واريزي هاي اخير</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav>
+    <!-- breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+
+            <!-- Main -->
+            {% if history %}
+            <table class="table table-wishlist table-mobile">
+
+                <!-- Heading -->
+                <thead>
+                    <tr>
+                        <th>مبلغ واریز شده</th>
+                        <th>تاريخ</th>
+                        <th>فروشنده</th>
+                    </tr>
+                </thead>
+                <!-- Heading -->
+
+                <!-- Body -->
+                <tbody>
+
+                  {% for p in history %}
+                  <tr>
+                    <!-- Price -->
+                    <td class="price-col">{{ p.amount|intcomma:False }} تومان</td>
+                    <!-- Price -->
+
+                    <!-- Date -->
+                    <td class="price-col">{{ p.pay_date|naturaltime }}</td>
+                    <!-- Date -->
+
+                    <!-- Seller -->
+                    <td class="price-col"><a href="{% url 'seller:seller_page' p.user.slug %}">{{ p.user.seller_title }}</a></td>
+                    <!-- Seller -->
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+                <!-- Body -->
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    {% if history.has_other_pages %}
+                    <ul class="pagination">
+                        {% if history.has_previous %}
+                        <li class="page-item"><a class="page-link page-link-prev" href="{% url 'shop:last_payments' %}?page={{ history.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true">قبلي<span aria-hidden="true"><i class="icon-long-arrow-left"></i></span></a></li>
+                        {% endif %}
+                        {% for i in history.paginator.page_range %}
+                            {% if history.number == i %}
+                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if history.has_next %}
+                        <li class="page-item"><a class="page-link page-link-next" href="{% url 'shop:last_payments' %}?page={{ history.next_page_number }}" aria-label="Next">بعدي <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span></a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <!-- Pagination -->
+
+            </table>
+            {% else %}
+            <div class="container text-center">
+                <h2>هيچ واريزي اخيري موجود نميباشد!</h2>
+                <a href="{% url 'shop:shop' %}" class="btn btn-outline-dark-2 mt-3 mb-5"><span>بازگشت به فروشگاه</span><i class="las la-shopping-bag mr-2"></i></a>
+            </div>
+            {% endif %}
+            <!-- Main -->
+
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}
