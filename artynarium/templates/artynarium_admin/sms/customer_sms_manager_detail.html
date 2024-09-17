@@ -1,0 +1,101 @@
+{% extends 'artynarium_admin/base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Artynarium Admin{% endblock title %}
+{% block content %}
+<div class="app-main" id="main">
+    <!-- begin container-fluid -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 m-b-30">
+                <!-- begin page title -->
+                <div class="d-block d-sm-flex flex-nowrap align-items-center">
+                    <div class="ml-auto d-flex align-items-center">
+                        <nav>
+                            <ol class="breadcrumb p-0 m-b-0">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'artynarium_admin:home' %}"><i class="ti ti-home"></i></a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    Messages
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'artynarium_admin:customer_sms_manager' %}">Customer SMS</a>
+                                </li>
+                                <li class="breadcrumb-item active text-primary" aria-current="page">SMS Detail</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <!-- end page title -->
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <!--Message-->
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} mb-2"
+                    role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <!--Message-->
+        </div>
+
+        <div class="row justify-content-center">
+
+            <div class="col-8">
+                {% if sms %}
+                <div class="container text-center">
+                    <div class="card card-statistics h-100 mb-0 widget-support-list">
+                        <div class="card-header">
+                            <div class="card-heading">
+                                <h4 class="card-title">Recent Messages</h4>
+                            </div>
+                        </div>
+                        {% for sms in sms %}
+
+                        <div class="card-body">
+                            <div class="media d-block">
+                                <div class="text-right" style="direction: rtl" >
+                                    <span class="cs-bg-btn">{{ sms.create_at|naturaltime }}</span>
+                                    {% if sms.message_api_exception %}<span class="cs-bg-btn-err">API Exception Err</span>{% endif %}
+                                    {% if sms.message_http_exception %}<span class="cs-bg-btn-err">HTTP Exception Err</span>{% endif %}
+                                </div>
+                            </div>
+                            <div class="pt-3 text-right">
+                                <p style="padding: 8px 3px;">{{ sms.message_content }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-8">
+                <div class="container text-center mt-5">
+                <div class="card card-statistics">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Textarea</h4>
+                        </div>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <textarea dir="rtl" class="form-control" name="message_content" rows="3"></textarea>
+                        </div>
+                        <button class="btn btn-primary my-3" type="submit">Send</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- end container-fluid -->
+</div>
+{% endblock content %}

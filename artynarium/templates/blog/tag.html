@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}پست های برچسب {{ tag }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">پست های برچسب {{ tag }}</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'blog:home' %}">بلاگ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">پست های برچسب {{ tag }}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content">
+        <div class="container mt-5">
+
+            <div class="entry-container max-col-3" data-layout="fitRows">
+
+                {% for p in posts %}
+                <div class="entry-item lifestyle shopping col-sm-6 col-lg-4">
+                    <article class="entry entry-grid text-center cs-card">
+
+                        <!-- Image -->
+                        <figure class="entry-media cs-card-image">
+                            <a href="{% url 'blog:post' p.id p.slug %}">
+                                <img src="{{ p.image.url }}" alt="image desc">
+                            </a>
+                        </figure>
+                        <!-- Image -->
+
+                        <div class="entry-body pb-4">
+                            <div class="entry-meta">
+                                <span class="entry-author">توسط {{ p.author }}</span>
+                                <span class="meta-separator">|</span>{{ p.comment.count }} دیدگاه
+                            </div>
+
+                            <h2 class="entry-title">
+                                <a href="{% url 'blog:post' p.id p.slug %}">{{ p.title }}</a>
+                            </h2>
+
+                            <div class="entry-cats">
+                                در <a href="{% url 'blog:category' p.id p.slug %}">{{ p.category.title }}</a>
+                            </div>
+
+                            <div class="entry-content">
+                                <p>{{ p.short_description }}</p>
+                                <a class="btn btn-primary btn-round" href="{% url 'blog:post' p.id p.slug %}" class="read-more">بیشتر بخوانید</a>
+                            </div><!-- End .entry-content -->
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+{% endblock content %}

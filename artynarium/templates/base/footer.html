@@ -1,0 +1,184 @@
+{% load static %}
+
+<!-- footer -->
+<footer class="footer">
+    <div class="footer-middle">
+        <div class="container">
+            <div class="row">
+                <!-- Site Description -->
+                <div
+                    class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
+                    <div
+                        class="widget widget-about">
+                        <img src="{% static 'assets/images/demos/logo2.svg' %}"
+                            class="footer-logo"
+                            alt="Footer Logo"
+                            width="165"
+                            height="25">
+                        <p
+                            style="font-size: 1.15em;">
+                            لورم ایپسوم متن ساختگی
+                            با تولید سادگی نامفهوم
+                            از صنعت چاپ و با
+                            استفاده از طراحان
+                            گرافیک است</p>
+                        <div class="social-icons">
+                            {%comment%}<a href="{% url 'blog:home' %}"
+                                class="social-icon cs-font-size7"
+                                title="Instagram"
+                                target="_blank"><i
+                                    class="las la-rss"></i></a>{%endcomment%}
+                            <a href="https://www.instagram.com/artynarium/"
+                                class="social-icon cs-font-size7"
+                                title="Instagram"
+                                target="_blank"><i
+                                    class="icon-instagram"></i></a>
+                            <a href="https://t.me/artynarium/"
+                                class="social-icon cs-font-size7"
+                                title="Pinterest"
+                                target="_blank"><i
+                                    class="icon-telegram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Site Description -->
+
+                <!-- Useful Links -->
+                <div class="col-12 col-sm-6
+                    col-lg-3 d-flex
+                    justify-content-center">
+                    <div class="widget">
+                        <h4 class="widget-title">
+                            لینک های مفید</h4>
+                        <ul class="widget-list">
+                            <li>{%comment%}<a href="{% url 'blog:home' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-rss ml-3 align-icon cs-font-size1"></i>بلاگ</a>{%endcomment%}
+                            </li>
+                            <li>{%comment%}<a href="{% url 'shop:instagram' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="lab la-instagram ml-3 align-icon cs-font-size1"></i>صفحه
+                                    اینستاگرام</a>{%endcomment%}
+                            </li>
+                            <li><a href="{% url 'shop:contact' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-phone-volume ml-3 align-icon cs-font-size1"></i>تماس
+                                    با ما</a></li>
+                            <li><a href="{% url 'shop:about' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-info ml-3 align-icon cs-font-size1"></i>در
+                                    باره ما</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Useful Links -->
+
+                <!-- Account -->
+                <div class="col-12 col-sm-6
+                    col-lg-3 d-flex
+                    justify-content-center">
+                    <div class="widget">
+                        <h4 class="widget-title">
+                            حساب کاربری</h4>
+                        <ul class="widget-list">
+                            {% if user.is_authenticated %}
+                            <li><a href="{% url 'shop:my_orders' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-user ml-3 align-icon"></i>حساب
+                                    کاربری من</a>
+                            </li>
+                            <li><a href="{% url 'shop:cart' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-shopping-cart ml-3 align-icon"></i>سبد
+                                    خرید من</a>
+                            </li>
+                            <li><a href="{% url 'shop:wishlist' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-heart ml-3 align-icon"></i>لیست
+                                    علاقه مندی
+                                    من</a></li>
+                            {% if request.user.seller %}
+                            <li><a href="{% url 'seller:seller_page' request.user.slug %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-pager ml-3 align-icon"></i>صفحه
+                                    فروش من</a>
+                            </li>
+                            {% endif %}
+                            <li><a href="{% url 'account_logout' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-sign-out-alt ml-3 align-icon"></i>خروج
+                                    از حساب</a>
+                            </li>
+                            {% else %}
+                            <li><a href="{% url 'account_signup' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-user-plus ml-3"
+                                        style="font-size: 1.5em;"></i>ثبت
+                                    نام</a></li>
+                            <li><a href="{% url 'account_login' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-sign-in-alt ml-3"
+                                        style="font-size: 1.5em;"></i>ورود</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <!-- Account -->
+
+                <!-- Customer Service -->
+                <div class="col-12 col-sm-6
+                    col-lg-3 d-flex
+                    justify-content-center">
+                    <div class="widget">
+                        <h4 class="widget-title">
+                            سرویس مشتری</h4>
+                        <ul class="widget-list">
+                            <li><a href="{% url 'shop:faq' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-money-bill ml-3 align-icon"></i>روش
+                                    پرداخت</a>
+                            </li>
+                            <li><a href="{% url 'shop:faq' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-shipping-fast ml-3 align-icon"></i>روش
+                                    های ارسال</a>
+                            </li>
+                            <li><a href="{% url 'shop:faq' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-dolly ml-3 align-icon"></i>سفارشات</a>
+                            </li>
+                            <li><a href="{% url 'shop:faq' %}"
+                                    style="font-size: 1.15em;"><i
+                                        class="las la-question ml-3 align-icon"></i>سوالات
+                                    پر تکرار</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Customer Service -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+        <div class="container">
+            <p class="footer-copyright">© 2021 |
+                Artynarium | تمامی حقوق محفوظ است
+            </p>
+            <figure class="footer-payments">
+                <div id="zarinpal">
+                    <script
+                        src="https://www.zarinpal.com/webservice/TrustCode"
+                        type="text/javascript">
+                    </script>
+                </div>
+            </figure>
+        </div>
+    </div>
+    <!-- Copyright -->
+
+</footer>

@@ -1,0 +1,200 @@
+{% extends 'artynarium_admin/base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Artynarium Admin{% endblock title %}
+{% block content %}
+<div class="app-main" id="main">
+    <style id="print_style">
+        .receipt {
+            border: 2px solid black;
+            border-radius: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            direction: rtl;
+            padding: 5px 25px 1px 25px;
+        }
+
+        .receipt__item--first {
+            flex-basis: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .receipt__item__code {
+            flex-grow: 2;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .receipt__item__pic {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .receipt__item {
+            flex-basis: 50%;
+            font-size: 18px;
+            direction: rtl;
+            padding: 5px 40px;
+            box-sizing: border-box;
+            text-align:right;
+        }
+
+        .receipt__item--last {
+            flex-basis: 100%;
+            padding: 5px 40px 20px 40px;
+            font-size: 18px;
+            text-align: right;
+        }
+
+        .receipt__item div {
+            margin-bottom: 4px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer_url {
+            display: block;
+            margin-right: auto;
+            padding-bottom: 3px;
+        }
+
+
+        /* @media print {
+                /* @page {
+                    size: 185mm 170mm landscape;
+                }
+                body {}
+            } */
+
+        @page {
+            size: A6 landscape;
+        }
+
+        @media only screen and (max-width:576px) {
+            .receipt__item {
+                flex-basis: 100%;
+                direction: rtl;
+                padding: 5px 40px;
+                box-sizing: border-box;
+            }
+            .container {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            .receipt__item__code {
+                flex-grow: 1;
+                padding: 15px;
+                text-align: left;
+            }
+            .receipt__item__pic {
+                flex-grow: 1;
+                text-align: right;
+            }
+        }
+    </style>
+    <!-- begin container-fluid -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 m-b-30">
+                <!-- begin page title -->
+                <div class="d-block d-sm-flex flex-nowrap align-items-center">
+                    <div class="ml-auto d-flex align-items-center">
+                        <nav>
+                            <ol class="breadcrumb p-0 m-b-0">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'artynarium_admin:home' %}"><i class="ti ti-home"></i></a>
+                                </li>
+                                <li class="breadcrumb-item">Store</li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'artynarium_admin:orders' %}">Orders</a>
+                                </li>
+                                <li class="breadcrumb-item active text-primary" aria-current="page">Order Detail</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <!-- end page title -->
+            </div>
+        </div>
+            <div class="row justify-content-center">
+                <div class="print">
+                    <button onclick="printFunc()">Print</button>
+                </div>
+                <div class="container" style="direction:rtl">
+                    <div class="receipt A5" style="direction:rtl">
+                        <div class="receipt__item--first" style="direction:rtl">
+                            <div class="receipt__item__pic mb-2">
+                                <img src="{% static 'assets/images/demos/logo2.svg' %}" width="150" height="80">
+                            </div>
+                            <div class="receipt__item__code">
+                                <span>{{ orderid }} - {{ time }}</span>
+                            </div>
+
+                        </div>
+                        <div class="receipt__item">
+                            <div>
+                                <span>گیرنده : {{ receiver }}</span>
+                            </div>
+                            <div>
+                                <span>استان : {{ state }}</span>
+                            </div>
+                        </div>
+                        <div class="receipt__item">
+                            <div>
+                                <span>موبایل : {{ phone }}</span>
+                            </div>
+                            <div>
+                                <span>کد پستی : {{ zipcode }}</span>
+                            </div>
+                        </div>
+                        <div class="receipt__item--last">
+                            <div>
+                                <span>آدرس : {{ address }} </span>
+                            </div>
+                        </div>
+
+                        <div class="receipt__item">
+                            <div>
+                                <span>فرستنده : امير مهدي سامع</span>
+                            </div>
+                            <div>
+                                <span>کد پستی : 25616516516</span>
+                            </div>
+                        </div>
+                        <div class="receipt__item">
+                            <div>
+                                <span>موبایل : 09911061927</span>
+                            </div>
+                        </div>
+                        <div class="receipt__item--last">
+                            <div>
+                                <span>آدرس : طهران - اتوبان بسیج - قصر فیروزه یک - پست شهرک </span>
+                            </div>
+                        </div>
+                        <div class="footer_url">
+                            <span>ARTYNARIUM.COM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!-- end container-fluid -->
+</div>
+<script>
+    function printFunc() {
+        const myDiv = document.querySelector('.container ').innerHTML;
+        const style = document.querySelector('#print_style').outerHTML;
+        var printWindow = window.open(' ', ' ', 'height=800,width=800 ');
+        printWindow.document.write('<html dir="rtl"> <head>'+style+' <title> Print DIV Content </title>');
+        printWindow.document.write(' <link rel = "stylesheet" href = "style.css" ></head> <body class="A5"> ');
+        printWindow.document.write(myDiv);
+        printWindow.document.write(' </body> </html> ');
+        printWindow.document.close();
+        setTimeout(() => printWindow.print(), 300)
+    }
+</script>
+{% endblock content %}

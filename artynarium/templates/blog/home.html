@@ -1,0 +1,115 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}بلاگ{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- Top Image -->
+    <div class="page-header text-center" style="background-image: url({% static 'assets/images/page-header-bg.jpg' %})">
+        <div class="container">
+            <h1 class="page-title">بلاگ</h1>
+        </div>
+    </div>
+    <!-- Top Image -->
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item active" aria-current="page">بلاگ</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav>
+    <!-- Breadcrumb -->
+
+    <!-- Main -->
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+
+                <!-- Main -->
+                <div class="col-lg-9">
+
+                    {% for p in post %}
+                    <article class="entry">
+
+                        <!-- Image -->
+
+                        <!-- Image -->
+
+                        <div class="entry-body">
+                            <div class="post-top">
+                            <h2 class="entry-title">
+                                <a href="{% url 'blog:post' p.id p.slug %}">{{ p.title }}</a>
+                            </h2>
+
+                            <div class="entry-meta">
+                                <span class="meta-separator"><i class="las la-user mr-3 d-inline-block cs-icon-text"></i></span><span class="">{{ p.author.first_name }}</span>
+                                <span class="meta-separator">|<i class="las la-clock mr-3 d-inline-block cs-icon-text"></i></span><span>{{ p.create_time|naturaltime }}</span>
+                                <span class="meta-separator">|<i class="las la-comments mr-3 d-inline-block cs-icon-text"></i></span><span>{{ p.comment.count }} دیدگاه</span>
+
+                                <span class="eee meta-separator">
+                                    |<i class="las la-stream mr-3 d-inline-block cs-icon-text"></i></span><span>دسته بندی: </span><a href="{% url 'blog:category' p.category.id p.category.slug %}">{{ p.category.title }}</a>
+                                </span>
+
+                        </div>
+                    </div>
+                    <div class="container-fluid p-3">
+                        <div class="row">
+                        <div class="col-6">
+                            <a href="{% url 'blog:post' p.id p.slug %}"><img src="{{ p.image.url }}" alt="image desc"></a>
+                        </div>
+                        <div class="col-6">
+                            <div class="entry-content p-4">
+                                <p>{{ p.short_description }}</p>
+                                <a href="{% url 'blog:post' p.id p.slug %}" class="read-more">بیشتر بخوانید</a>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+
+                        </div>
+
+                    </article>
+                    {% endfor %}
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        {% if post.has_other_pages %}
+                        <ul class="pagination">
+                            {% if post.has_previous %}
+                            <li class="page-item"><a class="page-link page-link-prev" href="{% url 'blog:home' %}?page={{ post.previous_page_number }}"aria-label="Previous" tabindex="-1" aria-disabled="true">صفحه قبل<span aria-hidden="true"><i class="icon-long-arrow-left"></i></span></a></li>
+                            {% endif %}
+                            {% for i in post.paginator.page_range %}
+                                {% if post.number == i %}
+                                <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if post.has_next %}
+                            <li class="page-item"><a class="page-link page-link-next" href="{% url 'blog:home' %}?page={{ post.next_page_number }}" aria-label="Next">صفحه بعد<span aria-hidden="true"><i class="icon-long-arrow-right"></i></span></a></li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>
+                    <!-- Pagination -->
+
+                </div>
+                <!-- Main -->
+
+                {% include 'blog/side.html' %}
+
+            </div>
+        </div>
+    </div>
+    <!-- Main -->
+
+</main>
+
+{% endblock content %}

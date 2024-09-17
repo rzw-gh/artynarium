@@ -1,0 +1,467 @@
+{% load static %}
+{% load humanize %}
+{% load mptt_tags %}
+{% url 'shop:shop' as shop %}
+{% url 'shop:cart' as cart %}
+{% url 'shop:home' as home_url %}
+{% url 'seller:sellers' as sellers %}
+{% url 'shop:instagram' as instagram %}
+{% url 'shop:about' as about %}
+{% url 'shop:contact' as contact %}
+{% url 'shop:faq' as faq %}
+{% url 'seller:seller_request' as seller_request %}
+
+<!-- Header -->
+<header
+    class="header header-2 header-intro-clearance">
+
+    <!-- header-middle -->
+    <div class="header-middle">
+
+        <!-- container -->
+        <div class="container">
+
+            <!-- Logo -->
+            <button class="mobile-menu-toggler">
+                <span class="sr-only">منو</span>
+                <i class="icon-bars"></i>
+            </button>
+            <div class="header-left">
+                <a href="{% url 'shop:home' %}"
+                    class="logo">
+                    <img src="{% static 'assets/images/demos/logo.svg' %}"
+                        alt="Logo" width="105"
+                        height="25">
+                </a>
+            </div>
+            <!-- Logo -->
+
+
+            <!-- header-search -->
+
+            <!-- Jquery Auto Search Complete script -->
+            <!-- <script>
+                $(function () {
+                    $("#autos")
+                        .autocomplete({
+                            source: '{% url '
+                            shop: autocomplete ' %}'
+                        });
+                });
+
+            </script> -->
+            <!-- Jquery Auto Search Complete script -->
+
+            <!-- Search -->
+            <div class="header-center">
+                <div
+                    class="header-search header-search-extended header-search-visible header-search-no-radius d-none d-lg-block">
+
+                    <form method="POST"
+                        action="{% url 'shop:search' %}">
+                        {% csrf_token %}
+                        <div
+                            class="header-search-wrapper search-wrapper-wide">
+                            <label for="autos"
+                                class="sr-only">جستجو</label>
+                            <input type="text"
+                                class="form-control"
+                                name="autos"
+                                id="autos"
+                                placeholder="جستجو در بین محصولات سایت ..."
+                                required>
+                            <button
+                                class="btn btn-primary"
+                                type="submit"><i
+                                    class="icon-search"></i></button>
+                            <!--                        <select name="catid" class="search-wrapper-wide">-->
+                            <!--                            <option value="0">همه دسته بندی ها</option>-->
+
+                            <!--                            {% recursetree cat %}-->
+                            <!--                                {% if node.is_leaf_node %}-->
+                            <!--                                    <option value="{{ node.id }}">{{ node.title }}</option>-->
+                            <!--                                {% endif %}-->
+                            <!--                                {% if not node.is_leaf_node %}-->
+                            <!--                                    <option label="{{ node.title }}">-->
+                            <!--                                        {{ children }}-->
+                            <!--                                    </option>-->
+                            <!--                                {% endif %}-->
+                            <!--                            {% endrecursetree %}-->
+
+                            <!--                        </select>-->
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            <!-- Search -->
+
+            <!-- header-right -->
+            <div class="d-flex">
+
+                {% if user.is_authenticated %}
+
+                <!-- account -->
+                <div class="account">
+                    <a href="{% url 'shop:my_orders' %}"
+                        title="حساب کاربری من">
+                        <div class="icon">
+                            <i
+                                class="icon-user"></i>
+                            {% if account_notification > 0 %}
+                            <span
+                                class="wishlist-count badge">{{ account_notification }}</span>
+                            {% endif %}
+                        </div>
+                        <p
+                            style='font-size: 0.48em;'>
+                        </p>
+                    </a>
+                </div>
+
+                <!-- wishlist -->
+                <div
+                    class="wishlist d-none d-sm-flex">
+                    {% if request.user.seller %}
+                    <a href="{% url 'seller:order' %}"
+                        title="سفارشات محصولات من">
+                        {% else %}
+                        <a href="{% url 'shop:wishlist' %}"
+                            title="علاقه مندی های من">
+                            {% endif %}
+                            <div class="icon">
+                                {% if request.user.seller %}
+                                <i class="las la-store-alt"
+                                    style="vertical-align: -4px;"></i>
+                                {% if seller_order_notif %}
+                                <span
+                                    class="wishlist-count badge">{{ seller_order_notif }}</span>
+                                {% endif %}
+                                {% else %}
+                                <i
+                                    class="icon-heart-o"></i>
+                                {% if wishlist_count %}
+                                <span
+                                    class="wishlist-count badge">{{ wishlist_count }}</span>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                            <p
+                                style='font-size: 0.48em;'>
+                            </p>
+                        </a>
+                </div>
+                <!-- wishlist -->
+
+                <!-- cart-dropdown -->
+                <div
+                    class="dropdown cart-dropdown">
+
+                    <a href="{{ cart }}"
+                        class="dropdown-toggle"
+                        {% if not cart_item %}title="سبد خريد"
+                        {% endif %} role="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        data-display="static">
+                        <div class="icon">
+                            <i
+                                class="icon-shopping-cart"></i>
+                            {% if cart_item %}
+                            <span
+                                class="cart-count badge">{{ cart_item }}</span>
+                            {% endif %}
+                        </div>
+                        <p
+                            style='font-size: 0.48em;'>
+                        </p>
+                    </a>
+
+                    {% if cart_item != 0 and request.path != cart %}
+                    <div class="dropdown-menu">
+                        <div
+                            class="dropdown-cart-products">
+
+                            {% if cart_object_show_case %}
+                            {% for p in cart_object_show_case %}
+                            <div class="product">
+                                <div
+                                    class="product-cart-details">
+                                    <h4
+                                        class="product-title">
+                                        <a
+                                            href="{% url 'shop:product' p.product.id p.product.slug %}">{{ p.product.name }}
+                                            {% if p.variant.size %}
+                                            -
+                                            {{ p.variant.size }}
+                                            {% endif %}
+                                            {% if p.variant.color %}
+                                            -
+                                            {{ p.variant.color }}
+                                            {% endif %}</a>
+                                    </h4>
+
+                                    <span
+                                        class="cart-product-info">
+                                        {% if p.product.variant == 'None' %}
+                                        <span
+                                            class="price-col">تومان
+                                            {{ p.product.price|intcomma:False }}
+                                            {{ p.quantity }}x</span>
+                                        {% else %}
+                                        <span
+                                            class="price-col">تومان
+                                            {{ p.variant.price|intcomma:False }}
+                                            {{ p.quantity }}x</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <figure
+                                    class="product-image-container">
+                                    {% if p.variant.image_id  > 0 %}
+                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}"
+                                        class="product-image mr-2">
+                                        <img src="{{ p.variant.image }}"
+                                            alt="{{ p.product.name }}">
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'shop:product' p.product.id p.product.slug %}"
+                                        class="product-image mr-2">
+                                        <img src="{{ p.product.image.url }}"
+                                            alt="{{ p.product.name }}">
+                                    </a>
+                                    {% endif %}
+                                </figure>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+
+                        </div>
+
+                        <div
+                            class="dropdown-cart-total">
+                            <span
+                                class='ml-3'>کل:</span>
+
+                            <span
+                                class="cart-total-price mr-2">
+                                {{ total_cart_dropdown|intcomma:False }}
+                                تومان</span>
+                        </div>
+
+                        <div
+                            class="dropdown-cart-action">
+                            <a href="{% url 'shop:cart' %}"
+                                class="btn btn-outline-primary-2"><span>مشاهده
+                                    سبد
+                                    خرید</span></a>
+                            {% if cart_item != 0 %}
+                            <a href="{% url 'shop:checkout' %}"
+                                class="btn btn-outline-primary-2"><span>ادامه
+                                    فرایند
+                                    خرید</span></a>
+                            {% else %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+                <!-- cart-dropdown -->
+
+                {% else %}
+
+                <a href="{% url 'account_signup' %}"
+                    class="ml-4"
+                    style="font-size: 1.15em;"><span></span>ثبت
+                    نام</a>
+                |
+                <a href="{% url 'account_login' %}"
+                    class="mr-4"
+                    style="font-size: 1.15em;"><span></span>ورود</a>
+
+                {% endif %}
+
+            </div>
+            <!-- header-right -->
+
+        </div>
+
+    </div>
+
+
+    <div class="header-bottom sticky-header">
+        <div class="container">
+
+            <!-- header-left -->
+            <div class="header-left">
+
+                <!-- category-dropdown -->
+                <div
+                    class="dropdown category-dropdown">
+                    <a href="{% url 'shop:cat' %}"
+                        class="dropdown-toggle"
+                        role="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        data-display="static"
+                        title="Browse Categories"
+                        style="font-size: 1.15em;">دسته
+                        بندی</a>
+
+                    <div class="dropdown-menu">
+                        <nav class="side-nav">
+                            <ul
+                                class="menu-vertical sf-arrows">
+
+                                <li
+                                    class="item-lead">
+                                    <a
+                                        href="{% url 'shop:cat' %}"><i
+                                            class="las la-code-branch"
+                                            style="font-size: 1.5em;"
+                                            style="font-size: 1.15em;"></i>همه
+                                        دسته بندی
+                                        ها</li>
+                                </a>
+                                {% recursetree cat %}
+                                <li
+                                    class="{% if node.important %}item-lead{% endif %}">
+                                    <a href="{% url 'shop:category' node.id node.slug %}"
+                                        style="font-size: 1.3em;"><i
+                                            class="las {{ node.icon }}"
+                                            style="font-size: 1.15em;vertical-align: -3px"></i>{{ node.title }}</a>
+                                    {% if not node.is_leaf_node %}
+                                    <ul
+                                        class="children">
+                                        {{ children }}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endrecursetree %}
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+            <!-- End .header-left -->
+
+            <!-- header-center -->
+            <div class="header-center">
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+
+                        <!-- Home -->
+                        <li style="font-size: 1.15em;"
+                            class="megamenu-container {% if request.path == home_url %}active{% endif %}">
+                            <a href="{{ home_url }}"
+                                style="font-size: 1.15em;">خانه</a>
+                        </li>
+                        <!-- Home -->
+
+                        <li style="font-size: 1.15em;">
+                            <a href="{{ shop }}"
+                                class="sf-with-ul">فروشگاه</a>
+
+                            <div
+                                class="megamenu megamenu-sm">
+                                <div class="row ">
+                                    <div
+                                        class="col-md-6">
+                                        <div
+                                            class="menu-col">
+                                            <ul>
+                                                <li><a href="{% url 'shop:shop' %}"
+                                                        style="font-size: 1.35em;">همه
+                                                        محصولات</a>
+                                                </li>
+                                                <li><a href="{% url 'shop:cat' %}"
+                                                        style="font-size: 1.35em;">همه
+                                                        دسته
+                                                        بندی
+                                                        ها</a>
+                                                </li>
+                                                <li><a href="{% url 'shop:special' %}"
+                                                        style="font-size: 1.35em;">محصولات
+                                                        خاص</a>
+                                                </li>
+                                                <li><a href="{% url 'shop:featured' %}"
+                                                        style="font-size: 1.35em;">محصولات
+                                                        ویژه</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- End .menu-col -->
+                                    </div>
+                                    <!-- End .col-md-6 -->
+
+                                    <div
+                                        class="col-md-6">
+                                        <div
+                                            class="banner banner-overlay">
+                                            <img src="{% static 'assets/images/banner-2.jpg' %}"
+                                                alt="Banner">
+                                        </div>
+                                        <!-- End .banner -->
+                                    </div>
+                                    <!-- End .col-md-6 -->
+                                </div>
+                                <!-- End .row -->
+                            </div>
+                            <!-- End .megamenu megamenu-sm -->
+                        </li>
+                        <!-- Shop -->
+
+                        <!-- Sellers -->
+                        <li class="megamenu-container {% if request.path == sellers %}active{% endif %}"
+                            style="font-size: 1.15em;">
+                            <a href="{{ sellers }}">فروشندگان</a>
+                        </li>
+                        <!-- Sellers -->
+
+                        <!-- About -->
+                        <li class="megamenu-container {% if request.path == about %}active{% endif %}"
+                            style="font-size: 1.15em;">
+                            <a href="{{ about }}">درباره
+                                ما</a></li>
+                        <!-- About -->
+
+                        <!-- Contact -->
+                        <li class="megamenu-container {% if request.path == contact %}active{% endif %}"
+                            style="font-size: 1.15em;">
+                            <a
+                                href="{{ contact }}">تماس
+                                با ما</a></li>
+                        <!-- Contact -->
+
+                        <!-- FAQ -->
+                        <li class="megamenu-container {% if request.path == faq %}active{% endif %}"
+                            style="font-size: 1.15em;">
+                            <a href="{{ faq }}">سوالی
+                                دارید؟</a></li>
+                        <!-- FAQ -->
+
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Shop Smart -->
+            <div class="header-right">
+                <i class="las la-brush"
+                    style="font-size: 1.5em;"></i>
+                <p><span class="highlight"
+                        style="font-size: 1.15em;">&nbsp;هنری
+                        !؟</span></p>
+            </div>
+            <!-- Shop Smart -->
+
+        </div>
+    </div>
+
+</header>
+<!-- End .header -->

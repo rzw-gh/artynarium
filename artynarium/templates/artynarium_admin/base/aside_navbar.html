@@ -1,0 +1,196 @@
+{% url 'artynarium_admin:home' as home %}
+{% url 'artynarium_admin:customer_sms_manager' as customer_sms_manager %}
+{% url 'artynarium_admin:seller_sms_manager' as seller_sms_manager %}
+{% url 'artynarium_admin:seller_request_sms_manager' as seller_request_sms_manager %}
+{% url 'artynarium_admin:orders' as orders %}
+
+<aside class="app-navbar">
+    <!-- begin sidebar-nav -->
+    <div class="sidebar-nav scrollbar scroll_light">
+        <ul class="metismenu" id="sidebarNav">
+            <!-- begin Dashboard -->
+            <li class="{% if request.path == home %}active{% endif %}">
+                <a href="{{ home }}" aria-expanded="false">
+                    <i class="nav-icon ti ti-rocket"></i>
+                    <span class="nav-title">Dashboard</span>
+                </a>
+            </li>
+            <!-- end Dashboard -->
+
+            <!-- begin Store -->
+            <li>
+                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon dripicons dripicons-store"></i>
+                    <span class="nav-title">Store</span>
+                </a>
+                <!-- Products -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fe fe-box"></i>Products</a></li>
+                </ul>
+                <!-- Products -->
+                <!-- Category -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-th-list"></i>Category</a></li>
+                </ul>
+                <!-- Category -->
+                <!-- Brands -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-copyright"></i>Brands</a></li>
+                </ul>
+                <!-- Brands -->
+                <!-- Colors -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon zmdi zmdi-palette"></i>Colors</a></li>
+                </ul>
+                <!-- Colors -->
+                <!-- Sizes -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-sort-numeric-asc"></i>Sizes</a></li>
+                </ul>
+                <!-- Sizes -->
+                <!-- Comments -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-comments"></i>Comments</a></li>
+                </ul>
+                <!-- Comments -->
+                <!-- Orders -->
+                <ul aria-expanded="false">
+                    <li><a href="{{ orders }}"><i class="nav-icon fa fa-shopping-cart"></i>Orders</a></li>
+                </ul>
+                <!-- Orders -->
+                <!-- Coupons -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-tags"></i>Coupons</a></li>
+                </ul>
+                <!-- Coupons -->
+            </li>
+            <!-- end Store -->
+
+            <!-- begin Sellers -->
+            <li>
+                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon dashicons dashicons-businessman"></i>
+                    <span class="nav-title">Sellers</span>
+                </a>
+                <!-- Product Charges -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fe fe-battery-charging"></i>Product Charges</a></li>
+                </ul>
+                <!-- Product Charges -->
+                <!-- Order Charges -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fe fe-battery-charging"></i>Order Charges</a></li>
+                </ul>
+                <!-- Order Charges -->
+                <!-- Withdraw Requests -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-dollar"></i>Withdraw Requests</a></li>
+                </ul>
+                <!-- Withdraw Requests -->
+            </li>
+            <!-- end Sellers -->
+
+            <!-- begin Blog -->
+            <li>
+                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon fa fa-rss"></i>
+                    <span class="nav-title">Blog</span>
+                </a>
+                <!-- Posts -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-newspaper-o"></i>Posts</a></li>
+                </ul>
+                <!-- Posts -->
+                <!-- Category -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-th-list"></i>Category</a></li>
+                </ul>
+                <!-- Category -->
+                <!-- Comments -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-comments"></i>Comments</a></li>
+                </ul>
+                <!-- Comments -->
+            </li>
+            <!-- end Blog -->
+
+            <!-- begin Messages -->
+            <li
+                class="{% if request.path == seller_request_sms_manager %}active{% endif %}
+                {% if request.path == seller_sms_manager %}active{% endif %}
+                {% if request.path == customer_sms_manager %}active{% endif %}">
+                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon fa fa-inbox"></i>
+                    <span class="nav-title">Messages</span>
+                </a>
+                <!-- Tickets -->
+                <ul aria-expanded="false">
+                    <li class="scoop-hasmenu">
+                        <a class="has-arrow" href='javascript:void(0)'><i class="nav-icon fe fe-message-square"></i>Tickets</a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href='javascript:void(0)'><i class="nav-icon fa fa-dollar"></i>Finance</a></li>
+                            <li><a href='javascript:void(0)'><i class="nav-icon fe fe-box"></i>Products</a></li>
+                            <li><a href='javascript:void(0)'><i class="nav-icon dashicons dashicons-admin-users"></i>Account</a></li>
+                            <li><a href='javascript:void(0)'><i class="nav-icon fa fa-certificate"></i>Others</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Tickets -->
+                <!-- Contact Us -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fe fe-message-circle"></i>Contact Us</a></li>
+                </ul>
+                <!-- Contact Us -->
+                <!-- SMS -->
+                <ul aria-expanded="false">
+                    <li class="scoop-hasmenu {% if request.path == seller_request_sms_manager %}active{% endif %}
+                        {% if request.path == seller_sms_manager %}active{% endif %}
+                        {% if request.path == customer_sms_manager %}active{% endif %}">
+                        <a class="has-arrow" href="javascript: void(0);"><i class="nav-icon fa fa-comments-o"></i>SMS</a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li class="{% if request.path == customer_sms_manager %}active{% endif %}"><a href='{{ customer_sms_manager }}'><i class="nav-icon dashicons dashicons-admin-users"></i>Customer</a></li>
+                            <li class="{% if request.path == seller_sms_manager %}active{% endif %}"><a href='{{ seller_sms_manager }}'><i class="nav-icon dashicons dashicons-businessman"></i>Seller</a></li>
+                            <li class="{% if request.path == seller_request_sms_manager %}active{% endif %}"><a href='{{ seller_request_sms_manager }}'><i class="nav-icon fa fa-plus"></i>Seller Request</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- SMS -->
+            </li>
+            <!-- end Messages -->
+
+            <!-- begin Analytics -->
+            <li>
+                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon fe fe-bar-chart-2"></i>
+                    <span class="nav-title">Analytics</span>
+                </a>
+                <!-- WishLists -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-heart-o"></i>WishLists</a></li>
+                </ul>
+                <!-- WishLists -->
+                <!-- Products Views -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon fa fa-eye"></i>Products Views</a></li>
+                </ul>
+                <!-- Products Views -->
+                <!-- Sales Graph -->
+                <ul aria-expanded="false">
+                    <li><a href='javascript:void(0)'><i class="nav-icon dripicons dripicons-graph-line"></i>Sales Graph</a></li>
+                </ul>
+                <!-- Sales Graph -->
+            </li>
+            <!-- end Analytics -->
+
+            <!-- begin Users -->
+            <li>
+                <a href="javascript:void(0)" aria-expanded="false">
+                    <i class="nav-icon dashicons dashicons-admin-users"></i>
+                    <span class="nav-title">Users</span>
+                </a>
+            </li>
+            <!-- end Users -->
+        </ul>
+    </div>
+    <!-- end sidebar-nav -->
+</aside>

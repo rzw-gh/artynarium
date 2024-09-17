@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}شما قادر به حذف ایمیل اصلی خود نمیباشید{% endblocktrans %}

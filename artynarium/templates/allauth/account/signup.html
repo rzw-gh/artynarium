@@ -1,0 +1,70 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<!-- style="background-image: url({% static 'allauth/images/bg-01.jpg' %});" -->
+<div class="container-login100">
+	<div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+						
+		<form class="login100-form validate-form" method="post" action="{% url 'account_signup' %}">
+			<span class="login100-form-title p-b-37">{% trans "Signup" %}</span>
+			
+			{% csrf_token %}
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="ایمیل را وارد کنید">
+				{% render_field form.email class="input100" type="email" id="id_email" %}
+				{{ form.email.errors }}
+				<span class="focus-input100"></span>
+			</div>
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="شماره همراه را وارد کنید">
+				{% render_field form.phone_number class="input100" type="text" id="id_phone_number" %}
+				{{ form.phone_number.errors }}
+				<span class="focus-input100"></span>
+			</div>
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="نام را وارد کنید">
+				{% render_field form.first_name class="input100" type="text" id="id_first_name" %}
+				{{ form.first_name.errors }}
+				<span class="focus-input100"></span>
+			</div>
+			<div class="wrap-input100 validate-input m-b-20" data-validate="نام را وارد کنید">
+				{% render_field form.last_name class="input100" type="text" id="id_last_name" %}
+				{{ form.last_name.errors }}
+				<span class="focus-input100"></span>
+			</div>
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="پسورد را وارد کنید">
+				{% render_field form.password1 class="input100" type="password" id="id_password1" %}
+				{{ form.password1.errors }}
+				<span class="focus-input100"></span>
+			</div>
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="تکرار پسورد را وارد کنید">
+				{% render_field form.password2 class="input100" type="password" id="id_password2" %}
+				{{ form.password2.errors }}
+				<span class="focus-input100"></span>
+			</div>
+
+			
+			{% if redirect_field_value %}
+				<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+			{% endif %}
+
+			<div class="container-login100-form-btn">
+				<button type="submit" class="login100-form-btn">{% trans "Signup" %}</button>
+			</div>
+    </form>
+
+    <div class="text-center mt-3">
+      <p>اگر حساب كاربري داريد<a href="{{ login_url }}" class="txt2 hov1 ml-1 mr-1">وارد</a>شويد</p>
+    </div>
+
+	</div>
+</div>
+
+{% endblock %}

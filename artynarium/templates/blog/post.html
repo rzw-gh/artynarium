@@ -1,0 +1,247 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ post.title }}{% endblock title %}
+{% block content %}
+
+<main class="main">
+
+    <!-- breadcrumb -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">خانه</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'blog:home' %}">بلاگ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+            </ol>
+        </div>
+    </nav>
+    <!-- breadcrumb -->
+
+    <div class="page-content">
+        <div class="container">
+
+            <!-- Image Gallery -->
+            <figure class="entry-media">
+                <div class="owl-carousel owl-simple owl-light owl-nav-inside" data-toggle="owl">
+                    {% for i in images %}
+                        <img src="{{ i.image.url }}">
+                    {% endfor %}
+                </div>
+            </figure>
+            <!-- Image Gallery -->
+
+            <div class="row">
+
+                <div class="col-lg-9">
+                    <article class="entry single-entry">
+
+                    <!-- Main -->
+                    <div class="entry-body">
+                        <div class="post-top">
+                            <h2 class="entry-title entry-title-big">
+                                {{ post.title }}
+                            </h2>
+
+                        <!-- Title -->
+
+                        <!-- Title -->
+                        <!-- Post Details -->
+                        <div class="entry-meta">
+
+                            <!-- Author -->
+                            <i class="las la-user mr-3" style="font-size: 1.5em;"></i><span class="entry-author">
+                                {{ post.author }}
+                            </span>
+                            <!-- Author -->
+
+                            <!-- Release Time -->
+                            <span class="meta-separator">|<i class="las la-clock mr-3 cs-icon-text cs-font-size1"></i></span>
+                            <span>{{ post.create_time|naturaltime }}</span>
+                            <!-- Comments -->
+                            <span class="meta-separator">|<i class="las la-comments mr-3 d-inline-block cs-icon-text"></i></span><span>{{ post.comment.count }} دیدگاه</span>
+
+                            <!-- Views -->
+                            <span class="meta-separator">|<i class="las la-eye mr-3 d-inline-block cs-icon-text cs-font-size1"></i></span><span>{{ post.views }} بازدید</span>
+                            <span class="eee meta-separator">
+                                |<i class="las la-stream mr-3 d-inline-block cs-icon-text"></i></span><span> دسته بندی : </span><a href="{% url 'blog:category' post.category.id post.category.slug %}">{{ post.category.title }}</a>
+                            </span>
+                        </div>
+                        </div>
+                        <!-- Post Details -->
+                        <!-- Description -->
+                        <div class="entry-content editor-content p-5">
+                            {{ post.description|safe }}
+                        </div>
+                        <!-- Description -->
+
+                        <!-- Description Bottom -->
+                        <div class="entry-footer row no-gutters flex-column flex-md-row">
+
+                            <!-- Tags -->
+                            <div class="col-md">
+                                <div class="entry-tags">
+                                    <span>برچسب ها:</span>
+                                    {% for tag in post.tags.all %}
+                                    <a href="{% url 'blog:tagged' tag.slug %}">{{ tag }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <!-- Tags -->
+
+                        </div>
+                        <!-- Description Bottom -->
+                    </div>
+                    <!-- Main -->
+
+                    <!-- Pagination -->
+                    <nav class="pager-nav" aria-label="Page navigation">
+
+                        <!-- Next Post -->
+                        {% if prev_post %}
+                        <a class="pager-link pager-link-prev" href="{% url 'blog:post' prev_post.id prev_post.slug %}" aria-label="Previous" tabindex="-1">پست قبلی<span class="pager-link-title">{{ prev_post.title }}</span></a>
+                        {% endif %}
+                        <!-- Next Post -->
+
+                        <!-- Next Post -->
+                        {% if next_post %}
+                            <a class="pager-link pager-link-next" href="{% url 'blog:post' next_post.id next_post.slug %}" aria-label="Next" tabindex="-1">پست بعدی<span class="pager-link-title">{{ next_post.title }}</span></a>
+                        {% endif %}
+                        <!-- Next Post -->
+
+                    </nav>
+                    <!-- Pagination -->
+
+                    <!-- Related Posts -->
+                    {% if post.related_post.all %}
+                    <div class="related-posts">
+                        <h3 class="title">پست های مرتبط</h3><!-- End .title -->
+
+                        <div class="owl-carousel owl-8 owl-simple" data-toggle="owl">
+
+                            {% for p in post.related_post.all %}
+                            <article class="entry entry-grid">
+                                <figure class="entry-media">
+                                    <a href="{% url 'blog:post' p.id p.slug %}">
+                                        <img src="{{ p.image.url }}" alt="Post Image">
+                                    </a>
+                                </figure>
+
+                                <div class="entry-body">
+                                    <div class="entry-meta">
+                                        {{ p.comment.count }} دیدگاه
+                                        <span class="meta-separator">|</span>
+                                        {{ p.views }} بازدید
+                                    </div>
+
+                                    <h2 class="entry-title">
+                                        <a href="{% url 'blog:post' p.id p.slug %}">{{ p.title }}</a>
+                                    </h2>
+
+                                    <div class="entry-cats">
+                                        in <a href="{% url 'blog:category' post.category.id post.category.slug %}">{{ post.category.title }}</a>
+                                    </div>
+                                </div>
+                            </article>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    {% endif %}
+                    <!-- Related Posts -->
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{message.tags}} mb-2" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Add Comment -->
+                    <div class="reply">
+                        <div class="heading">
+                            <h3 class="title">{% if post.comment.count == 0 %}اولین نفری باشید که دیدگاه میدهد{% else %}دیدگاه بدهید{% endif %}</h3>
+                            <p>آدرس ایمیل شما نمایش داده نخواهد شد. فیلد های الزامی توسط * مشخص شده اند</p>
+                        </div>
+
+                        <form action="{% url 'blog:addcomment' post.id %}" method="post">
+                            {% csrf_token %}
+                            <label for="rcomment" class="sr-only">دیدگاه</label>
+                            <textarea name="comment" id="comment" cols="30" rows="4" class="form-control" required placeholder="دیدگاه *"></textarea>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="name" class="sr-only">نام *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required placeholder="نام *">
+                                </div><!-- End .col-md-6 -->
+
+                                <div class="col-md-6">
+                                    <label for="email" class="sr-only">ایمیل *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required placeholder="ایمیل *">
+                                </div><!-- End .col-md-6 -->
+                            </div><!-- End .row -->
+
+                            <button type="submit" class="btn btn-outline-primary-2">
+                                <i class="icon-long-arrow-right ml-3"></i>
+                                <span>ارسال</span>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Add Comment -->
+
+                    <!-- Comments -->
+                    <div class="comments mt-5">
+                        <h3 class="title">{{ comment.count }} دیدگاه</h3>
+
+                        <!-- Main -->
+                        <ul id="myList">
+                            {% for c in comment %}
+                            <li>
+                                <div class="comment">
+                                    <div class="comment-body">
+
+                                        <div class="comment-user">
+                                            <h4><span>{{ c.name }}</span></h4>
+                                            <span class="comment-date">{{ c.create_at|naturaltime }}</span>
+                                        </div>
+
+                                        <div class="comment-content">
+                                            <p>{{ c.comment }}</p>
+                                        </div>
+
+                                        <!-- Votes -->
+
+                                        <div class="review-action mt-3">
+                                            <a id="another_a_tag_{{ forloop.counter }}" href="javascript:{}" data-target-url="{% url 'blog:comment_upvote' c.id %}" class="cs-font-size5"><i class="las la-thumbs-up cs-font-size6"></i>موافق (<span class="agreeCount">{{ c.agree }}</span>)</a>
+                                        </div>
+
+                                        <!-- Votes -->
+
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+
+
+                            {% if comment.count > 3 %}
+                            <div id="loadMore">نمایش بیشتر</div>
+                            <div id="showLess">نمایش کمتر</div>
+                            {% else %}
+                            {% endif %}
+                        </ul>
+                        <!-- Main -->
+
+                    </div>
+                    <!-- Comments -->
+
+                </div>
+
+                {% include 'blog/side.html' %}
+
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

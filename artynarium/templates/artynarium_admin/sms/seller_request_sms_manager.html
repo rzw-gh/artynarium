@@ -1,0 +1,121 @@
+{% extends 'artynarium_admin/base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Artynarium Admin{% endblock title %}
+{% block content %}
+<div class="app-main" id="main">
+    <!-- begin container-fluid -->
+    <div class="container-fluid">
+        <!-- begin row -->
+        <div class="row">
+            <div class="col-md-12 m-b-30">
+                <!-- begin page title -->
+                <div class="d-block d-sm-flex flex-nowrap align-items-center">
+                    <div class="page-title mb-2 mb-sm-0">
+                        <h1>Seller Requests</h1>
+                    </div>
+                    <div class="ml-auto d-flex align-items-center">
+                        <nav>
+                            <ol class="breadcrumb p-0 m-b-0">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'artynarium_admin:home' %}"><i class="ti ti-home"></i></a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    Messages
+                                </li>
+                                <li class="breadcrumb-item active text-primary" aria-current="page">Seller Request</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <!-- end page title -->
+            </div>
+        </div>
+        <!-- end row -->
+
+        <!-- start-clients contant-->
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-statistics clients-contant">
+                    <div class="card-header">
+                        <div class="d-xxs-flex justify-content-between align-items-center">
+                            <div class="card-heading">
+                                <h4 class="card-title">Seller Requests</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-0 table-responsive">
+                        <table class="table clients-contant-table mb-0 text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-left">Seller Requests</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Seller Title</th>
+                                    <th scope="col" >Communicate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seller_request in seller_request %}
+                                <tr>
+                                    <td class="text-left">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-img mr-4">
+                                                <img src="{% if seller_request.profile_image %}{{ seller_request.profile_image.url }}{% endif %}"
+                                                    class="img-fluid" alt="{{ seller_request }}"
+                                                    style="width:60px;height:60px;">
+                                            </div>
+                                            <p class="font-weight-bold">{{ seller_request }}</p>
+                                        </div>
+                                    </td>
+                                    <td>{{ seller_request.phone_number }}</td>
+                                    <td><span>{{ seller_request.seller_title }}</span></td>
+                                    <td>
+                                        <a href="{% url 'artynarium_admin:seller_request_sms_manager_detail' seller_request.id %}" class="btn btn-outline-primary mr-2 mb-2 mb-sm-0 " style="border-radius: 50%;width: 13px;height: 38px;">
+                                            <div class="position-relative">
+                                                <i class="fa fa-comments-o position-absolute" style="right: -9px;font-size: 19px;top: -5px;"></i>
+                                            </div>
+
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if seller_request.has_other_pages %}
+                    <div class="col-md-6 mt-5">
+                        <div class=" card-statistics">
+                            <div class="card-body float-left">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        {% if seller_request.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'artynarium_admin:seller_request_sms_manager' %}?page={{ seller_request.previous_page_number }}" tabindex="-1">Previous</a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in seller_request.paginator.page_range %}
+                                            {% if seller_request.number == i %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                                            {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if seller_request.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'artynarium_admin:seller_request_sms_manager' %}?page={{ seller_request.next_page_number }}">Next</a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- end-clients contant-->
+    </div>
+    <!-- end container-fluid -->
+</div>
+{% endblock content %}

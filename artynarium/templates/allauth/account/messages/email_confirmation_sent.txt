@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}لینک تایید به ایمیل {{email}} ارسال{% endblocktrans %}

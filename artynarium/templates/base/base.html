@@ -1,0 +1,182 @@
+{% load static %}
+{% load mptt_tags %}
+{% url 'shop:shop' as shop %}
+{% url 'shop:checkout' as checkout %}
+{% url 'shop:home' as home_url %} {% url 'blog:home' as blog_home %} {% url 'shop:instagram' as instagram %}
+{% url 'shop:about' as about %} {% url 'shop:contact' as contact %} {% url 'shop:faq' as faq %}
+{% url 'shop:instagram' as instagram %} {% url 'seller:sellers' as sellers %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}{% endblock title %}</title>
+    <style>
+        /*@font-face {*/
+        /*font-family: 'BYekan';*/
+
+        /*    src: local('BYekan'),*/
+        /*    local('BYekan'),*/
+        /*    url(" {% static 'assets/fonts/BYekan.woff' %} ") format('woff'),*/
+        /*    url(" {% static 'assets/fonts/BYekan.ttf' %} ") format('truetype');*/
+        /*}*/
+        @font-face {
+	font-family: 'vazir';
+	src: url('/static/assets/fonts/eot/Vazir-Light.eot');
+	src: url('/static/assets/fonts/eot/Vazir-Light.eot?#iefix') format('embedded-opentype'), url('/static/assets/fonts/woff2/Vazir-Light.woff2') format('woff2'), url('/static/assets/fonts/woff/Vazir-Light.woff') format('woff'),
+		url('/static/assets/fonts/ttf/Vazir-Light.ttf') format('truetype');
+}
+        p,h1,h2,h3,h4,h5,h6,a,span ,input,li,label,th,td,select,textarea,span {
+            font-family: 'vazir'!important;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/images/icons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/images/icons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/icons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'assets/images/icons/site.html' %}">
+    <link rel="mask-icon" href="{% static 'assets/images/icons/safari-pinned-tab.svg' %}" color="#666666">
+    <link rel="shortcut icon" href="{% static 'assets/images/icons/favicon.ico' %}">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#393bb9">
+    <meta name="msapplication-config" content="{% static 'assets/images/icons/browserconfig.xml' %}">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Sweet Alert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Jquery UI -->
+    {% comment %}<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">{% endcomment %}
+    <link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}">
+
+
+      <link rel="stylesheet" href="{% static 'assets/dropify/css/dropify.min.css' %}">
+
+
+    <!-- Jquery -->
+    {% comment %}<script src="https://code.jquery.com/jquery-1.12.4.js"></script>{% endcomment %}
+    <script src="{% static 'assets/js/jquery-1.12.4.js' %}"></script>
+      {% comment %}<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>{% endcomment %}
+    <script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+
+
+      <script src="{% static 'assets/dropify/js/dropify.min.js' %}"></script>
+      <script src="{% static 'assets/dropify/jquery.form-upload.init.js' %}"></script>
+
+
+      <script src="https://kit.fontawesome.com/4e2f69b234.js" crossorigin="anonymous"></script>
+    {% include 'base/css.html' %}
+
+  </head>
+  <body>
+    <div class="page-wrapper">
+      {% include 'base/header.html'%}
+      {% block content %} {% endblock content %}
+      {% include 'base/footer.html'%}
+    </div>
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    <div class="mobile-menu-overlay"></div>
+
+    <div class="mobile-menu-container mobile-menu-light">
+        <div class="mobile-menu-wrapper">
+            <span class="mobile-menu-close"><i class="icon-close"></i></span>
+
+            <form action="{% url 'shop:search' %}" method="POST" class="mobile-search">
+                {% csrf_token %}
+                <label for="mobile-search" class="sr-only">جستجو</label>
+                <input type="search" class="form-control" name="autos" id="mobile-search" placeholder="جستجو در بین محصولات سایت ..." required>
+                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+            </form>
+
+            <ul class="nav nav-pills-mobile nav-border-anim" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="mobile-menu-link" data-toggle="tab" href="#mobile-menu-tab" role="tab" aria-controls="mobile-menu-tab" aria-selected="true">منو</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mobile-cats-link" data-toggle="tab" href="#mobile-cats-tab" role="tab" aria-controls="mobile-cats-tab" aria-selected="false">دسته بندی ها</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Menu -->
+                <div class="tab-pane fade show active" id="mobile-menu-tab" role="tabpanel" aria-labelledby="mobile-menu-link">
+                    <nav class="mobile-nav">
+                        <ul class="mobile-menu">
+                            <!-- Home -->
+                            <li class="{% if request.path == home_url %}active{% endif %}">
+                                <a href="{{ home_url }}">خانه</a>
+                            </li>
+                            <!-- Home -->
+                            <!-- Shop -->
+                            <li class="{% if request.path == shop %}active{% endif %}">
+                                <a href="{{ shop }}">فروشگاه</a>
+                                <ul>
+                                    <li><a class="menu-drop-a" href="{% url 'shop:shop' %}">همه محصولات</a></li>
+                                    <li><a class="menu-drop-a" href="{% url 'shop:cat' %}">همه دسته بندی ها</a></li>
+                                    <li><a class="menu-drop-a" href="{% url 'shop:special' %}">محصولات خاص</a></li>
+                                    <li><a class="menu-drop-a" href="{% url 'shop:featured' %}">محصولات ویژه</a></li>
+                                </ul>
+                            </li>
+                            <!-- Shop -->
+                            <!-- Instagram -->
+                            <li class="{% if request.path == sellers %}active{% endif %}">
+                                <a href="{{ sellers }}" class="sf-with-ul">فروشندگان</a>
+                            </li>
+                            <!-- Instagram -->
+                            <!-- Instagram -->
+                            <li class="{% if request.path == instagram %}active{% endif %}">
+                                <a href="{{ instagram }}" class="sf-with-ul">اینستاگرام</a>
+                            </li>
+                            <!-- Instagram -->
+                            <!-- About -->
+                            <li class="{% if request.path == about %}active{% endif %}">
+                                <a href="{{ about }}" class="sf-with-ul">درباره ما</a>
+                            </li>
+                            <!-- About -->
+                            <!-- Contact -->
+                            <li class="{% if request.path == contact %}active{% endif %}">
+                                <a href="{{ contact }}" class="sf-with-ul">تماس با ما</a>
+                            </li>
+                            <!-- Contact -->
+                            <!-- FAQ -->
+                            <li class="{% if request.path == faq %}active{% endif %}">
+                                <a href="{{ faq }}" class="sf-with-ul">سوالی دارید؟</a>
+                            </li>
+                            <!-- FAQ -->
+                        </ul>
+                    </nav><!-- End .mobile-nav -->
+                </div>
+                <!-- Menu -->
+
+                <!-- Category -->
+                <div class="tab-pane fade" id="mobile-cats-tab" role="tabpanel" aria-labelledby="mobile-cats-link">
+                    <nav class="mobile-cats-nav">
+                        <ul class="mobile-cats-menu">
+                            <li><a class="mobile-cats-lead" href="{% url 'shop:cat' %}">همه دسته بندی ها</a></li>
+                            {% for p in recat %}
+                            <li><a href="{% url 'shop:category' p.id p.slug %}">{{ p.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+                <!-- Category -->
+
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.instagram.com/artynarium/" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
+                <a href="https://t.me/artynarium/" class="social-icon" target="_blank" title="Telegram"><i class="icon-telegram"></i></a>
+            </div><!-- End .social-icons -->
+        </div><!-- End .mobile-menu-wrapper -->
+    </div>
+    <!-- Jquery -->
+
+    {% include 'base/js.html' %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha512-MAhdSIQcK5z9i33WN0KzveJUhM2852CJ1lJp4o60cXhQT20Y3friVRdeZ5TEWz4Pi+nvaQqnIqWJJw4HVTKg1Q==" crossorigin="anonymous"></script>
+    {%comment%}<script>console.log("Developer Contact --> https://website.com");</script>{%endcomment%}
+    {% block javascript %}{% endblock %}
+  </body>
+</html>

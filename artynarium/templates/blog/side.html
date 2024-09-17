@@ -1,0 +1,74 @@
+{% load humanize %}
+<aside class="col-lg-3">
+    <div class="sidebar">
+            
+        <!-- Search -->
+        <div class="widget widget-search">
+
+            <form method="POST" action="{% url 'blog:search' %}" >
+                {% csrf_token %}
+                <input type="search" class="form-control" name="query" id="query" placeholder="جستجو در بلاگ" required>
+                <button type="submit" class="btn"><i class="icon-search"></i><span class="sr-only"></span></button>
+            </form>
+        </div>
+        <!-- Search -->
+
+        <!-- Categories -->
+        <div class="widget widget-cats">
+            <h3 class="widget-title cs-title d-inline-block">دسته بندی ها</h3>
+
+            <ul>
+                {% for c in cate %}
+                    <li><a href="{% url 'blog:category' c.id c.slug %}"><span class='ml-5'>{{ c.pos.count }}</span>{{ c.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Categories -->
+
+        <!-- Popular -->
+        <div class="widget">
+            <h3 class="widget-title cs-title d-inline-block">پست های محبوب</h3>
+
+            <ul class="posts-list">
+                {% for p in pop %}
+                <li>
+                    <figure>
+                        <a href="{% url 'blog:post' p.id p.slug %}">
+                            <img class="img-sidebar" src="{{ p.image.url }}" alt="post">
+                        </a>
+                    </figure>
+
+                    <div>
+                        <span>{{ p.create_at|naturaltime }}</span>
+                        <h4 ><a class="mr-2" href="{% url 'blog:post' p.id p.slug %}">{{ p.title }}</a></h4>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Popular -->
+
+        <!-- Tags -->
+        <div class="widget">
+            <h3 class="widget-title cs-title d-inline-block">برچسب ها</h3>
+
+            <div class="tagcloud">
+                {% for t in tag %}
+                <a href="{% url 'blog:tagged' t.slug %}">{{ t }}</a>
+                {% endfor %}
+            </div><!-- End .tagcloud -->
+        </div>
+        <!-- Tags -->
+
+        <!-- About Blog -->
+        <div class="widget widget-text">
+            <h3 class="widget-title cs-title d-inline-block">درباره بلاگ</h3>
+
+            <div class="widget-text-content">
+                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</p>
+            </div>
+        </div>
+        <!-- About Blog -->
+
+    </div>
+</aside>

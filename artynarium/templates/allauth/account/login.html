@@ -1,0 +1,63 @@
+{% extends "account/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block head_title %}{% trans 'Sign In' %}{% endblock %}
+{% block content %}
+
+
+<!-- style="background-image: url({% static 'allauth/images/bg-01.jpg' %});" -->
+<div class="container-login100">
+	<div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+
+		<form class="login100-form validate-form" method="POST" action="{% url 'account_login' %}">
+			<span class="login100-form-title p-b-37">{% trans 'Sign In' %}</span>
+			{% csrf_token %}
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="ایمیل را وارد کنید">
+				{% render_field form.login class="input100" type="email" id="id_login" %}
+				<span class="focus-input100"></span>
+			</div>
+
+			<div class="wrap-input100 validate-input m-b-20" data-validate="پسورد را وارد کنید">
+				{% render_field form.password class="input100" type="password" id="id_password" %}
+				<span class="focus-input100"></span>
+			</div>
+
+
+			{% render_field form.remember type="checkbox" id="id_remember" %}
+			<label for="id_remember">مرا به خاطر بسپار</label>
+
+
+			{% if form.errors %}
+				{% for field in form %}
+					{% for error in field.errors %}
+						<div class="alert alert-error">
+							<strong>{{ error|escape }}</strong>
+						</div>
+					{% endfor %}
+				{% endfor %}
+				{% for error in form.non_field_errors %}
+					<div class="alert alert-error">
+						<strong>{{ error|escape }}</strong>
+					</div>
+				{% endfor %}
+			{% endif %}
+
+			{% if redirect_field_value %}
+				<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+			{% endif %}
+
+			<div class="container-login100-form-btn">
+				<button type="submit" class="login100-form-btn">{% trans 'Sign In' %}</button>
+			</div>
+		</form>
+
+		<div class="text-center mt-3">
+			<p>اگر حساب كاربري نداريد <a href="{% url 'account_signup' %}" class="txt2 hov1 mr-1 ml-1">{% trans 'Sign Up' %} </a>كنيد</p>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_title %}{% trans "E-mail Addresses" %}{% endblock %}
+
+{% block content %}
+
+<!-- style="background-image: url({% static 'allauth/images/bg-01.jpg' %});" -->
+<div class="container-login100">
+	<div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+    <span class="login100-form-title p-b-37">
+			آدرس ایمیل ها
+    </span>
+    {% if user.emailaddress_set.all %}
+    <span class="login100-form-title p-b-37">
+			ایمیل های زیر به حساب شما وصل شده اند:
+    </span>
+    <form method="POST" action="{% url 'account_email' %}" class="email_list">
+    {% csrf_token %}
+    <fieldset class="blockLabels">
+    
+      {% for emailaddress in user.emailaddress_set.all %}
+      <div class="ctrlHolder">
+            <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+      
+            <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+      
+      {{ emailaddress.email }}
+          {% if emailaddress.verified %}
+          <span class="verified">{% trans "Verified" %}</span>
+          {% else %}
+          <span class="unverified">{% trans "Unverified" %}</span>
+          {% endif %}
+            {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif %}
+      </label>
+      </div>
+        {% endfor %}
+      
+      <div class="buttonHolder">
+        <div class="container-login100-form-btn">
+          <button type="submit" name="action_primary" class="login100-form-btn mb-2 mt-3">{% trans 'Make Primary' %}</button>
+        </div>
+        <div class="container-login100-form-btn">
+          <button type="submit" name="action_send" class="login100-form-btn mb-2">{% trans 'Re-send Verification' %}</button>
+        </div>
+        <div class="container-login100-form-btn">
+          <button type="submit" name="action_remove" class="login100-form-btn">{% trans 'Remove' %}</button>
+        </div>        
+      </div>
+
+    </fieldset>
+    </form>
+
+
+    {% else %}
+    <span class="login100-form-title p-b-37">
+      {% trans 'You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.' %}
+    </span>
+    {% endif %}
+    <span class="login100-form-title p-b-37 mt-5">
+			{% trans 'Add E-mail Address' %}
+    </span>
+    <form method="POST" action="{% url 'account_email' %}" class="add_email">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <div class="form-control-border"></div>
+      {{ field.label }}
+      {% render_field field class="form-control" %}
+    </div>
+    {% endfor %}
+    <div class="container-login100-form-btn">
+      <button name="action_add" type="submit" class="login100-form-btn">{% trans 'Add E-mail' %}</button>
+    </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_body %}
+<script type="text/javascript">
+(function() {
+  var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
+  var actions = document.getElementsByName('action_remove');
+  if (actions.length) {
+    actions[0].addEventListener("click", function(e) {
+      if (! confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

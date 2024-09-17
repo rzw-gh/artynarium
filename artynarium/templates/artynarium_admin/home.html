@@ -1,0 +1,1805 @@
+{% extends 'artynarium_admin/base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Artynarium Admin{% endblock title %}
+{% block content %}
+<div class="app-main" id="main">
+    <!-- begin container-fluid -->
+    <div class="container-fluid">
+        <!-- begin BreadCrumb -->
+        <div class="row">
+            <div class="col-md-12 m-b-30">
+                <!-- begin page title -->
+                <div class="d-block d-lg-flex flex-nowrap align-items-center">
+                    <!-- begin Main Current Page -->
+                    <div class="page-title mr-4 pr-4 border-right">
+                        <h1>Dashboard</h1>
+                    </div>
+                    <!-- end Main Current Page -->
+
+                    <!-- begin Breadcrumb -->
+                    <div class="breadcrumb-bar align-items-center">
+                        <nav>
+                            <ol class="breadcrumb p-0 m-b-0">
+                                <li class="breadcrumb-item">
+                                    <a href="index.html"><i class="ti ti-home"></i></a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    Dashboard
+                                </li>
+                                <li class="breadcrumb-item active text-primary" aria-current="page">Default</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- end Breadcrumb -->
+
+                    <!-- begin Tooltips -->
+                    <div class="ml-auto d-flex align-items-center secondary-menu text-center">
+                        <a href="javascript:void(0);" class="tooltip-wrapper" data-toggle="tooltip" data-placement="top" title="" data-original-title="Todo list">
+                            <i class="fe fe-edit btn btn-icon text-primary"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="tooltip-wrapper" data-toggle="tooltip" data-placement="top" title="" data-original-title="Projects">
+                            <i class="fa fa-lightbulb-o btn btn-icon text-success"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="tooltip-wrapper" data-toggle="tooltip" data-placement="top" title="" data-original-title="Task">
+                            <i class="fa fa-check btn btn-icon text-warning"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="tooltip-wrapper" data-toggle="tooltip" data-placement="top" title="" data-original-title="Calendar">
+                            <i class="fa fa-calendar-o btn btn-icon text-cyan"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="tooltip-wrapper" data-toggle="tooltip" data-placement="top" title="" data-original-title="Analytics">
+                            <i class="fa fa-bar-chart-o btn btn-icon text-danger"></i>
+                        </a>
+                    </div>
+                    <!-- end Tooltips -->
+                </div>
+                <!-- end page title -->
+            </div>
+        </div>
+        <!-- end BreadCrumb -->
+
+        <!-- begin Greetings -->
+        <div class="row">
+            <div class="col-md-12 m-b-30">
+                <!-- begin page title -->
+                <div class="user-welcome d-block d-xl-flex flex-nowrap align-items-center">
+                    <div class="bg-img mb-2 mb-xl-0 mr-3">
+                        <img class="img-fluid rounded" src="{% static 'assets/admin_panel/img/avtar/06.jpg' %}" alt="user">
+                    </div>
+                    <div class="page-title mb-2 mb-xl-0">
+                        <h1 class="mb-1">Good Morning, Michael!</h1>
+                        <p>You have 7 essential tasks today, 8 messages and notifications to respond.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+        </div>
+        <!-- end Greetings -->
+
+        <!-- begin Notification -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert border-0 alert-primary bg-gradient m-b-30 alert-dismissible fade show border-radius-none" role="alert">
+                    <strong>Holy guacamole!</strong> You should check in on some of those
+                    fields below.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <i class="ti ti-close"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- end Notification -->
+
+        <!-- begin Statics -->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-statistics">
+                    <div class="row no-gutters">
+                        <!-- begin Month Visitors -->
+                        <div class="col-xxl-3 col-lg-6">
+                            <div class="p-20 border-lg-right border-bottom border-xxl-bottom-0">
+                                <div class="d-flex m-b-10">
+                                    <p class="mb-0 font-regular text-muted font-weight-bold">Month Visitors</p>
+                                    <a class="mb-0 ml-auto font-weight-bold" href="#"><i class="ti ti-more-alt"></i> </a>
+                                </div>
+                                <div class="d-block d-sm-flex h-100 align-items-center">
+                                    <div class="apexchart-wrapper">
+                                        <div id="analytics7"></div>
+                                    </div>
+                                    <div class="statistics mt-3 mt-sm-0 ml-sm-auto text-center text-sm-right">
+                                        <h3 class="mb-0"><i class="icon-arrow-up-circle"></i>{{ month_visits }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end Monthly Visitors -->
+                        <!-- begin Month Sales -->
+                        <div class="col-xxl-3 col-lg-6">
+                            <div class="p-20 border-lg-right border-bottom border-lg-bottom-0">
+                                <div class="d-flex m-b-10">
+                                    <p class="mb-0 font-regular text-muted font-weight-bold">Month Sales</p>
+                                    <a class="mb-0 ml-auto font-weight-bold" href="#"><i class="ti ti-more-alt"></i> </a>
+                                </div>
+                                <div class="d-block d-sm-flex h-100 align-items-center">
+                                    <div class="apexchart-wrapper">
+                                        <div id="analytics9"></div>
+                                    </div>
+                                    <div class="statistics mt-3 mt-sm-0 ml-sm-auto text-center text-sm-right">
+                                        <h3 class="mb-0"><i class="icon-arrow-up-circle"></i>{{ month_sells }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end Month Sales -->
+                        <!-- begin Month Income -->
+                        <div class="col-xxl-3 col-lg-6">
+                            <div class="p-20 border-xxl-right border-bottom border-xxl-bottom-0">
+                                <div class="d-flex m-b-10">
+                                    <p class="mb-0 font-regular text-muted font-weight-bold">Month Income</p>
+                                    <a class="mb-0 ml-auto font-weight-bold" href="#"><i class="ti ti-more-alt"></i> </a>
+                                </div>
+                                <div class="d-block d-sm-flex h-100 align-items-center">
+                                    <div class="apexchart-wrapper">
+                                        <div id="analytics8"></div>
+                                    </div>
+                                    <div class="statistics mt-3 mt-sm-0 ml-sm-auto text-center text-sm-right">
+                                        <h3 class="mb-0"><i class="icon-arrow-up-circle"></i>{{ month_income }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end Month Income -->
+                        <!-- begin Month Comment -->
+                        <div class="col-xxl-3 col-lg-6">
+                            <div class="p-20 border-xxl-right border-bottom border-xxl-bottom-0">
+                                <div class="d-flex m-b-10">
+                                    <p class="mb-0 font-regular text-muted font-weight-bold">Month Comments</p>
+                                    <a class="mb-0 ml-auto font-weight-bold" href="#"><i class="ti ti-more-alt"></i> </a>
+                                </div>
+                                <div class="d-block d-sm-flex h-100 align-items-center">
+                                    <div class="apexchart-wrapper">
+                                        <div id="analytics10"></div>
+                                    </div>
+                                    <div class="statistics mt-3 mt-sm-0 ml-sm-auto text-center text-sm-right">
+                                        <h3 class="mb-0"><i class="icon-arrow-up-circle"></i>{{ month_comment }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end Month Comment -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end Statics -->
+
+        <!-- begin Site Activity -->
+        <div class="row">
+            <div class="col-xxl-7 m-b-30">
+                <div class="card card-statistics h-100 mb-0 apexchart-tool-force-top">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Site activity</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 col-xs-6 col-lg-3">
+                                <div class="row mb-2 pb-3 align-items-end">
+                                    <div class="col">
+                                        <p>Users</p>
+                                        <h3 class="tex-dark mb-0">8.6K</h3>
+                                    </div>
+                                    <div class="col ml-auto">
+                                        <span><i class="fa fa-arrow-down"></i> 2.5%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-xs-6 col-lg-3">
+                                <div class="row mb-2 pb-3 align-items-end">
+                                    <div class="col">
+                                        <p>Revenue</p>
+                                        <h3 class="tex-dark mb-0">176K</h3>
+                                    </div>
+                                    <div class="col ml-auto">
+                                        <span><i class="fa fa-arrow-up"></i> 15%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-xs-6 col-lg-3">
+                                <div class="row mb-2 pb-3 align-items-end">
+                                    <div class="col">
+                                        <p>Rate</p>
+                                        <h3 class="tex-dark mb-0">6.2K</h3>
+                                    </div>
+                                    <div class="col ml-auto">
+                                        <span><i class="fa fa-arrow-down"></i> 6.5%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-xs-6 col-lg-3">
+                                <div class="row mb-2 pb-3 align-items-end">
+                                    <div class="col">
+                                        <p>Sessions</p>
+                                        <h3 class="tex-dark mb-0">44K</h3>
+                                    </div>
+                                    <div class="col ml-auto">
+                                        <span><i class="fa fa-arrow-down"></i> 1.8%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <div class="apexchart-wrapper p-inherit">
+                                    <div id="analytics1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-5 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Income Analysis</h4>
+                        </div>
+                        <div class="dropdown">
+                            <a class="p-2" href="#!" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fe fe-circle"></i>
+                            </a>
+                            <div class="dropdown-menu custom-dropdown dropdown-menu-right p-4">
+                                <h6 class="mb-1">Action</h6>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-o pr-2"></i>View reports</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-edit pr-2"></i>Edit reports</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-bar-chart-o pr-2"></i>Statistics</a>
+                                <h6 class="mb-1 mt-3">Export</h6>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-pdf-o pr-2"></i>Export to PDF</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-excel-o pr-2"></i>Export to CSV</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h2>3.8k</h2>
+                                <span class="d-block mb-2 font-16">AVG sessions</span>
+                                <span class="d-block mb-2 mb-sm-5"><b class="text-primary">-65.88%</b> vs last 1 months</span>
+                                <p class="mb-3">Sapiente corporis fugiat, doloremque eveniet nostrum id molestiae quaerat!</p>
+                                <a class="btn btn-round btn-inverse-primary mb-3 mb-sm-0" href="#"><b>View details </b></a>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="apexchart-wrapper">
+                                    <div id="analytics2" class="chart-fit"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-top my-4"></div>
+                        <h4 class="card-title">Income by department</h4>
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                <span>FCBK: <b>$1,475</b></span>
+                                <div class="progress my-3" style="height: 4px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <span>GGL: <b>$23,475</b></span>
+                                <div class="progress my-3" style="height: 4px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <span>APL: <b>$1,658</b></span>
+                                <div class="progress my-3" style="height: 4px;">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <span>SMG: <b>$12,489</b></span>
+                                <div class="progress my-3" style="height: 4px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 55%;" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end Site Activity -->
+
+        <!-- begin Row 4 -->
+        <div class="row">
+            <!-- begin Latest Comments -->
+            {% if latest_comments %}
+            <div class="col-lg-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Latest Comments</h4>
+                        </div>
+                        <div class="dropdown">
+                            <a class="btn btn-round btn-inverse-primary btn-xs" href="#">View all</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% for comment in latest_comments %}
+                        <div class="row active-task m-b-20">
+                            <div class="col-11">
+                                <small class="d-block mb-1">{{ comment.subject }}</small>
+                                <h5 class="mb-0"><a href="#">{{ comment.comment }}</a></h5>
+                                <ul class="list-unstyled list-inline">
+                                    <li class="list-inline-item">
+                                        <small> Commented by {{ comment.user }}</small>
+                                    </li>
+                                    <li class="list-inline-item">|</li>
+                                    <li class="list-inline-item">
+                                        <small>{{ comment.create_at|naturaltime }}</small>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- end Latest Comments -->
+            <!-- begin Latest Tickets -->
+            {% if latest_tickets %}
+            <div class="col-lg-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Latest Tickets</h4>
+                        </div>
+                        <div class="dropdown">
+                            <a class="btn btn-round btn-inverse-primary btn-xs" href="#">View all</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% for ticket in latest_tickets %}
+                        <div class="row active-task m-b-20">
+                            <div class="col-11">
+                                <small class="d-block mb-1">{{ ticket.subject }}</small>
+                                <h5 class="mb-0"><a href="#">{{ ticket.text }}</a></h5>
+                                <ul class="list-unstyled list-inline">
+                                    <li class="list-inline-item">
+                                        <small> Created by {{ ticket.user }}</small>
+                                    </li>
+                                    <li class="list-inline-item">|</li>
+                                    <li class="list-inline-item">
+                                        <small>{{ ticket.create_at|naturaltime }}</small>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- end Latest Tickets -->
+            <!-- begin Latest WishLists -->
+            {% if latest_wishlists %}
+            <div class="col-lg-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header">
+                        <h4 class="card-title">Latest Wished Products</h4>
+                    </div>
+                    <div class="card-body scrollbar scroll_dark mCustomScrollbar _mCS_3 mCS-autoHide" style="height: 380px; position: relative; overflow: visible;"><div id="mCSB_3" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" tabindex="0" style="max-height: none;"><div id="mCSB_3_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
+                        {% for wished in latest_wishlists %}
+                        <div class="row align-items-center m-b-20">
+                            <div class="col-4 col-xs-2">
+                                <div class="bg-img">
+                                    <img class="img-fluid mCS_img_loaded" src="{{ wished.wished_item.image.url }}" alt="{{ wished.wished_item }}" style="width:45px;height:45px;">
+                                </div>
+                            </div>
+                            <div class="col-8 col-xs-6">
+                                <h5 class="mb-0">{{ wished.user }}</h5>
+                                <span>{{ wished.wished_item }}</span>
+                            </div>
+                            <div class="col-xs-4 mt-3 mt-xs-0">
+                                <div class="ratings">
+                                    <small><i class="fe fe-star-on text-warning"></i> ({{ wished.wished_item.averagereview }}) {{ wished.wished_item.reviews }} reviews </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div></div><div id="mCSB_3_scrollbar_vertical" class="mCSB_scrollTools mCSB_3_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_3_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 50px; height: 0px; top: 0px;"><div class="mCSB_dragger_bar" style="line-height: 50px;"></div></div><div class="mCSB_draggerRail"></div></div></div></div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- end Latest WishLists -->
+        </div>
+        <!-- end Row 4 -->
+
+        <!-- begin Weekly Top Seller & Buyers-->
+        <div class="row">
+            <div class="col-xs-12 col-xxl-7 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header">
+                        <h4 class="card-title">Weekly Top Seller</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-borderless mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th scope="col">Sales person</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Sale</th>
+                                        <th scope="col">% Sale Change</th>
+                                        <th scope="col">Revenue</th>
+                                        <th scope="col">% Revenue Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seller in weekly_top_sellers %}
+                                    <tr>
+                                        <td>{{ seller }}</td>
+                                        <td>{{ seller.last_week_sale_count }}</td>
+                                        <td>{{ seller.last_week_user_sale|intcomma:False }}</td>
+                                        <td>{{ seller.last_week_sale_change }}</td>
+                                        <td>{{ seller.last_week_site_profit|intcomma:False }}</td>
+                                        <td>{{ seller.last_week_site_profit_change|intcomma:False }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-xxl-5 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header">
+                        <h4 class="card-title">Top Buyers</h4>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="apexchart-wrapper">
+                            <div id="stockmarket6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end Weekly Top Seller & Buyers-->
+
+        <!-- begin Top Selling Products & Lifetime Sales-->
+        <div class="row">
+            <div class="col-xxl-8 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Top selling products</h4>
+                        </div>
+                        <div class="dropdown">
+                            <a class="btn btn-xs" href="#">Export <i class="zmdi zmdi-download pl-1"></i> </a>
+                        </div>
+                    </div>
+                    <div class="card-body scrollbar scroll_dark pt-0" style="max-height: 350px;">
+                        <div class="datatable-wrapper table-responsive">
+                            <table id="datatable" class="table table-borderless table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Available</th>
+                                        <th>Status</th>
+                                        <th>Sold</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in top_selling_products %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.price|intcomma:False }}</td>
+                                        <td>{{ product.total_amount }}</td>
+                                        <td><span class="badge badge-{% if product.ghost %}danger{% else %}success{% endif %}-inverse">{% if product.ghost %}Ghost{% else %}Active{% endif %}</span></td>
+                                        <td>{{ product.sold }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <h4 class="card-title">Lifetime sales</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5>We only started collecting data from February 2021 </h5>
+                        <div class="row mt-4">
+                            <div class="col-lg-8">
+                                <div class="morris-wrapper">
+                                    <div id="morrisecommerce1" style="height: 260px;"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mt-4">
+                                <div class="mb-3">
+                                    <h3 class="mb-0">{{ total_customers }}</h3>
+                                    <p class="mb-0">Customers</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h3 class="mb-0">{{ total_sells }}</h3>
+                                    <p class="mb-0 text-info">Total sales</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h3 class="mb-0">{{ total_orders }}</h3>
+                                    <p class="mb-0 text-primary">Total Orders</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end Top Selling Products & Lifetime Sales-->
+
+        <!-- begin Ad Mode & View All Tickets-->
+        <div class="row">
+            <div class="col-xxl-3">
+                <div class="card card-statistics bg-gradient">
+                    <div class="card-header border-0">
+                        <h4 class="card-title text-white">Ad Mod</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="text-white">Enable for all users</p>
+                            <div class="form-group ml-auto">
+                                <div class="checkbox checbox-switch switch-success">
+                                    <label>
+                                        <input type="checkbox" name="switch8" checked="">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <p class="text-white">Enable for free users</p>
+                            <div class="form-group ml-auto">
+                                <div class="checkbox checbox-switch switch-success">
+                                    <label>
+                                        <input type="checkbox" name="switch8">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-statistics">
+                    <div class="card-header border-0">
+                        <h4 class="card-title">Users Upload Image</h4>
+                    </div>
+                    <div class="card-body datting-upload-image">
+                        <div class="tab">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active show" id="successed-tab" data-toggle="tab" href="#successed" role="tab" aria-controls="successed" aria-selected="true">Successed</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="false">Pending</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade active show p-0 border-top" id="successed" role="tabpanel" aria-labelledby="successed-tab">
+                                    <div class="d-flex align-items-center justify-content-between row">
+                                        <div class="upload-image d-flex align-items-center col">
+                                            <div class="icon-container m-r-10 img-icon img-icon-sm">
+                                                <i class="fa fa-male"></i>
+                                            </div>
+                                            <div class="report-details">
+                                                <h4 class="m-b-0">516</h4>
+                                                <p>Male</p>
+                                            </div>
+                                        </div>
+                                        <div class="upload-image d-flex align-items-center col">
+                                            <div class="icon-container m-r-10 img-icon img-icon-sm">
+                                                <i class="fa fa-female"></i>
+                                            </div>
+                                            <div class="report-details">
+                                                <h4 class="m-b-0">658</h4>
+                                                <p>Female</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade p-0 border-top" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                                    <div class=" d-flex align-items-center justify-content-between row">
+                                        <div class="upload-image d-flex align-items-center col">
+                                            <div class="icon-container m-r-10 img-icon img-icon-sm">
+                                                <i class="fa fa-male"></i>
+                                            </div>
+                                            <div class="report-details">
+                                                <h4 class="m-b-0">879</h4>
+                                                <p>Male</p>
+                                            </div>
+                                        </div>
+                                        <div class="upload-image d-flex align-items-center col">
+                                            <div class="icon-container m-r-10 img-icon img-icon-sm">
+                                                <i class="fa fa-female"></i>
+                                            </div>
+                                            <div class="report-details">
+                                                <h4 class="m-b-0">957</h4>
+                                                <p>Female</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-9 m-b-30">
+                <div class="card card-statistics dating-contant h-100 mb-0">
+                    <div class="card-header">
+                        <h4 class="card-title">View all tickets</h4>
+                    </div>
+                    <div class="card-body pt-2 scrollbar scroll_dark" style="height: 300px">
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="border-top-0">No.</th>
+                                        <th class="border-top-0">User Name</th>
+                                        <th class="border-top-0">Subject</th>
+                                        <th class="border-top-0">Status</th>
+                                        <th class="border-top-0">Date</th>
+                                        <th class="border-top-0">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                    {% for ticket in latest_tickets %}
+                                    <tr>
+                                        <td>{{ ticket.id }}</td>
+                                        <td>
+                                            <div class="bg-img">
+                                                <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="user">
+                                            </div>
+                                            <p>{{ ticket.text }}</p>
+                                        </td>
+                                        <td>Support Lead</td>
+                                        <td>
+                                            <label class="badge mb-0 badge-success-inverse">Completed</label>
+                                        </td>
+                                        <td>27/3/2018</td>
+                                        <td>
+                                            <a href="javascript:void(0)" class="mr-2"><i class="fa fa-pencil" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"></i></a>
+                                            <a href="javascript:void(0)"><i class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- begin Ad Mode & View All Tickets-->
+
+        <div class="row">
+            <div class="col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 o-hidden">
+                    <div class="card-header">
+                        <h4 class="card-title">Traffic Source</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-self-center">
+                            <div class="col">
+                                <h4>Reached 6,454</h4>
+                                <p>Ea consectetur dolorem, enim explicabo necessitatibus</p>
+                                <ul class="jobportaldemo2-list list-unstyled m-t-20">
+                                    <li class="py-1"> <i class="fa fa-minus pr-2 text-primary"></i> Direct</li>
+                                    <li class="py-1"> <i class="fa fa-minus pr-2 text-primary"></i> Referral</li>
+                                    <li class="py-1"> <i class="fa fa-minus pr-2 text-primary"></i> Organic</li>
+                                    <li class="py-1"> <i class="fa fa-minus pr-2 text-primary"></i> Social</li>
+                                </ul>
+                            </div>
+                            <div class="apexchart-wrapper col">
+                                <div id="jobportaldemo2" class="jobportaldemo2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apexchart-wrapper">
+                        <div id="jobportaldemo5" class="chart-fit p-absolute-lrb"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0">
+                    <div class="card-header">
+                        <h4 class="card-title">Monthly Top Search</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row jus align-itemes-center no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>New york US</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">75k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>Montreal Canada</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">60k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>London UK</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">55k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>Delhi India</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">90k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>Tokyo Japan</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">77k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 77%" aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters m-b-10">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>Menlo Park</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">66k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <span>Mumbai India</span>
+                                    <h5 class="mt-1 mt-sm-0 pl-sm-3 mb-0">87k</h5>
+                                </div>
+                                <div class="progress my-2" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 87%" aria-valuenow="87" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-4 h-100 o-hidden">
+                <div class="card card-statistics h-50 m-b-30 bg-gradient o-hidden">
+                    <div class="card-body">
+                        <div class="card-header d-flex justify-content-between border-0 pb-0">
+                            <div class="card-heading">
+                                <h4 class="card-title text-white mb-1">User activations</h4>
+                                <p class="text-white">Last Sale 23.45 USD</p>
+                            </div>
+                            <div class="dropdown">
+                                <a class="p-2 text-white" href="#!" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fe fe-circle"></i>
+                                </a>
+                                <div class="dropdown-menu custom-dropdown dropdown-menu-right p-4">
+                                    <h6 class="mb-1">Action</h6>
+                                    <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-o pr-2"></i>View reports</a>
+                                    <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-edit pr-2"></i>Edit reports</a>
+                                    <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-bar-chart-o pr-2"></i>Statistics</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apexchart-wrapper">
+                        <div id="jobportaldemo6" class="chart-fit jobportaldemo6"></div>
+                    </div>
+                </div>
+                <div class="card card-statistics h-50 m-b-30 bg-pink">
+                    <div class="card-body">
+                        <div class="d-block d-sm-flex p-3">
+                            <div class="mb-3 mb-sm-0 mr-sm-2">
+                                <h5 class="text-white mb-1">Total # of employees</h5>
+                                <h2 class="text-white mb-0">32548</h2>
+                            </div>
+                            <div class="ml-auto">
+                                <h5 class="text-white mb-1">Their social network reach</h5>
+                                <h2 class="text-white mb-0">425456</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-xl-6 col-xxl-4">
+                        <div class="card card-statistics">
+                            <div class="card-header">
+                                <h4 class="card-title">Conversion Visualizer</h4>
+                            </div>
+                            <div class="card-body pb-2">
+                                <div class="row no-gutters">
+                                    <div class="col-sm-4 mt-3">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item px-0 pt-0 d-flex justify-content-between align-items-center">
+                                                <p class="text-muted m-b-0">
+                                                    <i class="fa fa-circle-o mr-2 text-primary"></i>
+                                                    Direct
+                                                </p>
+                                                <p class="text-primary mb-0">44</p>
+                                            </li>
+                                            <li class="list-group-item d-flex px-0 justify-content-between align-items-center">
+                                                <p class="text-muted m-b-0">
+                                                    <i class="fa fa-circle-o mr-2 text-warning"></i>
+                                                    Referral
+                                                </p>
+                                                <p class="text-warning mb-0">55</p>
+                                            </li>
+                                            <li class="list-group-item d-flex px-0 justify-content-between align-items-center">
+                                                <p class="text-muted m-b-0">
+                                                    <i class="fa fa-circle-o mr-2 text-info"></i>
+                                                    Organic Search
+                                                </p>
+                                                <p class="text-info mb-0">13</p>
+                                            </li>
+                                            <li class="list-group-item d-flex px-0 justify-content-between align-items-center">
+                                                <p class="text-muted m-b-0">
+                                                    <i class="fa fa-circle-o mr-2 text-danger"></i>
+                                                    Social Network
+                                                </p>
+                                                <p class="text-danger mb-0">53</p>
+                                            </li>
+                                            <li class="list-group-item d-flex px-0 justify-content-between align-items-center">
+                                                <p class="text-muted m-b-0">
+                                                    <i class="fa fa-circle-o mr-2 text-dark"></i>
+                                                    Other Advertising
+                                                </p>
+                                                <p class="text-dark mb-0">35</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="apexchart-wrapper">
+                                            <div id="ecommercedemo5"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-statistics bg-gradient">
+                            <div class="card-header d-flex justify-content-between border-0 pb-0">
+                                <div class="card-heading">
+                                    <h4 class="card-title text-white">Next payout</h4>
+                                </div>
+                                <div class="dropdown">
+                                    <a class="text-white tooltip-wrapper font-18" href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Payout account: XXXX4955"><i class="fa fa-question-circle-o"></i></a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h2 class="text-white mb-0">$12,127.48</h2>
+                                <p class="text-white">Your payout will be processed on January 15, 2019</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-xxl-4 m-b-30">
+                        <div class="card card-statistics h-100 mb-0">
+                            <div class="card-header">
+                                <h4 class="card-title">Best selling product</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="blog">
+                                    <img class="img-fluid" src="{% static 'assets/admin_panel/img/product.jpg' %}" alt="">
+                                    <h4 class="m-b-10 m-t-20"><a href="#">Active Smartwatch</a></h4>
+                                    <p>Explicabo rem autem fugit, rerum, debitis, perferendis aut Lorem ipsum dolor sit Lorem ipsum dolor sit amet, consectetur.</p>
+                                </div>
+                                <div class="product-bar m-t-30">
+                                    <div class="d-flex">
+                                        <span>Ordered: <b>45</b></span>
+                                        <span class="ml-auto">Items available: <b>8</b></span>
+                                    </div>
+                                    <div class="progress my-3" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-4 m-b-30">
+                        <div class="card card-statistics h-100 mb-0">
+                            <div class="card-header">
+                                <h4 class="card-title">Sales overview</h4>
+                            </div>
+                            <div class="card-body p-30">
+                                <div class="row">
+                                    <div class="col-xxs-6 h-100 p-2 border-right border-bottom border-xxs-right-0">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="p-3 text-center">
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-round btn-inverse-primary"><i class="fe fe-settings"></i></a>
+                                                <h2 class="m-t-20 mb-0">$272</h2>
+                                                <p class="text-muted d-block m-b-0">Avg. Order Value</p>
+                                                <span class="text-primary"> <i class="fe fe-activity"></i> 155.5% </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxs-6 h-100 p-2 border-bottom">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="p-3 text-center">
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-round btn-inverse-success"><i class="fe fe-user-check"></i></a>
+                                                <h2 class="m-t-20 mb-0">$450</h2>
+                                                <p class="text-muted d-block m-b-0">Page Impressions</p>
+                                                <span class="text-success"> <i class="fe fe-arrow-down-left"></i> 155.5% </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxs-6 h-100 p-2 border-right border-xxs-bottom border-xxs-right-0">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="p-3 text-center">
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-round btn-inverse-danger"><i class="fe fe-bar-chart-2"></i></a>
+                                                <h2 class="m-t-20 mb-0">$135</h2>
+                                                <p class="text-muted d-block m-b-0">Quantity</p>
+                                                <span class="text-danger"> <i class="fe fe-arrow-down-right"></i> 155.5% </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxs-6 h-100 p-2 ">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="p-3 text-center">
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-round btn-inverse-info"><i class="fe fe-crosshair"></i></a>
+                                                <h2 class="m-t-20 mb-0">$7525</h2>
+                                                <p class="text-muted d-block m-b-0">Total Products</p>
+                                                <span class="text-info"> <i class="fe fe-arrow-up"></i> 155.5% </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-support-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Support Tickets</h4>
+                        </div>
+                    </div>
+                    <div class="card-body pl-0 pr-0 scrollbar scroll_dark">
+                        <div class="widget-text">
+                            <div class="media">
+                                <div class="dot-online">
+                                    <div class="bg-img mr-2">
+                                        <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                    </div>
+                                    <span class="dot-online-icon bg-success"></span>
+                                </div>
+                                <div class="media-body ml-2">
+                                    <h4 class="mb-0">Martin smith</h4>
+                                    <span>2 day ago</span>
+                                    <p><span class="badge badge-pill badge-success">Pending</span></p>
+                                </div>
+                            </div>
+                            <div class="pt-3">
+                                <p>If success is a process with a number of defined steps, then it is just like any other process.</p>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media">
+                                <div class="dot-online">
+                                    <div class="bg-img mr-2">
+                                        <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                    </div>
+                                    <span class="dot-online-icon bg-success"></span>
+                                </div>
+                                <div class="media-body ml-2">
+                                    <h4 class="mb-0">Paul Flavius</h4>
+                                    <span>4 day ago</span>
+                                    <p><span class="badge badge-pill badge-success">Pending</span></p>
+                                </div>
+                            </div>
+                            <div class="pt-3">
+                                <p>Having clarity of purpose and a clear picture of what you desire, is probably the single most important factor in achievement.</p>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media">
+                                <div class="dot-online">
+                                    <div class="bg-img mr-2">
+                                        <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                    </div>
+                                    <span class="dot-online-icon"></span>
+                                </div>
+                                <div class="media-body ml-2">
+                                    <h4 class="mb-0">Anne Smith</h4>
+                                    <span>5 day ago</span>
+                                    <p><span class="badge badge-pill badge-success">Pending</span></p>
+                                </div>
+                            </div>
+                            <div class="pt-3">
+                                <p>Trying to go through life without clarity is similar to sailing a rudder-less ship – no good thing can or will happen!</p>
+                            </div>
+                        </div>
+                        <div class="widget-text">
+                            <div class="media">
+                                <div class="dot-online">
+                                    <div class="bg-img mr-2">
+                                        <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                                    </div>
+                                    <span class="dot-online-icon"></span>
+                                </div>
+                                <div class="media-body ml-2">
+                                    <h4 class="mb-0">Sara Lisbon</h4>
+                                    <span>5 day ago</span>
+                                    <p><span class="badge badge-pill badge-success">Pending</span></p>
+                                </div>
+                            </div>
+                            <div class="pt-3">
+                                <p>Customers and business owners talk differently. You should be writing your page in a way that resonates with.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-branches-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Country List</h4>
+                        </div>
+                    </div>
+                    <div class="card-body pl-0 pr-0 scrollbar scroll_dark">
+                        <ul class="nav d-block">
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/au.png" class="img-fluid" alt="Australia">
+                                        <span class="title pl-3">Australia</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">452</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/bd.png" class="img-fluid" alt="Bangladesh">
+                                        <span class="title pl-3">Bangladesh</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">652</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/ca.png" class="img-fluid" alt="Canada">
+                                        <span class="title pl-3">Canada</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">772</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/cn.png" class="img-fluid" alt="China">
+                                        <span class="title pl-3">China</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">5522</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/es.png" class="img-fluid" alt="Ecuador">
+                                        <span class="title pl-3">Ecuador</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">352</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between align-items-center" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/gb.png" class="img-fluid" alt="Australia">
+                                        <span class="title pl-3">Greece</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">452</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/in.png" class="img-fluid" alt="Australia">
+                                        <span class="title pl-3">India</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">452</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="media justify-content-between" href="javascript:void(0)">
+                                    <p>
+                                        <img src="assets/img/flags/nz.png" class="img-fluid" alt="Australia">
+                                        <span class="title pl-3">New Zealand</span>
+                                    </p>
+                                    <span class="badge badge-pill badge-warning">452</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-downloads-list">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-heading">
+                            <div class="card-heading">
+                                <h4 class="card-title">Downloads Files</h4>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <a class="p-2" href="#!" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="ti ti-settings"></i>
+                            </a>
+                            <div class="dropdown-menu custom-dropdown dropdown-menu-right p-4">
+                                <h6 class="mb-1">Action</h6>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-o pr-2"></i>View reports</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-edit pr-2"></i>Edit reports</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-bar-chart-o pr-2"></i>Statistics</a>
+                                <h6 class="mb-1 mt-3">Export</h6>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-pdf-o pr-2"></i>Export to PDF</a>
+                                <a class="dropdown-item" href="#!"><i class="fa-fw fa fa-file-excel-o pr-2"></i>Export to CSV</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body scrollbar scroll_dark">
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/ai.png" class="img-fluid" alt="avi">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.avi</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/css.png" class="img-fluid" alt="css">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.css</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/dbf.png" class="img-fluid" alt="dbf">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.dbf</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/doc.png" class="img-fluid" alt="doc">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.doc</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/dwg.png" class="img-fluid" alt="dwg">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.dwg</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-text">
+                            <div class="media align-items-center">
+                                <img src="assets/img/file-icon/exe.png" class="img-fluid" alt="exe">
+                                <div class="media-body">
+                                    <h4 class="mb-0 ml-3">Mentor_demo.exe</h4>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-success">
+                                        <i class="ti ti-download"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-icon btn-round btn-outline-danger ml-2">
+                                        <i class="ti ti-close"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-support-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Notifications</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon bg-success"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Fielmonk23</h4>
+                                <p>Commitment is something that comes from understanding that everything has its price and then having the willingness to pay that price. </p>
+                                <span><small>Just now</small></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Sara Lisbon</h4>
+                                <p>If success is a process with a number of defined steps, then it is just like any other process. </p>
+                                <span>33 min ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Paul Flavius</h4>
+                                <p>Since there is not an "all the above" category, I'll take the opportunity to enthusiastically congratulate you on the very high quality, "user-friendly" documentation.</p>
+                                <span>33 min ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">AnnaHorno</h4>
+                                <p>Hey guys! I'd like to share my experience with the developer and they are pretty amazing by answering and fixing the problem in a couple of minutes! defnitely recommend this guys!</p>
+                                <span>33 min ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-support-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">User activity</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon bg-success"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Wdcorbitt</h4>
+                                <p>Without clarity, you send a very garbled message out to the Universe. </p>
+                                <span>Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">DutcaPatrick</h4>
+                                <p>The sad thing is the majority of people have no clue about what they truly want. </p>
+                                <span>Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Ansalpa</h4>
+                                <p>We carry them with us like rocks in a knapsack, and then use them to sabotage our success. </p>
+                                <span>Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">M_morsch</h4>
+                                <p>If the answer is no, you may want to reconsider doing it at that time. </p>
+                                <span>Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/05.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Savvyone</h4>
+                                <p>It really comes down to understanding the steps in the process and then executing on those steps. </p>
+                                <span>Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-recent-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Recent comments</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="mb-0">William</h4>
+                                    <span>33 min ago</span>
+                                </div>
+                                <p>Step out on to the path to your left. Where there is no change.</p>
+                                <div>
+                                    <ul class="nav align-items-center">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-success nav-link btn-round"><i class="ti ti-check"></i></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-danger nav-link btn-round"><i class="ti ti-close"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="mb-0">Theron Trump</h4>
+                                    <span>33 min ago</span>
+                                </div>
+                                <p>Briefly imagine that you are not going to live and discover your unfulfilled dreams.</p>
+                                <div>
+                                    <ul class="nav align-items-center">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-success nav-link btn-round"><i class="ti ti-check"></i></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-danger nav-link btn-round"><i class="ti ti-close"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="mb-0">Madison</h4>
+                                    <span>33 min ago</span>
+                                </div>
+                                <p>This is the beginning of creating the life that you want to live.</p>
+                                <div>
+                                    <ul class="nav align-items-center">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-success nav-link btn-round"><i class="ti ti-check"></i></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-danger nav-link btn-round"><i class="ti ti-close"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <div class="d-flex justify-content-between">
+                                    <h4 class="mb-0">Wdcorbitt</h4>
+                                    <span>33 min ago</span>
+                                </div>
+                                <p>Imagine reaching deep inside you for all the strength and wisdom that you need to make this decision today.</p>
+                                <div>
+                                    <ul class="nav align-items-center">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-success nav-link btn-round"><i class="ti ti-check"></i></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="btn btn-icon btn-outline-danger nav-link btn-round"><i class="ti ti-close"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-user-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">User list</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="media d-flex align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Carlos</h4>
+                                <p>CEO</p>
+                            </div>
+                            <button class="btn btn-info">Follow</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media d-flex align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Grayson</h4>
+                                <p>SEO</p>
+                            </div>
+                            <button class="btn btn-primary">Followed</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media d-flex align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Theron Trump</h4>
+                                <p>CEO</p>
+                            </div>
+                            <button class="btn btn-info">Follow</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media d-flex align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">William</h4>
+                                <p>CEO</p>
+                            </div>
+                            <button class="btn btn-primary">Followed</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media d-flex align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/05.jpg" alt="listwidget-img">
+                                </div>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Theron Trump</h4>
+                                <p>CEO</p>
+                            </div>
+                            <button class="btn btn-info">Follow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-support-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Recent Message</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon bg-success"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Martin smith</h4>
+                            </div>
+                            <div class="text-right"><span>33 min ago</span></div>
+                        </div>
+                        <div class="pt-3">
+                            <p>You will drift aimlessly until you arrive back at the original dock. </p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon bg-success"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Paul Flavius</h4>
+                            </div>
+                            <div class="text-right"><span>33 min ago</span></div>
+                        </div>
+                        <div class="pt-3">
+                            <p>Focus is having the unwavering attention to complete what you set out to do. There are a million distractions in every facet of our lives. </p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="dot-online">
+                                <div class="bg-img mr-2">
+                                    <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                                </div>
+                                <span class="dot-online-icon"></span>
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Anne Smith</h4>
+                            </div>
+                            <div class="text-right"><span>33 min ago</span></div>
+                        </div>
+                        <div class="pt-3">
+                            <p>Commitment is something that comes from understanding that everything has its price and then having the willingness to pay that price. </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-xxl-4 m-b-30">
+                <div class="card card-statistics h-100 mb-0 widget-income-list">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <h4 class="card-title">Income List</h4>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="bg-img mr-2">
+                                <img class="img-fluid" src="assets/img/avtar/01.jpg" alt="listwidget-img">
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Madison</h4>
+                            </div>
+                            <span class="badge badge-success px-3 py-2">$5,000</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="bg-img mr-2">
+                                <img class="img-fluid" src="assets/img/avtar/02.jpg" alt="listwidget-img">
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Olivia</h4>
+                            </div>
+                            <span class="badge badge-warning px-3 py-2">$3,000</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="bg-img mr-2">
+                                <img class="img-fluid" src="assets/img/avtar/03.jpg" alt="listwidget-img">
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Madison</h4>
+                            </div>
+                            <span class="badge badge-primary px-3 py-2">$1,000</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="bg-img mr-2">
+                                <img class="img-fluid" src="assets/img/avtar/04.jpg" alt="listwidget-img">
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">William</h4>
+                            </div>
+                            <span class="badge badge-primary px-3 py-2">$1,000</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="media align-items-center">
+                            <div class="bg-img mr-2">
+                                <img class="img-fluid" src="assets/img/avtar/05.jpg" alt="listwidget-img">
+                            </div>
+                            <div class="media-body ml-2">
+                                <h4 class="mb-0">Emily</h4>
+                            </div>
+                            <span class="badge badge-primary px-3 py-2">$1,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end container-fluid -->
+</div>
+{% endblock content %}

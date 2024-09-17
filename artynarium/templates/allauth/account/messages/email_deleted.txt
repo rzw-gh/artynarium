@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}ایمیل به آدرس {{email}} با موفقیت حذف شد{% endblocktrans %}

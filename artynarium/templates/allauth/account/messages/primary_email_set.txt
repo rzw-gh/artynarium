@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}ایمیل اصلی با موفقیت ثبت شد{% endblocktrans %}
