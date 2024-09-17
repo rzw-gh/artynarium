@@ -1,0 +1,15 @@
+.cs-bg-btn {
+    direction: rtl;
+    background: #5f6ae7;
+    padding: 8px 4px;
+    border-radius: 12px;
+    color: white;
+}
+
+.cs-bg-btn-err {
+    direction: rtl;
+    background: red;
+    padding: 8px 4px;
+    border-radius: 12px;
+    color: white;
+}
